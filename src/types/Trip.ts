@@ -3,7 +3,7 @@ import {
   shippingLines,
   sizeOfContainer,
   typeOfGoods,
-} from 'utils/constants';
+} from '../common/constants';
 import Asset from './Asset';
 
 export default interface Trip {
