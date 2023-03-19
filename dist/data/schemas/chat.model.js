@@ -29,4 +29,4 @@ const schema = new mongoose_1.Schema({
     },
 }, { timestamps: true });
 exports.ChatSchema = (0, mongoose_1.model)('Chat', schema);
-//# sourceMappingURL=Chat.js.map
+//# sourceMappingURL=chat.model.js.map

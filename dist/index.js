@@ -12,8 +12,11 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const rateLimit_1 = __importDefault(require("./config/rateLimit"));
 require("./data/db");
+const routes_1 = __importDefault(require("./routes"));
 const cors_1 = __importDefault(require("./config/cors"));
 const privateKeys_1 = require("./common/privateKeys");
+const http_1 = __importDefault(require("http"));
+const Socket_1 = require("./services/Socket");
 const app = (0, express_1.default)();
 const rateLimiter = (0, express_rate_limit_1.default)(rateLimit_1.default);
 app.set('trust proxy', rateLimit_1.default.numberOfProxies);
@@ -53,13 +56,18 @@ const errorHandler = (err, req, res, next) => {
     next();
 };
 app.use(errorHandler);
-app.get('/api/v0.1', (_, res) => {
-    res.status(200).send();
-});
+app.use('/api/v0.1', routes_1.default);
 // catch 404 and forward to error handler
-app.use((req, res) => res.status(404).json({
+app.use((_, res) => res.status(404).json({
     error: true,
     msg: 'you seem to be lost',
 }));
-app.listen(privateKeys_1.PORT, () => console.log(`Running on port ${privateKeys_1.PORT}`));
+const server = http_1.default.createServer(app);
+const connectSocket = () => {
+    new Socket_1.Socket(server).connect();
+};
+connectSocket();
+server.listen(privateKeys_1.PORT, () => {
+    console.log(`Running on port ${privateKeys_1.PORT}`);
+});
 //# sourceMappingURL=index.js.map

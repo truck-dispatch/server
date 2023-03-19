@@ -4,6 +4,7 @@ export default interface Chat {
   message: string
   createdAt: number
   senderId: string
+  receiverId: string
   agentId: string
   transporterId: string
   status?: 'success' | 'pending' | 'failed'

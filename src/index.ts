@@ -9,9 +9,13 @@ dotEnv.config()
 import rateLimitConfig from './config/rateLimit'
 
 import './data/db'
+import routes from './routes'
 
 import corsConfig from './config/cors'
 import { PORT } from './common/privateKeys'
+
+import http from 'http'
+import { Socket } from './services/Socket'
 
 const app = express()
 const rateLimiter = rateLimit(rateLimitConfig)
@@ -61,16 +65,23 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 }
 app.use(errorHandler)
 
-app.get('/api/v0.1', (_, res) => {
-  res.status(200).send()
-})
+app.use('/api/v0.1', routes)
 
 // catch 404 and forward to error handler
-app.use((req, res) =>
+app.use((_, res) =>
   res.status(404).json({
     error: true,
     msg: 'you seem to be lost',
   })
 )
 
-app.listen(PORT, () => console.log(`Running on port ${PORT}`))
+const server = http.createServer(app)
+
+const connectSocket = () => {
+  new Socket(server).connect()
+}
+connectSocket()
+
+server.listen(PORT, () => {
+  console.log(`Running on port ${PORT}`)
+})

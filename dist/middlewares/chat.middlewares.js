@@ -27,4 +27,4 @@ class ChatMiddlewares {
     }
 }
 exports.default = new ChatMiddlewares();
-//# sourceMappingURL=ChatMiddlewares.js.map
+//# sourceMappingURL=chat.middlewares.js.map
