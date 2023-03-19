@@ -10,6 +10,6 @@ const options = {
 // useUnifiedTopology: true,
 };
 mongoose_1.default.connect(privateKeys_1.MONGO_DB_URL, options).then(() => {
-    console.log("database connected successfully");
+    console.log('database connected successfully');
 });
 //# sourceMappingURL=db.js.map

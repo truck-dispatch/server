@@ -1,4 +1,1 @@
-class ChatMiddlewares {
-    
-}
-
+class ChatMiddlewares {}

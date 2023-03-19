@@ -1,7 +1,7 @@
-interface Message  {
-    msg: string;
-    userEmail?: string;
+interface Message {
+  msg: string
+  userEmail?: string
 }
 export default class Logger {
-    error(data: Message) {}
+  error(data: Message) {}
 }

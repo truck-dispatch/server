@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Response } from 'express'
 
 class Respond {
   /**
@@ -7,11 +7,15 @@ class Respond {
    * @param {String} msg message string for error response
    * @param {Number} status Status code
    */
-  static error(res: Response, msg = 'an error occurred', status = 422): Response {
+  static error(
+    res: Response,
+    msg = 'an error occurred',
+    status = 422
+  ): Response {
     return res.status(status).json({
       error: true,
       msg,
-    });
+    })
   }
 
   /**
@@ -25,7 +29,7 @@ class Respond {
       error: false,
       msg,
       data,
-    });
+    })
   }
 }
 

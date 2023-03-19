@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Chat {
     createChat() { }
-    getChats() { }
-    getChatById() { }
+    getChatsByUserId() { }
+    getChatsByChatId() { }
 }
 exports.default = new Chat();
-//# sourceMappingURL=chat.js.map
+//# sourceMappingURL=Chat.js.map

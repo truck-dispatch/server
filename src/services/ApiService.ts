@@ -1,10 +1,10 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
 
 /**
  * ApiService Class
  */
 class ApiService {
-  private api: AxiosInstance;
+  private api: AxiosInstance
 
   /**
    * constructor function
@@ -14,7 +14,7 @@ class ApiService {
     this.api = axios.create({
       baseURL: baseUrl,
       timeout: 40000,
-    });
+    })
   }
 
   /**
@@ -22,9 +22,9 @@ class ApiService {
    * @param {String} endpoint url endpoint to access
    */
   async getData(endpoint: string): Promise<any> {
-    const response: AxiosResponse<any> = await this.api.get(endpoint);
-    return response.data;
+    const response: AxiosResponse<any> = await this.api.get(endpoint)
+    return response.data
   }
 }
 
-export default ApiService;
+export default ApiService

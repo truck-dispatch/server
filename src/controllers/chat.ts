@@ -1,9 +1,9 @@
-import express from 'express';
+import express from 'express'
 
 class Chat {
   createChat() {}
-  getChats() {}
-  getChatById() {}
+  getChatsByUserId() {}
+  getChatsByChatId() {}
 }
 
-export default new Chat();
+export default new Chat()
