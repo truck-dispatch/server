@@ -12,9 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const chat_model_1 = require("../data/schemas/chat.model");
+const chat_model_1 = require("../data/models/chat.model");
 const Respond_1 = __importDefault(require("../helpers/Respond"));
-const Socket_1 = require("../services/Socket");
 class ChatController {
     createChat(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,7 +28,8 @@ class ChatController {
                     chatId,
                 });
                 yield messageToSave.save();
-                Socket_1.appIo.emit('message', messageToSave);
+                // @ts-ignore
+                req.io.emit('message', messageToSave);
                 return Respond_1.default.success(res, 'Message created successfully.', messageToSave);
             }
             catch (err) {
@@ -53,7 +53,8 @@ class ChatController {
             }
         });
     }
-    getChatsByChatId(req, res) { }
+    getChatsByChatId(req, res) {
+    }
 }
 exports.default = new ChatController();
 //# sourceMappingURL=chat.controller.js.map

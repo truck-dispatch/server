@@ -11,12 +11,13 @@ const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const rateLimit_1 = __importDefault(require("./config/rateLimit"));
+const socket_io_1 = require("socket.io");
 require("./data/db");
 const routes_1 = __importDefault(require("./routes"));
 const cors_1 = __importDefault(require("./config/cors"));
 const privateKeys_1 = require("./common/privateKeys");
 const http_1 = __importDefault(require("http"));
-const Socket_1 = require("./services/Socket");
+// import { Socket } from './services/Socket'
 const app = (0, express_1.default)();
 const rateLimiter = (0, express_rate_limit_1.default)(rateLimit_1.default);
 app.set('trust proxy', rateLimit_1.default.numberOfProxies);
@@ -56,17 +57,39 @@ const errorHandler = (err, req, res, next) => {
     next();
 };
 app.use(errorHandler);
+const server = http_1.default.createServer(app);
+const io = new socket_io_1.Server(server, {
+    cors: {
+        origin: '*',
+    },
+});
+app.use((req, res, next) => {
+    io.on('connect', (socket) => {
+        console.log('connected socket');
+        socket.on('join', ({ userId }) => {
+            console.log(userId);
+            // @ts-ignore
+            socket.userId = userId;
+        });
+        socket.on('message', (message) => {
+            // @ts-ignore
+            const userId = socket.userId;
+            if (userId === message.receiverId || userId === message.senderId) {
+                console.log(userId, 'userId');
+                io.emit('message', message);
+            }
+        });
+    });
+    // @ts-ignore
+    req.io = io;
+    next();
+});
 app.use('/api/v0.1', routes_1.default);
 // catch 404 and forward to error handler
 app.use((_, res) => res.status(404).json({
     error: true,
     msg: 'you seem to be lost',
 }));
-const server = http_1.default.createServer(app);
-const connectSocket = () => {
-    new Socket_1.Socket(server).connect();
-};
-connectSocket();
 server.listen(privateKeys_1.PORT, () => {
     console.log(`Running on port ${privateKeys_1.PORT}`);
 });

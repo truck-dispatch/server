@@ -14,18 +14,24 @@ class Socket {
         exports.appIo = appIo = this.io;
     }
     connect() {
+        console.log('connect is triggered', { io: this.io });
         this.io.on('connection', (socket) => {
             console.log('a user connected');
             socket.on('message', (message) => {
                 const typedSocket = socket;
+                console.log({ messageB: message });
                 if (typedSocket.userId === message.senderId ||
                     typedSocket.userId === message.receiverId) {
                     socket.emit('message', message);
+                    console.log({ message });
                 }
             });
             socket.on('disconnect', () => {
                 console.log('user disconnected');
             });
+        });
+        this.io.on('error', (err) => {
+            console.log({ err });
         });
     }
 }

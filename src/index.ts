@@ -1,4 +1,4 @@
-import express, { ErrorRequestHandler } from 'express'
+import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express'
 import logger from 'morgan'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
@@ -7,7 +7,7 @@ import dotEnv from 'dotenv'
 dotEnv.config()
 
 import rateLimitConfig from './config/rateLimit'
-
+import { Server, Socket as TypedSocket } from 'socket.io'
 import './data/db'
 import routes from './routes'
 
@@ -15,7 +15,8 @@ import corsConfig from './config/cors'
 import { PORT } from './common/privateKeys'
 
 import http from 'http'
-import { Socket } from './services/Socket'
+import { SocketAddress } from 'net'
+// import { Socket } from './services/Socket'
 
 const app = express()
 const rateLimiter = rateLimit(rateLimitConfig)
@@ -65,6 +66,35 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 }
 app.use(errorHandler)
 
+const server = http.createServer(app)
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  },
+});
+
+app.use((req: Request, res, next: NextFunction) => {
+  io.on('connect', (socket) => {
+    console.log('connected socket');
+    socket.on('join', ({ userId }) => {
+      console.log(userId);
+      // @ts-ignore
+      socket.userId = userId
+    })
+    socket.on('message', (message) => {
+      // @ts-ignore
+      const userId = socket.userId;
+      if (userId === message.receiverId || userId === message.senderId) {
+        console.log(userId, 'userId')
+        io.emit('message', message);
+      }
+    })
+  })
+  // @ts-ignore
+  req.io = io;
+  next();
+})
+
 app.use('/api/v0.1', routes)
 
 // catch 404 and forward to error handler
@@ -75,12 +105,6 @@ app.use((_, res) =>
   })
 )
 
-const server = http.createServer(app)
-
-const connectSocket = () => {
-  new Socket(server).connect()
-}
-connectSocket()
 
 server.listen(PORT, () => {
   console.log(`Running on port ${PORT}`)
