@@ -17,7 +17,7 @@ const routes_1 = __importDefault(require("./routes"));
 const cors_1 = __importDefault(require("./config/cors"));
 const privateKeys_1 = require("./common/privateKeys");
 const http_1 = __importDefault(require("http"));
-// import { Socket } from './services/Socket'
+const connect_socket_1 = require("./services/socket/connect.socket");
 const app = (0, express_1.default)();
 const rateLimiter = (0, express_rate_limit_1.default)(rateLimit_1.default);
 app.set('trust proxy', rateLimit_1.default.numberOfProxies);
@@ -63,27 +63,9 @@ const io = new socket_io_1.Server(server, {
         origin: '*',
     },
 });
-app.use((req, res, next) => {
-    io.on('connect', (socket) => {
-        console.log('connected socket');
-        socket.on('join', ({ userId }) => {
-            console.log(userId);
-            // @ts-ignore
-            socket.userId = userId;
-        });
-        socket.on('message', (message) => {
-            // @ts-ignore
-            const userId = socket.userId;
-            if (userId === message.receiverId || userId === message.senderId) {
-                console.log(userId, 'userId');
-                io.emit('message', message);
-            }
-        });
-    });
-    // @ts-ignore
-    req.io = io;
-    next();
-});
+io.on('connect', connect_socket_1.connectSocket);
+// @ts-ignore;
+global.io = io;
 app.use('/api/v0.1', routes_1.default);
 // catch 404 and forward to error handler
 app.use((_, res) => res.status(404).json({

@@ -1,12 +1,12 @@
-import { model, Schema, Document} from 'mongoose';
+import { model, Schema, Document } from 'mongoose'
 
 export interface Chat extends Document {
-  senderId: string;
-  receiverId: string;
-  message: string;
-  chatId: string;
-  agentId: string;
-  transporterId: string;
+  senderId: string
+  receiverId: string
+  message: string
+  chatId: string
+  agentId: string
+  transporterId: string
 }
 
 const schema = new Schema(
@@ -39,4 +39,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const ChatSchema = model<Chat>('Chat', schema);
+export const ChatSchema = model<Chat>('Chat', schema)

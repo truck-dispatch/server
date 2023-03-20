@@ -14,8 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const chat_model_1 = require("../data/models/chat.model");
 const Respond_1 = __importDefault(require("../helpers/Respond"));
+const connectedUsers_socket_1 = require("../services/socket/connectedUsers.socket");
 class ChatController {
     createChat(req, res, next) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { message, senderId, receiverId, transporterId, agentId, chatId } = req.body;
@@ -28,8 +30,11 @@ class ChatController {
                     chatId,
                 });
                 yield messageToSave.save();
-                // @ts-ignore
-                req.io.emit('message', messageToSave);
+                const receiverSocket = (0, connectedUsers_socket_1.getConnectedUserSocketByUserId)(messageToSave.receiverId);
+                if (receiverSocket) {
+                    // @ts-ignore
+                    (_a = global.io) === null || _a === void 0 ? void 0 : _a.to(receiverSocket).emit('message', messageToSave);
+                }
                 return Respond_1.default.success(res, 'Message created successfully.', messageToSave);
             }
             catch (err) {
@@ -53,8 +58,7 @@ class ChatController {
             }
         });
     }
-    getChatsByChatId(req, res) {
-    }
+    getChatsByChatId(req, res) { }
 }
 exports.default = new ChatController();
 //# sourceMappingURL=chat.controller.js.map

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ChatSchema } from '../data/models/chat.model';
 import Respond from '../helpers/Respond';
+import { getConnectedUserSocketByUserId } from '../services/socket/connectedUsers.socket';
 
 class ChatController {
   async createChat(req: Request, res: Response, next: NextFunction) {
@@ -17,8 +18,14 @@ class ChatController {
       })
       await messageToSave.save();
 
-      // @ts-ignore
-      req.io.emit('message', messageToSave);
+      const receiverSocket = getConnectedUserSocketByUserId(messageToSave.receiverId);
+
+      if (receiverSocket) {
+        // @ts-ignore
+        global.io
+          ?.to(receiverSocket)
+          .emit('message', messageToSave);
+      }
       return Respond.success(
         res,
         'Message created successfully.',
@@ -44,9 +51,7 @@ class ChatController {
       next(err)
     }
   }
-  getChatsByChatId(req: Request, res: Response) {
-
-  }
+  getChatsByChatId(req: Request, res: Response) {}
 }
 
 export default new ChatController()

@@ -1,13 +1,11 @@
-export default interface Chat {
-  id: string
+import { Document } from 'mongoose'
+export default interface Chat extends Document {
   chatId: string
   message: string
-  createdAt: number
   senderId: string
   receiverId: string
   agentId: string
   transporterId: string
   status?: 'success' | 'pending' | 'failed'
   readAt?: number
-  stillSending?: boolean
 }
