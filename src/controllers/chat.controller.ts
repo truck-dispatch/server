@@ -51,7 +51,19 @@ class ChatController {
       next(err)
     }
   }
-  getChatsByChatId(req: Request, res: Response) {}
+
+  async setChatIsReadByChatId(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { chatId } = req.params;
+
+      const chat = await ChatSchema.findOneAndUpdate({_id: chatId}, { readAt: Date.now() })
+
+      return Respond.success(res, 'Chat read successfully.', chat);
+
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default new ChatController()

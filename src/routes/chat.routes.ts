@@ -15,4 +15,6 @@ router.get(
   ChatController.getChatsByUserId
 )
 
+router.patch('/read/:chatId', ChatMiddlewares.chatIdExistsInParam,ChatController.setChatIsReadByChatId)
+
 export default router

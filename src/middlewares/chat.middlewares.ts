@@ -33,6 +33,13 @@ class ChatMiddlewares {
 
     next()
   }
+  chatIdExistsInParam(req: Request, res: Response, next: NextFunction) {
+    const { chatId } = req.params
+
+    if (!chatId) return Respond.error(res, 'User ID is a compulsory field')
+
+    next()
+  }
 }
 
 export default new ChatMiddlewares()

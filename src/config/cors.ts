@@ -10,7 +10,7 @@ export default {
    *                                                                          *
    ************************************************************************** */
 
-  methods: 'GET, POST, PUT, DELETE, OPTIONS, HEAD',
+  methods: 'GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD',
   /** *************************************************************************
    *                                                                          *
    * Which headers should be allowed for CORS requests?                       *

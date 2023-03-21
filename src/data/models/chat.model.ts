@@ -35,6 +35,10 @@ const schema = new Schema(
       type: String,
       required: true,
     },
+    readAt: {
+      type: Number,
+      required: false
+    }
   },
   { timestamps: true }
 )
