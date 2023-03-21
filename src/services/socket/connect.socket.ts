@@ -3,9 +3,9 @@ import { addConnectedUser, removeConnectedUser } from './connectedUsers.socket'
 
 export function connectSocket(socket: Socket) {
   socket.on('join', ({ userId }) => {
-    addConnectedUser(userId, socket.id);
+    addConnectedUser(userId, socket.id)
   })
   socket.on('disconnect', () => {
-    removeConnectedUser(socket.id);
-  });
+    removeConnectedUser(socket.id)
+  })
 }

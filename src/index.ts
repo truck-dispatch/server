@@ -1,6 +1,4 @@
-import express, {
-  ErrorRequestHandler,
-} from 'express'
+import express, { ErrorRequestHandler } from 'express'
 import logger from 'morgan'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'

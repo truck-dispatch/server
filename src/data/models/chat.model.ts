@@ -1,13 +1,5 @@
 import { model, Schema, Document } from 'mongoose'
-
-export interface Chat extends Document {
-  senderId: string
-  receiverId: string
-  message: string
-  chatId: string
-  agentId: string
-  transporterId: string
-}
+import Chat from '../../types/Chat'
 
 const schema = new Schema(
   {
@@ -37,8 +29,8 @@ const schema = new Schema(
     },
     readAt: {
       type: Number,
-      required: false
-    }
+      required: false,
+    },
   },
   { timestamps: true }
 )

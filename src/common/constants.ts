@@ -1,3 +1,10 @@
+export const userTypes = [
+  'agent',
+  'transporter',
+  'transporter_company',
+  'company',
+]
+
 export const shippingLines = [
   'Maersk line',
   'Cosco',

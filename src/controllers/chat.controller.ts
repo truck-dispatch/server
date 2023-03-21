@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
-import { ChatSchema } from '../data/models/chat.model';
-import Respond from '../helpers/Respond';
-import { getConnectedUserSocketByUserId } from '../services/socket/connectedUsers.socket';
+import { NextFunction, Request, Response } from 'express'
+import { ChatSchema } from '../data/models/chat.model'
+import Respond from '../helpers/Respond'
+import { getConnectedUserSocketByUserId } from '../services/socket/connectedUsers.socket'
 
 class ChatController {
   async createChat(req: Request, res: Response, next: NextFunction) {
@@ -16,15 +16,15 @@ class ChatController {
         agentId,
         chatId,
       })
-      await messageToSave.save();
+      await messageToSave.save()
 
-      const receiverSocket = getConnectedUserSocketByUserId(messageToSave.receiverId);
+      const receiverSocket = getConnectedUserSocketByUserId(
+        messageToSave.receiverId
+      )
 
       if (receiverSocket) {
         // @ts-ignore
-        global.io
-          ?.to(receiverSocket)
-          .emit('message', messageToSave);
+        global.io?.to(receiverSocket).emit('message', messageToSave)
       }
       return Respond.success(
         res,
@@ -54,14 +54,16 @@ class ChatController {
 
   async setChatIsReadByChatId(req: Request, res: Response, next: NextFunction) {
     try {
-      const { chatId } = req.params;
+      const { chatId } = req.params
 
-      const chat = await ChatSchema.findOneAndUpdate({_id: chatId}, { readAt: Date.now() })
+      const chat = await ChatSchema.findOneAndUpdate(
+        { _id: chatId },
+        { readAt: Date.now() }
+      )
 
-      return Respond.success(res, 'Chat read successfully.', chat);
-
+      return Respond.success(res, 'Chat read successfully.', chat)
     } catch (err) {
-      next(err);
+      next(err)
     }
   }
 }
