@@ -1,5 +1,5 @@
 import { model, Schema, Document } from 'mongoose'
-import Chat from '../../types/Chat'
+import Chat from '../../../types/Chat'
 
 const schema = new Schema(
   {

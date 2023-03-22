@@ -17,5 +17,5 @@ export default interface User {
     | 'fraudulent'
   rating: number
   bankAccount: BankAccount
-};
-
+  password: string
+}
