@@ -7,7 +7,7 @@ import {
 import Asset from './Asset'
 
 export default interface Trip {
-  id: string
+  _id: string
   pickUpAddress: string
   deliveryAddress: string
   pickUpDate: string

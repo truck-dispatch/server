@@ -20,4 +20,15 @@ export class Helpers {
     // Return the formatted phone
     return phone
   }
+  static generateReference() {
+    const alphanumeric =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let key = ''
+    for (let i = 0; i < 6; i++) {
+      key += alphanumeric.charAt(
+        Math.floor(Math.random() * alphanumeric.length)
+      )
+    }
+    return key
+  }
 }

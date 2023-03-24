@@ -1,4 +1,4 @@
-import { model, Schema, Document } from 'mongoose'
+import { model, Schema } from 'mongoose'
 import Chat from '../../../types/Chat'
 
 const schema = new Schema(

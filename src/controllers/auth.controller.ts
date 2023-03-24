@@ -23,11 +23,11 @@ class AuthController {
       }: Record<string, string> = req.body
 
       const encryptedPassword = await encrypt(password)
-
+      const formattedPhone = Helpers.convertPhone(phone)
       await createUser({
         email,
         password: encryptedPassword,
-        phone: phone.replace(/^0/, '234'),
+        phone: formattedPhone,
         userType,
         firstName,
         lastName,
@@ -35,7 +35,7 @@ class AuthController {
         isPhoneVerified: false,
       })
       const smsData = await smsService.sendOTP({
-        to: phone.replace(/^0/, '234'),
+        to: formattedPhone,
       })
       return Respond.success(res, 'User created successfully...', smsData)
     } catch (err) {

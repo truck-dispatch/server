@@ -1,0 +1,66 @@
+import { model, Schema } from 'mongoose'
+import Trip from '../../../types/Trip'
+
+const schema = new Schema(
+  {
+    agentId: {
+      required: true,
+      type: String,
+    },
+    transporterId: {
+      type: String,
+    },
+    pickUpAddress: {
+      type: String,
+      required: true,
+    },
+    deliveryAddress: {
+      type: String,
+      required: true,
+    },
+    pickUpDate: {
+      type: String,
+      required: true,
+    },
+    deliveryDate: {
+      type: String,
+      required: true,
+    },
+    typeOfGoods: {
+      type: String,
+      required: true,
+    },
+    weight: {
+      type: String,
+      required: true,
+    },
+    sizeOfContainer: {
+      type: String,
+    },
+    shippingLine: {
+      type: String,
+    },
+    jobType: {
+      type: String,
+    },
+    instructions: {
+      type: String,
+    },
+    TDO: {
+      type: String,
+    },
+    paymentId: {
+      type: String,
+    },
+    reference: {
+      type: String,
+    },
+    status: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+)
+
+export const TripSchema = model<Trip>('Trip', schema)
