@@ -7,6 +7,7 @@ import {
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { encrypt } from '../services/encrypt'
+import { generateJWT } from '../services/JWT'
 import smsService from '../services/Sms'
 
 class AuthController {
@@ -47,8 +48,10 @@ class AuthController {
       const { email } = req.body
 
       const user = await findUserBy({ email })
+      if (!user) return Respond.error(res, 'user does not exist')
+      const jwt = generateJWT(user)
 
-      return Respond.success(res, 'Login successful', user)
+      return Respond.success(res, 'Login successful', { jwt })
     } catch (err) {
       next(err)
     }

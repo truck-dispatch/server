@@ -6,8 +6,19 @@ export function createUser(user: Partial<User>) {
   return data.save()
 }
 
-export function findUserBy(param: Partial<User>, deletePassword = true) {
-  return UserSchema.findOne(param)
+export async function findUserBy(
+  param: Partial<User>,
+  deletePassword = true
+): Promise<User | null> {
+  const user = await UserSchema.findOne(param)
+  if (!user) {
+    return null
+  }
+
+  if (!deletePassword) return user.toObject()
+
+  const { password, ...userWithoutPassword } = user.toObject()
+  return userWithoutPassword as unknown as User
 }
 
 export function findAndUpdateUserBy(
