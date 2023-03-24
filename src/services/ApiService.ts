@@ -22,8 +22,11 @@ class ApiService {
    * @param {String} endpoint url endpoint to access
    */
   async getData(endpoint: string): Promise<any> {
-    const response: AxiosResponse<any> = await this.api.get(endpoint)
-    return response.data
+    return this.api.get(endpoint).then(({ data }) => data)
+  }
+
+  async post(endpoint: string, data: unknown): Promise<any> {
+    return this.api.post(endpoint, data).then(({ data }) => data)
   }
 }
 

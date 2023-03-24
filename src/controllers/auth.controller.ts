@@ -1,25 +1,85 @@
 import { NextFunction, Request, Response } from 'express'
-import { createUser } from '../data/models/User/user.repository'
+import {
+  createUser,
+  findAndUpdateUserBy,
+  findUserBy,
+} from '../data/models/User/user.repository'
+import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { encrypt } from '../services/encrypt'
+import smsService from '../services/Sms'
 
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, phone, userType, firstName, lastName } = req.body
-
-      const encryptedPassword = await encrypt(password);
-
-      await createUser({
+      const {
         email,
-        password: encryptedPassword,
+        password,
         phone,
         userType,
         firstName,
         lastName,
+      }: Record<string, string> = req.body
+
+      const encryptedPassword = await encrypt(password)
+
+      await createUser({
+        email,
+        password: encryptedPassword,
+        phone: phone.replace(/^0/, '234'),
+        userType,
+        firstName,
+        lastName,
+        isEmailVerified: false,
+        isPhoneVerified: false,
+      })
+      const smsData = await smsService.sendOTP({
+        to: phone.replace(/^0/, '234'),
+      })
+      return Respond.success(res, 'User created successfully...', smsData)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async loginUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.body
+
+      const user = await findUserBy({ email })
+
+      return Respond.success(res, 'Login successful', user)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async requestSmsVerificationCode(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { phone } = req.body
+      const smsData = await smsService.sendOTP({ to: phone })
+      return Respond.success(res, 'SMS sent successfully...', smsData)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async verifyPhoneNumber(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { phone, pin, pin_id } = req.body
+      await smsService.verifyOTP(pin_id, pin).catch((err) => {
+        return Respond.error(res, err.response.data.message)
       })
 
-      return Respond.success(res, 'User created successfully...');
+      await findAndUpdateUserBy(
+        { phone: Helpers.convertPhone(phone) },
+        { isPhoneVerified: true }
+      )
+      return Respond.success(res, 'Phone number verification complete')
     } catch (err) {
       next(err)
     }

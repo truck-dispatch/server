@@ -18,4 +18,6 @@ export default interface User {
   rating: number
   bankAccount: BankAccount
   password: string
+  isEmailVerified: boolean
+  isPhoneVerified: boolean
 }

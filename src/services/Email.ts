@@ -1,3 +1,1 @@
-class EmailService {
-    
-}
+class EmailService {}
