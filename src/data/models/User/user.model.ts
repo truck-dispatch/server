@@ -41,6 +41,10 @@ const schema = new Schema(
     bankAccount: {
       type: Object,
     },
+    userType: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 )

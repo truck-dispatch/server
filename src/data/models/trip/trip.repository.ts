@@ -1,7 +1,8 @@
+import NewTrip from '../../../types/NewTrip'
 import Trip from '../../../types/Trip'
 import { TripSchema } from './trip.model'
 
-export async function createTrip(user: Trip) {
+export async function createTrip(user: NewTrip) {
   const data = new TripSchema(user)
   await data.save()
   return data

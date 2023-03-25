@@ -24,7 +24,6 @@ class AuthMiddlewares {
           400
         )
       }
-
       const userWithEmailExists = await findUserBy({ email })
       const userWithPhoneExists = await findUserBy({
         phone: Helpers.convertPhone(phone),

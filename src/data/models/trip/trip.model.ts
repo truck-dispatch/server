@@ -3,7 +3,7 @@ import Trip from '../../../types/Trip'
 
 const schema = new Schema(
   {
-    agentId: {
+    tripOwner: {
       required: true,
       type: String,
     },

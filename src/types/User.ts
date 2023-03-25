@@ -3,6 +3,7 @@ import Asset from './Asset'
 import BankAccount from './BankAccount'
 
 export default interface User {
+  _id: string
   firstName: string
   lastName: string
   email: string

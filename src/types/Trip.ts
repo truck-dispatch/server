@@ -2,6 +2,7 @@ import {
   jobTypes,
   shippingLines,
   sizeOfContainer,
+  tripStatus,
   typeOfGoods,
 } from '../common/constants'
 import Asset from './Asset'
@@ -18,10 +19,10 @@ export default interface Trip {
   jobType?: (typeof jobTypes)[number]
   weight: number
   instructions?: string
-  agentId: string
+  tripOwner: string
   transporterId?: string
   TDO?: Asset
   paymentId?: string
   reference: string
-  status: 'awaiting_bid' | 'payment_complete' | 'in-progress' | 'completed'
+  status: (typeof tripStatus)[number]
 }

@@ -3,10 +3,12 @@ import Respond from '../helpers/Respond'
 import chat from './chat.routes'
 import auth from './auth.routes'
 import trip from './trip.routes'
+import user from './user.routes'
 const router = Router()
 
 router.use('/auth', auth)
 router.use('/trips', trip)
+router.use('/user', user)
 router.use('/chat', chat)
 
 /* GET home page. */
