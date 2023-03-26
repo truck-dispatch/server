@@ -72,8 +72,6 @@ class TripController {
       const { tripId } = req.params
 
       const trip = await updateTrip({ _id: tripId }, req.body)
-      console.log(trip)
-
       return Respond.success(res, 'Trip updated successfully', trip)
     } catch (err) {
       next(err)

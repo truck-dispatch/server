@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { findUserBy } from '../data/models/User/user.repository'
 import Respond from '../helpers/Respond'
-import { decodeToken, getUserFromReq } from '../services/JWT'
-import User from '../types/User'
+import { getUserFromReq } from '../services/JWT'
 
 class UserController {
   async getUser(req: Request, res: Response, next: NextFunction) {
