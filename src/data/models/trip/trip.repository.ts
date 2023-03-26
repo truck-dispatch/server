@@ -2,10 +2,16 @@ import NewTrip from '../../../types/NewTrip'
 import Trip from '../../../types/Trip'
 import { TripSchema } from './trip.model'
 
-export async function createTrip(user: NewTrip) {
-  const data = new TripSchema(user)
+export async function createTrip(trip: NewTrip) {
+  const data = new TripSchema(trip)
   await data.save()
   return data
+}
+export async function updateTrip(
+  searchParam: Partial<Trip>,
+  data: Partial<Trip>
+) {
+  return TripSchema.findOneAndUpdate(searchParam, data, { new: true })
 }
 
 export async function findTripBy(param: Partial<Trip>): Promise<Trip | null> {
@@ -15,6 +21,10 @@ export async function findTripBy(param: Partial<Trip>): Promise<Trip | null> {
   }
 
   return trip.toObject()
+}
+
+export async function findTripsBy(param: Partial<Trip>) {
+  return TripSchema.find(param)
 }
 
 export function findAndUpdateTripBy(

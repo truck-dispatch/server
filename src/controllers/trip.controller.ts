@@ -1,16 +1,19 @@
 import { NextFunction, Request, Response } from 'express'
-import { createTrip } from '../data/models/trip/trip.repository'
+import { canCreateTrip } from '../common/constants'
+import {
+  createTrip,
+  findTripsBy,
+  updateTrip,
+} from '../data/models/trip/trip.repository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
-import { decodeToken } from '../services/JWT'
+import { getUserFromReq } from '../services/JWT'
 import Trip from '../types/Trip'
-import User from '../types/User'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = req.headers.authorization?.split(' ')[1]
-      const user = decodeToken<User>(token!)
+      const user = getUserFromReq(req)
       const {
         pickUpAddress,
         deliveryAddress,
@@ -41,6 +44,37 @@ class TripController {
       })
 
       return Respond.success(res, 'Trip created successfully', trip)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async getTrips(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = getUserFromReq(req)
+
+      const paramToFetchWith: Partial<Trip> = {}
+      if (canCreateTrip.includes(user.userType)) {
+        paramToFetchWith.tripOwner = user._id
+      } else {
+        paramToFetchWith.transporterId = user._id
+      }
+      const trips = await findTripsBy(paramToFetchWith)
+
+      return Respond.success(res, 'Trips fetched successfully', trips)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async updateTrip(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tripId } = req.params
+
+      const trip = await updateTrip({ _id: tripId }, req.body)
+      console.log(trip)
+
+      return Respond.success(res, 'Trip updated successfully', trip)
     } catch (err) {
       next(err)
     }

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import Respond from '../helpers/Respond'
-import { decodeToken } from '../services/JWT'
+import { decodeToken, getUserFromReq } from '../services/JWT'
 
 class JWTMiddlewares {
   jwtIsValid(req: Request, res: Response, next: NextFunction) {
@@ -24,10 +24,8 @@ class JWTMiddlewares {
 
   checkIsAgent(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = req.headers.authorization?.split(' ')[1]
-      const decodedToken = decodeToken(token!)
+      const { _id } = getUserFromReq(req)
 
-      console.log(decodedToken)
       next()
     } catch (err) {
       console.log(err)

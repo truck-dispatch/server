@@ -29,3 +29,5 @@ export const tripStatus = [
   'in-progress',
   'completed',
 ]
+
+export const canCreateTrip = ['agent', 'company']

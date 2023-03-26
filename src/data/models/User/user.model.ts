@@ -45,6 +45,10 @@ const schema = new Schema(
       type: String,
       required: true,
     },
+    completedTrips: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 )

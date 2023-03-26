@@ -1,15 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
 import { findUserBy } from '../data/models/User/user.repository'
 import Respond from '../helpers/Respond'
-import { decodeToken } from '../services/JWT'
+import { decodeToken, getUserFromReq } from '../services/JWT'
 import User from '../types/User'
 
 class UserController {
   async getUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const jwt = req.headers.authorization?.split(' ')[1]
-      const { _id } = decodeToken<User>(jwt!)
-
+      const { _id } = getUserFromReq(req)
       const user = await findUserBy({ _id })
 
       if (!user) return Respond.error(res, 'Profile not found')

@@ -6,10 +6,17 @@ import tripMiddlewares from '../middlewares/trip.middlewares'
 const router = Router()
 
 router.post(
-  '/new',
+  '/',
   JwtMiddlewares.jwtIsValid,
   tripMiddlewares.createTrip,
   TripController.createTrip
+)
+router.get('/', JwtMiddlewares.jwtIsValid, TripController.getTrips)
+router.patch(
+  '/:tripId',
+  JwtMiddlewares.jwtIsValid,
+  tripMiddlewares.updateTrip,
+  TripController.updateTrip
 )
 
 export default router
