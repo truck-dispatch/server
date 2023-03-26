@@ -85,7 +85,9 @@ POST {BASE_URL}/auth/request-sms
 
 # TRIPS
 
-POST {BASE_URL}/trips/new
+## Create Trip
+
+POST {BASE_URL}/trips
 
 ```
 {
@@ -98,6 +100,28 @@ POST {BASE_URL}/trips/new
   sizeOfContainer?: string,
   shippingLine?: string ,
   jobType: 'import' | 'export' | 'empty',
+  instructions?: string,
+}
+```
+
+## GET TRIPS
+
+GET {BASE_URL}/trips
+
+## UPDATE TRIP
+
+PATCH {BASE_URL}/trips/:tripId
+```
+{
+  pickUpAddress?: string,
+  deliveryAddress?: string,
+  pickUpDate?: string,
+  deliveryDate?: string,
+  typeOfGoods?: 'container' | 'cargo',
+  weight?: string,
+  sizeOfContainer?: string,
+  shippingLine?: string ,
+  jobType?: 'import' | 'export' | 'empty',
   instructions?: string,
 }
 ```
