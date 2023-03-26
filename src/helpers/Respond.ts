@@ -10,11 +10,13 @@ class Respond {
   static error(
     res: Response,
     msg = 'an error occurred',
-    status = 422
+    status = 422,
+    data?: any
   ): Response {
     return res.status(status).json({
       error: true,
-      msg,
+      message: msg,
+      data,
     })
   }
 

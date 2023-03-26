@@ -1,0 +1,34 @@
+import User from '../../../types/User'
+import { UserSchema } from './user.model'
+
+export function createUser(user: Partial<User>) {
+  const data = new UserSchema(user)
+  return data.save()
+}
+
+export async function findUserBy(
+  param: Partial<User>,
+  deletePassword = true
+): Promise<User | null> {
+  const user = await UserSchema.findOne(param)
+  if (!user) {
+    return null
+  }
+
+  if (!deletePassword) return user.toObject()
+
+  const { password, ...userWithoutPassword } = user.toObject()
+  return userWithoutPassword as unknown as User
+}
+
+export function findAndUpdateUserBy(
+  searchParam: Partial<User>,
+  data: Partial<User>
+) {
+  return UserSchema.findOneAndUpdate(searchParam, data, { new: true })
+}
+
+export function deleteAllUsers() {
+  console.log('all users are about to be deleted')
+  UserSchema.deleteMany({})
+}
