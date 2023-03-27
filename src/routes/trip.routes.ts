@@ -8,14 +8,20 @@ const router = Router()
 router.post(
   '/',
   JwtMiddlewares.jwtIsValid,
-  tripMiddlewares.createTrip,
+  tripMiddlewares.canCreateTrip,
   TripController.createTrip
 )
 router.get('/', JwtMiddlewares.jwtIsValid, TripController.getTrips)
+router.get(
+  '/jobs',
+  JwtMiddlewares.jwtIsValid,
+  tripMiddlewares.canGetJobs,
+  TripController.getJobs
+)
 router.patch(
   '/:tripId',
   JwtMiddlewares.jwtIsValid,
-  tripMiddlewares.updateTrip,
+  tripMiddlewares.canUpdateTrip,
   TripController.updateTrip
 )
 

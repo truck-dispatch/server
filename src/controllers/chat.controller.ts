@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express'
-import { ChatSchema } from '../data/models/Chat/chat.model'
 import {
   createMessage,
   getMessagesById,

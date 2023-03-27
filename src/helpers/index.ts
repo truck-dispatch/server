@@ -1,9 +1,15 @@
+import { Request } from 'express'
+
 export class Helpers {
   static isValidEmail(email: string) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
   }
 
+  static extractFileFromReq(req: Request, nameOfFile: string) {
+    // @ts-ignore
+    return req.files?.[nameOfFile][0]
+  }
   static convertPhone(phone: string) {
     // Remove any non-digits from the input phone
     phone = phone.replace(/\D/g, '')

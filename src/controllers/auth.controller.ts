@@ -9,6 +9,7 @@ import Respond from '../helpers/Respond'
 import { encrypt } from '../services/encrypt'
 import { generateJWT } from '../services/JWT'
 import smsService from '../services/Sms'
+import User from '../types/User'
 
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
@@ -20,12 +21,13 @@ class AuthController {
         userType,
         firstName,
         lastName,
+        status,
       }: Record<string, string> = req.body
-
       const encryptedPassword = await encrypt(password)
       const formattedPhone = Helpers.convertPhone(phone)
-      await createUser({
-        email,
+
+      const data = {
+        email: email.toLowerCase(),
         password: encryptedPassword,
         phone: formattedPhone,
         userType,
@@ -33,7 +35,10 @@ class AuthController {
         lastName,
         isEmailVerified: false,
         isPhoneVerified: false,
-      })
+      } as User
+
+      if (status) data.status = status as User['status']
+      await createUser(data)
       const smsData = await smsService.sendOTP({
         to: formattedPhone,
       })
@@ -47,7 +52,7 @@ class AuthController {
     try {
       const { email } = req.body
 
-      const user = await findUserBy({ email })
+      const user = await findUserBy({ email: email.toLowerCase() })
       if (!user) return Respond.error(res, 'user does not exist')
       const jwt = generateJWT(user)
 

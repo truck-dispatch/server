@@ -14,7 +14,6 @@ router.get(
   ChatMiddlewares.userIdExistsInParam,
   ChatController.getChatsByUserId
 )
-
 router.patch(
   '/read/:chatId',
   ChatMiddlewares.chatIdExistsInParam,

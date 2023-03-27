@@ -16,6 +16,8 @@ class UserController {
       next(err)
     }
   }
+
+  async submitVerification(req: Request, res: Response, next: NextFunction) {}
 }
 
 export default new UserController()

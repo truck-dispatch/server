@@ -77,6 +77,23 @@ class TripController {
       next(err)
     }
   }
+
+  /**
+   * Only available for a transporter account.
+   * @param req
+   * @param res
+   * @param next
+   * @returns
+   */
+  async getJobs(_: Request, res: Response, next: NextFunction) {
+    try {
+      const trips = await findTripsBy({ status: 'awaiting_bid' })
+
+      return Respond.success(res, 'Trips fetched successfully.', trips)
+    } catch (err) {
+      next(err)
+    }
+  }
 }
 
 export default new TripController()

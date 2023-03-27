@@ -5,7 +5,7 @@ import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
 
 class TripMiddlewares {
-  createTrip(req: Request, res: Response, next: NextFunction) {
+  canCreateTrip(req: Request, res: Response, next: NextFunction) {
     const {
       pickUpAddress,
       deliveryAddress,
@@ -53,7 +53,7 @@ class TripMiddlewares {
     next()
   }
 
-  async updateTrip(req: Request, res: Response, next: NextFunction) {
+  async canUpdateTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const user = getUserFromReq(req)
       const { tripId } = req.params
@@ -66,6 +66,25 @@ class TripMiddlewares {
           'Only the trip owner has the right to update this trip'
         )
 
+      next()
+    } catch (err) {
+      // Report error to our client..
+      console.log(err)
+      Respond.error(res, 'Something went wrong...')
+    }
+  }
+
+  canGetJobs(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = getUserFromReq(req)
+
+      if (canCreateTrip.includes(user.userType)) {
+        return Respond.error(
+          res,
+          'Your user type does not have access to this route.',
+          401
+        )
+      }
       next()
     } catch (err) {
       // Report error to our client..
