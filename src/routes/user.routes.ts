@@ -1,9 +1,9 @@
 import { Router } from 'express'
-import userController from '../controllers/user.controller'
-import jwtMiddlewares from '../middlewares/jwt.middlewares'
+import UserController from '../controllers/UserController'
+import JWTMiddlewares from '../middlewares/JWTMiddlewares'
 
 const router = Router()
 
-router.get('/', jwtMiddlewares.jwtIsValid, userController.getUser)
+router.get('/', JWTMiddlewares.jwtIsValid, UserController.getUser)
 
 export default router

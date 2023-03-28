@@ -1,8 +1,8 @@
 import User from '../../../types/User'
-import { UserSchema } from './user.model'
+import { UserModel } from './UserModel'
 
 export function createUser(user: Partial<User>) {
-  const data = new UserSchema(user)
+  const data = new UserModel(user)
   return data.save()
 }
 
@@ -10,7 +10,7 @@ export async function findUserBy(
   param: Partial<User>,
   deletePassword = true
 ): Promise<User | null> {
-  const user = await UserSchema.findOne(param)
+  const user = await UserModel.findOne(param)
   if (!user) {
     return null
   }
@@ -25,10 +25,10 @@ export function findAndUpdateUserBy(
   searchParam: Partial<User>,
   data: Partial<User>
 ) {
-  return UserSchema.findOneAndUpdate(searchParam, data, { new: true })
+  return UserModel.findOneAndUpdate(searchParam, data, { new: true })
 }
 
 export function deleteAllUsers() {
   console.log('all users are about to be deleted')
-  UserSchema.deleteMany({})
+  UserModel.deleteMany({})
 }

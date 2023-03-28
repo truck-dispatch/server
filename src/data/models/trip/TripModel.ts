@@ -63,4 +63,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const TripSchema = model<Trip>('Trip', schema)
+export const TripModel = model<Trip>('Trip', schema)

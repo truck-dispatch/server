@@ -3,7 +3,7 @@ import { findUserBy } from '../data/models/User/user.repository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { compareHashAndPassword } from '../services/encrypt'
-import smsService from '../services/Sms'
+import Sms from '../services/Sms'
 
 class AuthMiddlewares {
   async registrationCredentialChecks(
@@ -77,7 +77,7 @@ class AuthMiddlewares {
       }
 
       if (!user.isPhoneVerified) {
-        const verificationData = await smsService.sendOTP({ to: user.phone })
+        const verificationData = await Sms.sendOTP({ to: user.phone })
         return Respond.error(
           res,
           'Phone has not been verified',

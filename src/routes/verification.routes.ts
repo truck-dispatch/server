@@ -1,8 +1,8 @@
 import { Router } from 'express'
 import multer from 'multer'
-import verificationController from '../controllers/verification.controller'
-import jwtMiddlewares from '../middlewares/jwt.middlewares'
-import verificationMiddlewares from '../middlewares/verification.middlewares'
+import VerificationController from '../controllers/VerificationController'
+import JWTMiddlewares from '../middlewares/JWTMiddlewares'
+import VerificationMiddlewares from '../middlewares/VerificationMiddlewares'
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -25,9 +25,9 @@ router.post(
     { name: 'guarantor.idDoc', maxCount: 1 },
     { name: 'homeUtilityBill', maxCount: 1 },
   ]),
-  jwtMiddlewares.jwtIsValid,
-  verificationMiddlewares.checkVerificationSubmitDetails,
-  verificationController.submitVerification
+  JWTMiddlewares.jwtIsValid,
+  VerificationMiddlewares.checkVerificationSubmitDetails,
+  VerificationController.submitVerification
 )
 
 export default router

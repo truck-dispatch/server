@@ -8,7 +8,7 @@ import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { encrypt } from '../services/encrypt'
 import { generateJWT } from '../services/JWT'
-import smsService from '../services/Sms'
+import Sms from '../services/Sms'
 import User from '../types/User'
 
 class AuthController {
@@ -39,7 +39,7 @@ class AuthController {
 
       if (status) data.status = status as User['status']
       await createUser(data)
-      const smsData = await smsService.sendOTP({
+      const smsData = await Sms.sendOTP({
         to: formattedPhone,
       })
       return Respond.success(res, 'User created successfully...', smsData)
@@ -69,7 +69,7 @@ class AuthController {
   ) {
     try {
       const { phone } = req.body
-      const smsData = await smsService.sendOTP({ to: phone })
+      const smsData = await Sms.sendOTP({ to: phone })
       return Respond.success(res, 'SMS sent successfully...', smsData)
     } catch (err) {
       next(err)
@@ -79,7 +79,7 @@ class AuthController {
   async verifyPhoneNumber(req: Request, res: Response, next: NextFunction) {
     try {
       const { phone, pin, pin_id } = req.body
-      await smsService.verifyOTP(pin_id, pin).catch((err) => {
+      await Sms.verifyOTP(pin_id, pin).catch((err) => {
         return Respond.error(res, err.response.data.message)
       })
 

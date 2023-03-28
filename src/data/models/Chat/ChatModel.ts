@@ -35,4 +35,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const ChatSchema = model<Chat>('Chat', schema)
+export const ChatModel = model<Chat>('Chat', schema)

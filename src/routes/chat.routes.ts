@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import ChatController from '../controllers/chat.controller'
-import ChatMiddlewares from '../middlewares/chat.middlewares'
+import ChatController from '../controllers/ChatController'
+import ChatMiddlewares from '../middlewares/ChatMiddlewares'
 
 const router = Router()
 

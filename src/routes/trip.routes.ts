@@ -1,27 +1,27 @@
 import { Router } from 'express'
-import TripController from '../controllers/trip.controller'
-import JwtMiddlewares from '../middlewares/jwt.middlewares'
-import tripMiddlewares from '../middlewares/trip.middlewares'
+import TripController from '../controllers/TripController'
+import JwtMiddlewares from '../middlewares/JWTMiddlewares'
+import TripMiddlewares from '../middlewares/TripMiddlewares'
 
 const router = Router()
 
 router.post(
   '/',
   JwtMiddlewares.jwtIsValid,
-  tripMiddlewares.canCreateTrip,
+  TripMiddlewares.canCreateTrip,
   TripController.createTrip
 )
 router.get('/', JwtMiddlewares.jwtIsValid, TripController.getTrips)
 router.get(
   '/jobs',
   JwtMiddlewares.jwtIsValid,
-  tripMiddlewares.canGetJobs,
+  TripMiddlewares.canGetJobs,
   TripController.getJobs
 )
 router.patch(
   '/:tripId',
   JwtMiddlewares.jwtIsValid,
-  tripMiddlewares.canUpdateTrip,
+  TripMiddlewares.canUpdateTrip,
   TripController.updateTrip
 )
 

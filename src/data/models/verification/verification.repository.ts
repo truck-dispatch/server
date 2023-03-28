@@ -1,8 +1,8 @@
 import Verification from '../../../types/Verification'
-import { VerificationSchema } from './verification.model'
+import { VerificationModel } from './VerificationModel'
 
 export function createVerification(verification: Verification) {
-  const data = new VerificationSchema(verification)
+  const data = new VerificationModel(verification)
   return data.save()
 }
 
@@ -10,5 +10,5 @@ export function updateVerification(
   searchParam: Partial<Verification>,
   data: Partial<Verification>
 ) {
-  return VerificationSchema.findOneAndUpdate(searchParam, data, { new: true })
+  return VerificationModel.findOneAndUpdate(searchParam, data, { new: true })
 }

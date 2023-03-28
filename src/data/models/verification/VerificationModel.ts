@@ -69,4 +69,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const VerificationSchema = model<Verification>('Verification', schema)
+export const VerificationModel = model<Verification>('Verification', schema)

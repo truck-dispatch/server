@@ -55,4 +55,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const UserSchema = model<User>('User', schema)
+export const UserModel = model<User>('User', schema)

@@ -15,7 +15,7 @@ interface SendOTPParams {
   pin_placeholder?: string
 }
 const Api = new ApiService(SMS_API_URL!)
-class SmsService {
+class Sms {
   sendOTP({
     to,
     message_text = 'Your TruckDispatch verification code is < 123456 >. This is a one time pin and it expires in 60 minutes.',
@@ -52,6 +52,6 @@ class SmsService {
   }
 }
 
-const smsService = new SmsService()
+const sms = new Sms()
 
-export default smsService
+export default sms
