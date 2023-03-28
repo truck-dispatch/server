@@ -1,30 +1,37 @@
 import {
-  CLOUDINARY_IMAGE_UPLOAD_URL,
+  CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET,
+  CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
-  CLOUDINARY_VIDEO_UPLOAD_URL,
 } from '../common/privateKeys'
-import ApiService from './ApiService'
+import { v2 as cloudinaryV2 } from 'cloudinary'
+import fs from 'fs'
+
+const cloudinary = cloudinaryV2
+cloudinary.config({
+  cloud_name: CLOUDINARY_CLOUD_NAME,
+  api_key: CLOUDINARY_API_KEY,
+  api_secret: CLOUDINARY_API_SECRET,
+  upload_preset: CLOUDINARY_UPLOAD_PRESET,
+  secure: true,
+})
 
 interface UploadParams {
-  file: File
+  file: { path: string}// Change the type of file to 'any' or 'Buffer'
 }
-export default class Cloudinary {
-  Api: ApiService
-  constructor(isImage: boolean) {
-    this.Api = new ApiService(
-      isImage ? CLOUDINARY_IMAGE_UPLOAD_URL : CLOUDINARY_VIDEO_UPLOAD_URL
-    )
-  }
-  upload({ file }: UploadParams) {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET)
-    return this.Api.post('/', formData).then((response) => {
-      const fileUrl = response.data.secure_url
-      return Promise.resolve(fileUrl)
-    }).catch(err => {
-        console.log(err.response.data)
-        return Promise.reject(err.response.data.error.message)
-    })
+
+class Cloudinary {
+  async upload({ file }: UploadParams) {
+    try {
+      const result = await cloudinary.uploader.upload(file.path)
+      fs.unlink(file.path, (err) => {
+        if (err) throw new Error(err.message);
+      })
+      return result.secure_url
+    } catch (err) {
+      console.log(err)
+    }
   }
 }
+
+export default new Cloudinary()

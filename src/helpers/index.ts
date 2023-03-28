@@ -1,4 +1,6 @@
 import { Request } from 'express'
+import fs from 'fs'
+import path from 'path'
 
 export class Helpers {
   static isValidEmail(email: string) {
