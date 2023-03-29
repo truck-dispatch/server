@@ -1,4 +1,5 @@
 export default interface Verification {
+  _id: string
   idType: string
   idDoc: string
   homeAddress: string

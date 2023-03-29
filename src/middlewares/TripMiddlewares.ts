@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { canCreateTrip } from '../common/constants'
-import { findTripBy } from '../data/models/trip/trip.repository'
+import { findTripBy } from '../data/models/Trip/trip.repository'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
 

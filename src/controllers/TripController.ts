@@ -4,7 +4,7 @@ import {
   createTrip,
   findTripsBy,
   updateTrip,
-} from '../data/models/trip/trip.repository'
+} from '../data/models/Trip/trip.repository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'

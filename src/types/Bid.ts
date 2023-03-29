@@ -1,5 +1,5 @@
 export default interface Bid {
-  id: string
+  _id: string
   paymentId?: string
   extraNotes?: string
   price: number

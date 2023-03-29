@@ -10,7 +10,8 @@ export class Helpers {
 
   static extractFileFromReq(req: Request, nameOfFile: string) {
     // @ts-ignore
-    return req.files?.[nameOfFile][0]
+    if (req.files?.[nameOfFile]) return req.files?.[nameOfFile][0]
+    else return null
   }
   static convertPhone(phone: string) {
     // Remove any non-digits from the input phone
