@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
-import { canCreateTrip } from '../common/constants'
+import { clientUserTypes } from '../common/constants'
 import {
   createTrip,
+  findAndUpdateTripBy,
   findTripsBy,
   updateTrip,
 } from '../data/models/Trip/trip.repository'
@@ -54,7 +55,7 @@ class TripController {
       const user = getUserFromReq(req)
 
       const paramToFetchWith: Partial<Trip> = {}
-      if (canCreateTrip.includes(user.userType)) {
+      if (clientUserTypes.includes(user.userType)) {
         paramToFetchWith.tripOwner = user._id
       } else {
         paramToFetchWith.transporterId = user._id
@@ -73,6 +74,25 @@ class TripController {
 
       const trip = await updateTrip({ _id: tripId }, req.body)
       return Respond.success(res, 'Trip updated successfully', trip)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async assignTransporterToTrip(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { tripId, bidId } = req.params
+      const { paymentId, transporterId } = req.body
+
+      const trip = await findAndUpdateTripBy(
+        { _id: tripId },
+        { paymentId, transporterId }
+      )
+      return Respond.success(res, 'Trip updated successfully.', trip)
     } catch (err) {
       next(err)
     }

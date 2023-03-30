@@ -1,62 +1,60 @@
 import { NextFunction, Request, Response } from 'express'
-import { canCreateTrip } from '../common/constants'
+import { clientUserTypes } from '../common/constants'
 import { findTripBy } from '../data/models/Trip/trip.repository'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
 
 class TripMiddlewares {
   canCreateTrip(req: Request, res: Response, next: NextFunction) {
-    const {
-      pickUpAddress,
-      deliveryAddress,
-      pickUpDate,
-      deliveryDate,
-      typeOfGoods,
-      weight,
-      sizeOfContainer,
-      shippingLine,
-      jobType,
-    } = req.body
+    try {
+      const {
+        pickUpAddress,
+        deliveryAddress,
+        pickUpDate,
+        deliveryDate,
+        typeOfGoods,
+        weight,
+        sizeOfContainer,
+        shippingLine,
+        jobType,
+      } = req.body
 
-    const user = getUserFromReq(req)
+      if (
+        !pickUpAddress ||
+        !deliveryAddress ||
+        !pickUpDate ||
+        !deliveryDate ||
+        !typeOfGoods ||
+        !weight
+      ) {
+        return Respond.error(
+          res,
+          'pickUpAddress, deliveryAddress, pickUpDate, deliveryDate, typeOfGoods, weight are compulsory fields.'
+        )
+      }
 
-    if (!canCreateTrip.includes(user.userType))
-      return Respond.error(
-        res,
-        'This feature is not available for your user type'
-      )
+      if (
+        typeOfGoods === 'container' &&
+        (!sizeOfContainer || !shippingLine || !jobType)
+      ) {
+        return Respond.error(
+          res,
+          'sizeOfContainer, shippingLine, and jobType are compulsory fields.'
+        )
+      }
 
-    if (
-      !pickUpAddress ||
-      !deliveryAddress ||
-      !pickUpDate ||
-      !deliveryDate ||
-      !typeOfGoods ||
-      !weight
-    ) {
-      return Respond.error(
-        res,
-        'pickUpAddress, deliveryAddress, pickUpDate, deliveryDate, typeOfGoods, weight are compulsory fields.'
-      )
+      next()
+    } catch (err) {
+      Respond.error(res, (err as Error).message)
     }
-
-    if (
-      typeOfGoods === 'container' &&
-      (!sizeOfContainer || !shippingLine || !jobType)
-    ) {
-      return Respond.error(
-        res,
-        'sizeOfContainer, shippingLine, and jobType are compulsory fields.'
-      )
-    }
-
-    next()
   }
 
-  async canUpdateTrip(req: Request, res: Response, next: NextFunction) {
+  async isTripCreator(req: Request, res: Response, next: NextFunction) {
     try {
       const user = getUserFromReq(req)
       const { tripId } = req.params
+
+      if (!tripId) return Respond.error(res, 'Trip ID was not provided', 400)
 
       const trip = await findTripBy({ _id: tripId })
 
@@ -70,26 +68,22 @@ class TripMiddlewares {
     } catch (err) {
       // Report error to our client..
       console.log(err)
-      Respond.error(res, 'Something went wrong...')
+      Respond.error(res, (err as Error).message)
     }
   }
 
-  canGetJobs(req: Request, res: Response, next: NextFunction) {
+  async tripExists(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const { tripId } = req.params
 
-      if (canCreateTrip.includes(user.userType)) {
-        return Respond.error(
-          res,
-          'Your user type does not have access to this route.',
-          401
-        )
-      }
+      if (!tripId) return Respond.error(res, 'Trip Id was not provided')
+
+      const trip = await findTripBy({ _id: tripId })
+      if (!trip) return Respond.error(res, 'Trip does not exist', 404)
+
       next()
     } catch (err) {
-      // Report error to our client..
-      console.log(err)
-      Respond.error(res, 'Something went wrong...')
+      Respond.error(res, (err as Error).message)
     }
   }
 }

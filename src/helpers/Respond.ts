@@ -26,10 +26,10 @@ class Respond {
    * @param {String} msg message string for success response
    * @param {Object} data response data
    */
-  static success(res: Response, msg = 'successs', data?: any): Response {
+  static success(res: Response, message = 'successs', data?: any): Response {
     return res.status(200).json({
       error: false,
-      msg,
+      message,
       data,
     })
   }

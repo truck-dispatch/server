@@ -5,13 +5,15 @@ import auth from './auth.routes'
 import trip from './trip.routes'
 import verification from './verification.routes'
 import user from './user.routes'
+import bids from './bid.routes'
 const router = Router()
 
 router.use('/auth', auth)
-router.use('/trips', trip)
 router.use('/user', user)
-router.use('/chat', chat)
 router.use('/verification', verification)
+router.use('/trips', trip)
+router.use('/bids', bids)
+router.use('/chat', chat)
 
 /* GET home page. */
 router.get('/', (req, res) => {
