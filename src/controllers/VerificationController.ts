@@ -59,7 +59,7 @@ class VerificationController {
     try {
       let verificationData = await extractedVerificationData(req)
       const user = getUserFromReq(req)
-      const prevVerification = await findVerificationBy({ userId: user?._id})
+      const prevVerification = await findVerificationBy({ userId: user?._id })
       if (verificationData.guarantor) {
         verificationData.guarantor = {
           ...prevVerification?.guarantor,
@@ -86,7 +86,7 @@ export default new VerificationController()
 
 async function extractedVerificationData(req: Request) {
   const verificationData = {
-    guarantor: {}
+    guarantor: {},
   } as Verification
   const rawIdDoc = Helpers.extractFileFromReq(req, 'idDoc')
   const rawHomeUtilityBill = Helpers.extractFileFromReq(req, 'homeUtilityBill')

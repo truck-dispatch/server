@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { canCreateTrip } from '../common/constants'
+import { clientUserTypes } from '../common/constants'
 import { findTripBy } from '../data/models/Trip/trip.repository'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
@@ -17,14 +17,6 @@ class TripMiddlewares {
       shippingLine,
       jobType,
     } = req.body
-
-    const user = getUserFromReq(req)
-
-    if (!canCreateTrip.includes(user.userType))
-      return Respond.error(
-        res,
-        'This feature is not available for your user type'
-      )
 
     if (
       !pickUpAddress ||
@@ -53,10 +45,12 @@ class TripMiddlewares {
     next()
   }
 
-  async canUpdateTrip(req: Request, res: Response, next: NextFunction) {
+  async isTripCreator(req: Request, res: Response, next: NextFunction) {
     try {
       const user = getUserFromReq(req)
       const { tripId } = req.params
+
+      if (!tripId) return Respond.error(res, 'Trip ID was not provided', 400)
 
       const trip = await findTripBy({ _id: tripId })
 
@@ -66,25 +60,6 @@ class TripMiddlewares {
           'Only the trip owner has the right to update this trip'
         )
 
-      next()
-    } catch (err) {
-      // Report error to our client..
-      console.log(err)
-      Respond.error(res, 'Something went wrong...')
-    }
-  }
-
-  canGetJobs(req: Request, res: Response, next: NextFunction) {
-    try {
-      const user = getUserFromReq(req)
-
-      if (canCreateTrip.includes(user.userType)) {
-        return Respond.error(
-          res,
-          'Your user type does not have access to this route.',
-          401
-        )
-      }
       next()
     } catch (err) {
       // Report error to our client..
