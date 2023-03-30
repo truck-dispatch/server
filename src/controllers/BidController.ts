@@ -43,10 +43,12 @@ class BidController {
   async updateBid(req: Request, res: Response, next: NextFunction) {
     try {
       const { _id } = getUserFromReq(req)
+      console.log(req.body)
       const bidResponse = await findAndUpdateBidBy(
-        { _id, tripId: req.body.tripId },
+        { transporterId: _id, tripId: req.body.tripId },
         req.body
       )
+      console.log(bidResponse)
 
       return Respond.success(res, 'Bid updated successfully', bidResponse)
     } catch (err) {
@@ -58,7 +60,6 @@ class BidController {
     try {
       const { tripId } = req.params
       const bidsResponse = await findBidsBy({ tripId })
-      console.log(bidsResponse)
       return Respond.success(res, 'Bids found successfully', bidsResponse)
     } catch (err) {
       next(err)
@@ -73,8 +74,10 @@ class BidController {
     try {
       const { _id } = getUserFromReq(req)
       const { tripId } = req.params
-      const bidResponse = await findBidBy({ _id, tripId: tripId })
-
+      const bidResponse = await findBidBy({
+        tripId: tripId,
+        transporterId: _id,
+      })
       return Respond.success(res, 'Bid found successfully', bidResponse)
     } catch (err) {
       next(err)

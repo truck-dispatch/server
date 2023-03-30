@@ -15,18 +15,29 @@ router.post(
   BidController.createBid
 )
 router.patch(
-  '/',
+  '/:tripId',
   JWTMiddlewares.jwtIsValid,
   JWTMiddlewares.checkIsServiceBasedUserType,
   JWTMiddlewares.checkUserStatusIsVerified,
-  BidMiddlewares.canUpdateBid,
+  TripMiddlewares.tripExists,
+  BidMiddlewares.checkHasSubmittedABidToJob,
   BidController.updateBid
 )
 router.get(
   '/:tripId',
   JWTMiddlewares.jwtIsValid,
   JWTMiddlewares.checkisClientBasedUserType,
+  TripMiddlewares.tripExists,
   TripMiddlewares.isTripCreator,
   BidController.getTripBids
 )
+router.get(
+  '/transporter-bid/:tripId',
+  JWTMiddlewares.jwtIsValid,
+  JWTMiddlewares.checkIsServiceBasedUserType,
+  TripMiddlewares.tripExists,
+  BidMiddlewares.checkHasSubmittedABidToJob,
+  BidController.getTransporterBidToTrip
+)
+
 export default router

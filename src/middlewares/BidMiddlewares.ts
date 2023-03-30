@@ -38,10 +38,14 @@ class BidMiddlewares {
     }
   }
 
-  async canUpdateBid(req: Request, res: Response, next: NextFunction) {
+  async checkHasSubmittedABidToJob(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { _id } = getUserFromReq(req)
-      const { tripId } = req.body
+      const { tripId } = req.params
       if (!tripId) return Respond.error(res, 'Trip Id was not provided')
       const bid = await findBidBy({ transporterId: _id, tripId })
 

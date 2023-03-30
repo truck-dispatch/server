@@ -6,43 +6,47 @@ import { getUserFromReq } from '../services/JWT'
 
 class TripMiddlewares {
   canCreateTrip(req: Request, res: Response, next: NextFunction) {
-    const {
-      pickUpAddress,
-      deliveryAddress,
-      pickUpDate,
-      deliveryDate,
-      typeOfGoods,
-      weight,
-      sizeOfContainer,
-      shippingLine,
-      jobType,
-    } = req.body
+    try {
+      const {
+        pickUpAddress,
+        deliveryAddress,
+        pickUpDate,
+        deliveryDate,
+        typeOfGoods,
+        weight,
+        sizeOfContainer,
+        shippingLine,
+        jobType,
+      } = req.body
 
-    if (
-      !pickUpAddress ||
-      !deliveryAddress ||
-      !pickUpDate ||
-      !deliveryDate ||
-      !typeOfGoods ||
-      !weight
-    ) {
-      return Respond.error(
-        res,
-        'pickUpAddress, deliveryAddress, pickUpDate, deliveryDate, typeOfGoods, weight are compulsory fields.'
-      )
+      if (
+        !pickUpAddress ||
+        !deliveryAddress ||
+        !pickUpDate ||
+        !deliveryDate ||
+        !typeOfGoods ||
+        !weight
+      ) {
+        return Respond.error(
+          res,
+          'pickUpAddress, deliveryAddress, pickUpDate, deliveryDate, typeOfGoods, weight are compulsory fields.'
+        )
+      }
+
+      if (
+        typeOfGoods === 'container' &&
+        (!sizeOfContainer || !shippingLine || !jobType)
+      ) {
+        return Respond.error(
+          res,
+          'sizeOfContainer, shippingLine, and jobType are compulsory fields.'
+        )
+      }
+
+      next()
+    } catch (err) {
+      Respond.error(res, (err as Error).message)
     }
-
-    if (
-      typeOfGoods === 'container' &&
-      (!sizeOfContainer || !shippingLine || !jobType)
-    ) {
-      return Respond.error(
-        res,
-        'sizeOfContainer, shippingLine, and jobType are compulsory fields.'
-      )
-    }
-
-    next()
   }
 
   async isTripCreator(req: Request, res: Response, next: NextFunction) {
@@ -64,7 +68,22 @@ class TripMiddlewares {
     } catch (err) {
       // Report error to our client..
       console.log(err)
-      Respond.error(res, 'Something went wrong...')
+      Respond.error(res, (err as Error).message)
+    }
+  }
+
+  async tripExists(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tripId } = req.params
+
+      if (!tripId) return Respond.error(res, 'Trip Id was not provided')
+
+      const trip = await findTripBy({ _id: tripId })
+      if (!trip) return Respond.error(res, 'Trip does not exist', 404)
+
+      next()
+    } catch (err) {
+      Respond.error(res, (err as Error).message)
     }
   }
 }
