@@ -43,12 +43,10 @@ class BidController {
   async updateBid(req: Request, res: Response, next: NextFunction) {
     try {
       const { _id } = getUserFromReq(req)
-      console.log(req.body)
       const bidResponse = await findAndUpdateBidBy(
         { transporterId: _id, tripId: req.body.tripId },
         req.body
       )
-      console.log(bidResponse)
 
       return Respond.success(res, 'Bid updated successfully', bidResponse)
     } catch (err) {
