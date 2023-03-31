@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes } from '../common/constants'
+import { findAndUpdateBidBy } from '../data/models/Bid/bid.repository'
+import { createPayment } from '../data/models/Payment/payment.repository'
 import {
   createTrip,
   findAndUpdateTripBy,
@@ -79,25 +81,6 @@ class TripController {
     }
   }
 
-  async assignTransporterToTrip(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const { tripId, bidId } = req.params
-      const { paymentId, transporterId } = req.body
-
-      const trip = await findAndUpdateTripBy(
-        { _id: tripId },
-        { paymentId, transporterId }
-      )
-      return Respond.success(res, 'Trip updated successfully.', trip)
-    } catch (err) {
-      next(err)
-    }
-  }
-
   /**
    * Only available for a transporter account.
    * @param req
@@ -110,6 +93,47 @@ class TripController {
       const trips = await findTripsBy({ status: 'awaiting_bid' })
 
       return Respond.success(res, 'Trips fetched successfully.', trips)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async assignTrip(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {
+        from,
+        to,
+        tripId,
+        bidId,
+        paymentReference,
+        amountInBid,
+        totalAmountPaid,
+        transaction,
+      } = req.body
+
+      await Promise.all([
+        createPayment({
+          from,
+          to,
+          tripId,
+          bidId,
+          amountInBid,
+          totalAmountPaid,
+          paymentReference,
+          transaction,
+          tripReference: Helpers.generateReference(),
+          status: 'success',
+        }),
+        findAndUpdateBidBy({ _id: bidId }, { status: 'accepted' }),
+      ])
+
+      const trip = await updateTrip({ _id: tripId }, { transporterId: to, status: 'payment_complete' })
+
+      return Respond.success(
+        res,
+        'Trip assigned to transporter successfully',
+        trip
+      )
     } catch (err) {
       next(err)
     }

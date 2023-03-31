@@ -27,4 +27,12 @@ router.patch(
   TripController.updateTrip
 )
 
+router.post(
+  '/:tripId/assign-trip',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkisClientBasedUserType,
+  TripMiddlewares.isTripCreator,
+  TripMiddlewares.checkDataForTripAssignmentIsComplete,
+  TripController.assignTrip
+)
 export default router

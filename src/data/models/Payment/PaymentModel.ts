@@ -19,7 +19,7 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    reference: {
+    paymentReference: {
       type: String,
       required: true,
     },
