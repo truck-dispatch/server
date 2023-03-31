@@ -1,10 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
-import { canCreateTrip } from '../common/constants'
+import { clientUserTypes } from '../common/constants'
+import { findAndUpdateBidBy } from '../data/models/Bid/bid.repository'
+import { createPayment } from '../data/models/Payment/payment.repository'
 import {
   createTrip,
+  findAndUpdateTripBy,
   findTripsBy,
   updateTrip,
-} from '../data/models/trip/trip.repository'
+} from '../data/models/Trip/trip.repository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
@@ -54,7 +57,7 @@ class TripController {
       const user = getUserFromReq(req)
 
       const paramToFetchWith: Partial<Trip> = {}
-      if (canCreateTrip.includes(user.userType)) {
+      if (clientUserTypes.includes(user.userType)) {
         paramToFetchWith.tripOwner = user._id
       } else {
         paramToFetchWith.transporterId = user._id
@@ -90,6 +93,47 @@ class TripController {
       const trips = await findTripsBy({ status: 'awaiting_bid' })
 
       return Respond.success(res, 'Trips fetched successfully.', trips)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async assignTrip(req: Request, res: Response, next: NextFunction) {
+    try {
+      const {
+        from,
+        to,
+        tripId,
+        bidId,
+        paymentReference,
+        amountInBid,
+        totalAmountPaid,
+        transaction,
+      } = req.body
+
+      await Promise.all([
+        createPayment({
+          from,
+          to,
+          tripId,
+          bidId,
+          amountInBid,
+          totalAmountPaid,
+          paymentReference,
+          transaction,
+          tripReference: Helpers.generateReference(),
+          status: 'success',
+        }),
+        findAndUpdateBidBy({ _id: bidId }, { status: 'accepted' }),
+      ])
+
+      const trip = await updateTrip({ _id: tripId }, { transporterId: to, status: 'payment_complete' })
+
+      return Respond.success(
+        res,
+        'Trip assigned to transporter successfully',
+        trip
+      )
     } catch (err) {
       next(err)
     }

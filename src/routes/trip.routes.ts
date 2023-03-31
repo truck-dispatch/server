@@ -8,6 +8,7 @@ const router = Router()
 router.post(
   '/',
   JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkisClientBasedUserType,
   TripMiddlewares.canCreateTrip,
   TripController.createTrip
 )
@@ -15,14 +16,23 @@ router.get('/', JwtMiddlewares.jwtIsValid, TripController.getTrips)
 router.get(
   '/jobs',
   JwtMiddlewares.jwtIsValid,
-  TripMiddlewares.canGetJobs,
+  JwtMiddlewares.checkIsServiceBasedUserType,
   TripController.getJobs
 )
 router.patch(
   '/:tripId',
   JwtMiddlewares.jwtIsValid,
-  TripMiddlewares.canUpdateTrip,
+  JwtMiddlewares.checkisClientBasedUserType,
+  TripMiddlewares.isTripCreator,
   TripController.updateTrip
 )
 
+router.post(
+  '/:tripId/assign-trip',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkisClientBasedUserType,
+  TripMiddlewares.isTripCreator,
+  TripMiddlewares.checkDataForTripAssignmentIsComplete,
+  TripController.assignTrip
+)
 export default router

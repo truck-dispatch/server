@@ -17,19 +17,21 @@ cloudinary.config({
 })
 
 interface UploadParams {
-  file: { path: string}// Change the type of file to 'any' or 'Buffer'
+  file: { path: string } // Change the type of file to 'any' or 'Buffer'
 }
 
 class Cloudinary {
-  async upload({ file }: UploadParams) {
+  async upload({ file }: UploadParams): Promise<string> {
     try {
       const result = await cloudinary.uploader.upload(file.path)
       fs.unlink(file.path, (err) => {
-        if (err) throw new Error(err.message);
+        if (err) throw new Error(err.message)
       })
-      return result.secure_url
+      return result.secure_url!
     } catch (err) {
-      console.log(err)
+      // TODO: check format of error
+      // @ts-ignore
+      throw new Error(err.message)
     }
   }
 }

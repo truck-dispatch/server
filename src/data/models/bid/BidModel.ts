@@ -1,0 +1,44 @@
+import { model, Schema } from 'mongoose'
+import Bid from '../../../types/Bid'
+
+const schema = new Schema(
+  {
+    paymentId: {
+      type: String,
+    },
+    extraNotes: {
+      type: String,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    presentLocation: {
+      type: String,
+      required: true,
+    },
+    transporterId: {
+      type: String,
+      required: true,
+    },
+    driverName: {
+      type: String,
+      required: true,
+    },
+    truckPlateNumber: {
+      type: String,
+      required: true,
+    },
+    tripId: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+)
+
+export const BidModel = model<Bid>('Bid', schema)

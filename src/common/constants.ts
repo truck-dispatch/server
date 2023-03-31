@@ -30,4 +30,6 @@ export const tripStatus = [
   'completed',
 ]
 
-export const canCreateTrip = ['agent', 'company']
+export const clientUserTypes = ['agent', 'company']
+
+export const serviceBasedUserTypes = ['transporter', 'transport_company']
