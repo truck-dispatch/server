@@ -22,7 +22,7 @@ class AuthController {
         firstName,
         lastName,
         status,
-      }: Record<string, string> = req.body
+      } = req.body
       const encryptedPassword = await encrypt(password)
       const formattedPhone = Helpers.convertPhone(phone)
 
