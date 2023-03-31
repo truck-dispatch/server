@@ -6,6 +6,7 @@ import trip from './trip.routes'
 import verification from './verification.routes'
 import user from './user.routes'
 import bids from './bid.routes'
+
 const router = Router()
 
 router.use('/auth', auth)

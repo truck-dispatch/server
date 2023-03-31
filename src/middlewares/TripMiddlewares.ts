@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes } from '../common/constants'
 import { findTripBy } from '../data/models/Trip/trip.repository'
+import { findUserBy } from '../data/models/User/user.repository'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
 
@@ -57,7 +58,7 @@ class TripMiddlewares {
       if (!tripId) return Respond.error(res, 'Trip ID was not provided', 400)
 
       const trip = await findTripBy({ _id: tripId })
-
+      if (!trip) return Respond.error(res, 'Trip was not found.')
       if (trip?.tripOwner !== user._id)
         return Respond.error(
           res,
@@ -80,6 +81,54 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
       if (!trip) return Respond.error(res, 'Trip does not exist', 404)
+
+      next()
+    } catch (err) {
+      Respond.error(res, (err as Error).message)
+    }
+  }
+
+  async checkDataForTripAssignmentIsComplete(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const {
+        from,
+        to,
+        tripId,
+        bidId,
+        paymentReference,
+        amountInBid,
+        totalAmountPaid,
+        transaction,
+      } = req.body
+
+      if (!to) return Respond.error(res, 'to field was not passed.', 400)
+
+      const transporter = await findUserBy({ _id: to })
+      if (!transporter)
+        return Respond.error(res, 'Transporter does not exist', 404)
+
+      if (transporter.status !== 'verified')
+        return Respond.error(res, 'Transporter is not verified yet.')
+
+      if (
+        !from ||
+        !to ||
+        !tripId ||
+        !bidId ||
+        !paymentReference ||
+        !amountInBid ||
+        !totalAmountPaid ||
+        !transaction
+      ) {
+        return Respond.error(
+          res,
+          'from, to, tripId, bidId, paymentReference, amountInBid, totalAmountPaid, transaction are compulsory fields.'
+        )
+      }
 
       next()
     } catch (err) {

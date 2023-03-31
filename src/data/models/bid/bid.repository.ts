@@ -13,7 +13,7 @@ export function findAndUpdateBidBy(
   searchParam: Partial<Bid>,
   data: Partial<Bid>
 ) {
-  return BidModel.findOneAndUpdate(searchParam, data, { new: true})
+  return BidModel.findOneAndUpdate(searchParam, data, { new: true })
 }
 
 export async function findBidBy(searchParam: Partial<Bid>) {
