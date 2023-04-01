@@ -8,13 +8,6 @@ export async function createTrip(trip: NewTrip) {
   await data.save()
   return data
 }
-export async function updateTrip(
-  searchParam: Partial<Trip>,
-  data: Partial<Trip>
-) {
-  return TripModel.findOneAndUpdate(searchParam, data, { new: true })
-}
-
 export async function findTripBy(param: Partial<Trip>): Promise<Trip | null> {
   const trip = await TripModel.findOne(param)
   if (!trip) {

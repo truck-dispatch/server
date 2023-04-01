@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express'
-import { clientUserTypes } from '../common/constants'
 import { findTripBy } from '../data/models/Trip/trip.repository'
 import { findUserBy } from '../data/models/User/user.repository'
 import Respond from '../helpers/Respond'
