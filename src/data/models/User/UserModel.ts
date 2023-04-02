@@ -40,7 +40,7 @@ const schema = new Schema(
     avatar: {
       type: String,
     },
-    bankAccount: {
+    bankDetails: {
       type: Object,
     },
     userType: {
