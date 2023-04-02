@@ -126,7 +126,10 @@ class TripController {
         findAndUpdateBidBy({ _id: bidId }, { status: 'accepted' }),
       ])
 
-      const trip = await findAndUpdateTripBy({ _id: tripId }, { transporterId: to, status: 'payment_complete' })
+      const trip = await findAndUpdateTripBy(
+        { _id: tripId },
+        { transporterId: to, status: 'payment_complete' }
+      )
 
       return Respond.success(
         res,

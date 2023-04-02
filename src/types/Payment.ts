@@ -1,5 +1,5 @@
 export default interface Payment {
-  from: string;
+  from: string
   to: string
   tripId: string
   bidId: string

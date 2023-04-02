@@ -72,6 +72,29 @@ class TripMiddlewares {
     }
   }
 
+  async isTripTransporter(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = getUserFromReq(req)
+      const { tripId } = req.params
+
+      if (!tripId) return Respond.error(res, 'Trip ID was not provided', 400)
+
+      const trip = await findTripBy({ _id: tripId })
+      if (!trip) return Respond.error(res, 'Trip was not found.')
+      if (trip?.transporterId !== user._id)
+        return Respond.error(
+          res,
+          'Only the transporter assigned to the trip can perform this operation'
+        )
+
+      next()
+    } catch (err) {
+      // Report error to our client..
+      console.log(err)
+      Respond.error(res, (err as Error).message)
+    }
+  }
+
   async tripExists(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params

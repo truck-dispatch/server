@@ -1,20 +1,14 @@
-import Asset from './Asset'
+import { Vehicle } from './Vehicle'
 
 export default interface PaymentRequest {
-  id: string
-  driverName: string
-  paystackRecipient: string
-  driverPhoneNumber: string
-  containerVideo: File | null | Asset
+  vehicle: Vehicle
+  proofVideo: string
   status: 'pending' | 'rejected' | 'completed'
   transporterId: string
   tripId: string
-  truckPlateNumber: string
   tripReference: string
-  createdAt?: number
-  updatedAt?: number
   paymentReference?: string
-  reference?: string
-  amount?: number
+  reference: string
+  amount: number
   agentRemark?: string
 }

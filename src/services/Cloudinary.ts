@@ -18,12 +18,16 @@ cloudinary.config({
 
 interface UploadParams {
   file: { path: string } // Change the type of file to 'any' or 'Buffer'
+  isVideo: boolean
 }
 
 class Cloudinary {
-  async upload({ file }: UploadParams): Promise<string> {
+  async upload({ file, isVideo }: UploadParams): Promise<string> {
     try {
-      const result = await cloudinary.uploader.upload(file.path)
+      const result = await cloudinary.uploader.upload(
+        file.path,
+        isVideo ? { resource_type: 'video' } : {}
+      )
       fs.unlink(file.path, (err) => {
         if (err) throw new Error(err.message)
       })

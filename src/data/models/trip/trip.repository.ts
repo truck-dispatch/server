@@ -18,23 +18,23 @@ export async function findTripBy(param: Partial<Trip>): Promise<Trip | null> {
 }
 
 export async function findTripsBy(param: Partial<Trip>) {
-  const trips = await TripModel.find(param).lean();
+  const trips = await TripModel.find(param).lean()
 
   const tripsWithResponsibleUsers = await Promise.all(
     trips.map(async (trip) => {
-      if (!trip.transporterId) return trip;
+      if (!trip.transporterId) return trip
 
       const transporter = await findUserBy({ _id: trip.transporterId })
       const tripOwner = await findUserBy({ _id: trip.tripOwner })
       return {
         ...trip,
         transporter,
-        tripOwner
+        tripOwner,
       }
     })
   )
 
-  return tripsWithResponsibleUsers;
+  return tripsWithResponsibleUsers
 }
 
 export function findAndUpdateTripBy(
