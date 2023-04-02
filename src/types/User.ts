@@ -1,5 +1,4 @@
 import { userTypes } from '../common/constants'
-import Asset from './Asset'
 import TransferRecipient from './TransferRecipient'
 
 export default interface User {
@@ -8,7 +7,7 @@ export default interface User {
   lastName: string
   email: string
   phone: string
-  avatar?: Asset | File
+  avatar?: string | File
   userType: (typeof userTypes)[number]
   status?:
     | 'pending_verification'
