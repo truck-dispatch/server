@@ -1,23 +1,22 @@
 import { NextFunction, Request, Response } from 'express'
+import Respond from '../helpers/Respond'
 
-class UserMiddlewares{
-    checkDetailsForCreateAccount(
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ){
-       try{
-         const {
-          account_name,
-          account_number,
-          bank_id
-         } = req.body
-         if(!account_name || !account_number || !bank_id){
+class UserMiddlewares {
+  checkBankAccountDetails(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { name, account_number, bank_code, bank_name } = req.body
+      if (!name || !account_number || !bank_code || !bank_name) {
+        return Respond.error(
+          res,
+          ' name, account_number, bank_code, bank_name are compulsory fields'
+        )
+      }
 
-         }
-       }catch(err){
-
-       }
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message)
     }
-
+  }
 }
+
+export default new UserMiddlewares()

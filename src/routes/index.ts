@@ -6,6 +6,7 @@ import trip from './trip.routes'
 import verification from './verification.routes'
 import user from './user.routes'
 import bids from './bid.routes'
+import externals from './externals.routes'
 
 const router = Router()
 
@@ -15,6 +16,8 @@ router.use('/verification', verification)
 router.use('/trips', trip)
 router.use('/bids', bids)
 router.use('/chat', chat)
+// External services required by the frontend.
+router.use('/externals', externals)
 
 /* GET home page. */
 router.get('/', (req, res) => {
