@@ -14,15 +14,8 @@ import User from '../types/User'
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const {
-        email,
-        password,
-        phone,
-        userType,
-        firstName,
-        lastName,
-        status,
-      } = req.body
+      const { email, password, phone, userType, firstName, lastName, status } =
+        req.body
       const encryptedPassword = await encrypt(password)
       const formattedPhone = Helpers.convertPhone(phone)
 

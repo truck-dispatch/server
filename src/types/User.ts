@@ -1,6 +1,6 @@
 import { userTypes } from '../common/constants'
 import Asset from './Asset'
-import BankAccount from './BankAccount'
+import BankDetails from './BankDetails'
 
 export default interface User {
   _id: string
@@ -17,7 +17,7 @@ export default interface User {
     | 'rejected'
     | 'fraudulent'
   rating: number
-  bankAccount: BankAccount
+  bankDetails: BankDetails
   password: string
   isEmailVerified: boolean
   isPhoneVerified: boolean
