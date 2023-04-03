@@ -13,6 +13,14 @@ export class Helpers {
     if (req.files?.[nameOfFile]) return req.files?.[nameOfFile][0]
     else return null
   }
+  static extractPublicIdFromURL(url: string) {
+    const regex = /\/v\d+\/(.+)\.mp4/i
+    const match = url.match(regex)
+    if (match && match.length > 1) {
+      const publicId = match[1]
+      console.log(publicId)
+    } else return ''
+  }
   static convertPhone(phone: string) {
     // Remove any non-digits from the input phone
     phone = phone.replace(/\D/g, '')

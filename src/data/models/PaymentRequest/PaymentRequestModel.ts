@@ -4,7 +4,7 @@ import PaymentRequest from '../../../types/PaymentRequest'
 const schema = new Schema(
   {
     //   Subsequently, this should be replaced with just the ID of the vehicle.
-    vehicleDetails: {
+    vehicle: {
       type: Object,
       required: true,
     },
@@ -32,6 +32,10 @@ const schema = new Schema(
       type: String,
       required: true,
     },
+    reference: {
+      type: String,
+      required: true,
+    },
     // Check if reference exists when doing transfers.
     paymentProcessorReference: {
       type: String,
@@ -44,7 +48,7 @@ const schema = new Schema(
      * The person responsible for approving the payment's remark.
      * Only available when the payment was declined.
      */
-    creditorRemark: {
+    reasonForReject: {
       type: String,
     },
   },

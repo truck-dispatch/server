@@ -1,4 +1,4 @@
-export interface Vehicle {
+export default interface Vehicle {
   driver: {
     name: string
     phone?: string

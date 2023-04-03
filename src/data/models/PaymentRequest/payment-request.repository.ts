@@ -5,3 +5,23 @@ export function createPaymentRequest(paymentRequest: PaymentRequest) {
   const data = new PaymentRequestModel(paymentRequest)
   return data.save()
 }
+
+export async function findPaymentRequestBy(
+  searchParam: Partial<PaymentRequest>
+) {
+  const data = await PaymentRequestModel.findOne(searchParam).lean()
+  return data
+}
+export async function findPaymentRequestsBy(
+  searchParam: Partial<PaymentRequest>
+) {
+  const data = await PaymentRequestModel.find(searchParam).lean()
+  return data
+}
+
+export async function findAndUpdatePaymentRequestBy(
+  searchParam: Partial<PaymentRequest>,
+  data: Partial<PaymentRequest>
+) {
+  return PaymentRequestModel.findOneAndUpdate(searchParam, data, { new: true })
+}

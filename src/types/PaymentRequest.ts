@@ -1,6 +1,7 @@
-import { Vehicle } from './Vehicle'
+import Vehicle from './Vehicle'
 
 export default interface PaymentRequest {
+  _id?: string
   vehicle: Vehicle
   proofVideo: string
   status: 'pending' | 'rejected' | 'completed'
@@ -10,5 +11,5 @@ export default interface PaymentRequest {
   paymentReference?: string
   reference: string
   amount: number
-  agentRemark?: string
+  reasonForReject?: string
 }
