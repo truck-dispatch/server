@@ -16,8 +16,10 @@ export function findAndUpdateBidBy(
   return BidModel.findOneAndUpdate(searchParam, data, { new: true })
 }
 
-export async function findBidBy(searchParam: Partial<Bid>) {
-  const data = await BidModel.findOne(searchParam)
+export async function findBidBy(
+  searchParam: Partial<Bid>
+): Promise<Bid | null> {
+  const data = await BidModel.findOne(searchParam).lean()
   if (!data) return null
   return data
 }

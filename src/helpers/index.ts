@@ -1,6 +1,5 @@
 import { Request } from 'express'
-import fs from 'fs'
-import path from 'path'
+import { uuid } from 'uuidv4';
 
 export class Helpers {
   static isValidEmail(email: string) {
@@ -12,6 +11,14 @@ export class Helpers {
     // @ts-ignore
     if (req.files?.[nameOfFile]) return req.files?.[nameOfFile][0]
     else return null
+  }
+  static extractPublicIdFromURL(url: string) {
+    const regex = /\/v\d+\/(.+)\.mp4/i
+    const match = url.match(regex)
+    if (match && match.length > 1) {
+      const publicId = match[1]
+      console.log(publicId)
+    } else return ''
   }
   static convertPhone(phone: string) {
     // Remove any non-digits from the input phone
@@ -39,5 +46,15 @@ export class Helpers {
       )
     }
     return key
+  }
+  static nairaToKobo(amount: string | number) {
+    let value = amount
+    if (typeof value === 'string') {
+      value = parseInt(`${amount}`)
+    }
+    return value * 100
+  }
+  static generateUuid() {
+    return uuid()
   }
 }

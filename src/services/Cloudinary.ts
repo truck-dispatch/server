@@ -18,20 +18,36 @@ cloudinary.config({
 
 interface UploadParams {
   file: { path: string } // Change the type of file to 'any' or 'Buffer'
+  isVideo?: boolean
+  publicId?: string
 }
 
 class Cloudinary {
-  async upload({ file }: UploadParams): Promise<string> {
+  async upload({ file, isVideo, publicId }: UploadParams): Promise<string> {
+    let options: Record<string, unknown> = {}
+
+    if (isVideo) options.resource_type = 'video'
+    if (publicId) {
+      options = {
+        ...options,
+        public_id: publicId,
+        overwrite: true,
+        invalidate: true,
+      }
+    }
+
     try {
-      const result = await cloudinary.uploader.upload(file.path)
-      fs.unlink(file.path, (err) => {
-        if (err) throw new Error(err.message)
-      })
+      const result = await cloudinary.uploader.upload(file.path, options)
       return result.secure_url!
     } catch (err) {
       // TODO: check format of error
       // @ts-ignore
       throw new Error(err.message)
+    } finally {
+      // Delete in both success and error cases
+      fs.unlink(file.path, (err) => {
+        if (err) throw new Error(err.message)
+      })
     }
   }
 }

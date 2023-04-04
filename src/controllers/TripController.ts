@@ -6,7 +6,6 @@ import {
   createTrip,
   findAndUpdateTripBy,
   findTripsBy,
-  updateTrip,
 } from '../data/models/Trip/trip.repository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
@@ -74,7 +73,7 @@ class TripController {
     try {
       const { tripId } = req.params
 
-      const trip = await updateTrip({ _id: tripId }, req.body)
+      const trip = await findAndUpdateTripBy({ _id: tripId }, req.body)
       return Respond.success(res, 'Trip updated successfully', trip)
     } catch (err) {
       next(err)
@@ -127,7 +126,7 @@ class TripController {
         findAndUpdateBidBy({ _id: bidId }, { status: 'accepted' }),
       ])
 
-      const trip = await updateTrip(
+      const trip = await findAndUpdateTripBy(
         { _id: tripId },
         { transporterId: to, status: 'payment_complete' }
       )

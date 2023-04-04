@@ -45,7 +45,6 @@ export async function updateUserBankDetails(
   }
 
   const transferRecipient = await Paystack.createTransferRecipient(bankDetails)
-  console.log(transferRecipient, 'transfer recipei')
   return findAndUpdateUserBy(searchParam, {
     bankDetails: {
       ...bankDetails,
