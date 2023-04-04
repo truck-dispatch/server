@@ -1,6 +1,5 @@
 import { userTypes } from '../common/constants'
-import Asset from './Asset'
-import BankAccount from './BankAccount'
+import TransferRecipient from './TransferRecipient'
 
 export default interface User {
   _id: string
@@ -8,7 +7,7 @@ export default interface User {
   lastName: string
   email: string
   phone: string
-  avatar?: Asset | File
+  avatar?: string | File
   userType: (typeof userTypes)[number]
   status?:
     | 'pending_verification'
@@ -17,7 +16,7 @@ export default interface User {
     | 'rejected'
     | 'fraudulent'
   rating: number
-  bankAccount: BankAccount
+  bankDetails: TransferRecipient
   password: string
   isEmailVerified: boolean
   isPhoneVerified: boolean
