@@ -1,8 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import {
-  findAndUpdateBidBy,
-  findBidBy,
-} from '../data/models/Bid/bid.repository'
+import { findBidBy } from '../data/models/Bid/bid.repository'
 import {
   createPaymentRequest,
   findAndUpdatePaymentRequestBy,
@@ -10,10 +7,13 @@ import {
   findPaymentRequestsBy,
 } from '../data/models/PaymentRequest/payment-request.repository'
 import { findTripBy } from '../data/models/Trip/trip.repository'
+import { findUserBy } from '../data/models/User/user.repository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'
 import { getUserFromReq } from '../services/JWT'
+import Paystack from '../services/Paystack'
+import Sms from '../services/Sms'
 
 class PaymentController {
   async requestPaymentForTrip(req: Request, res: Response, next: NextFunction) {
@@ -46,7 +46,7 @@ class PaymentController {
         proofVideo,
         tripReference: trip?.reference!,
         reference: Helpers.generateReference(),
-        paymentReference: Helpers.generateReference(),
+        paymentReference: Helpers.generateUuid(),
         amount: 1000,
       })
 
@@ -127,6 +127,43 @@ class PaymentController {
       next(err)
     }
   }
+
+  async approvePaymentRequest(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { paymentRequestId } = req.params
+      const paymentRequest = await findPaymentRequestBy({ _id: paymentRequestId })
+      const user = await findUserBy({
+        _id: paymentRequest?.transporterId,
+      })
+
+      const transferData = {
+        source: 'balance',
+        reason: `TruckDispatch trip-${paymentRequest?.tripReference} payment-${paymentRequest?.reference}`,
+        reference: paymentRequest?.paymentReference!,
+        recipient: user?.bankDetails.paystackRecipientCode!,
+        amount: Helpers.nairaToKobo(paymentRequest?.amount!),
+      }
+
+      await Paystack.makeTransfer(transferData).catch((err) => {
+        throw new Error(err.response.data.message)
+      })
+
+      const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
+        { _id: paymentRequestId },
+        { status: 'completed' }
+      )
+      // await sms.
+
+      return Respond.success(
+        res,
+        'Payment request approved',
+        updatedPaymentRequest
+      )
+    } catch (err) {
+      next(err)
+    }
+  }
+
   async updatePaymentRequest(req: Request, res: Response, next: NextFunction) {
     try {
       const { paymentRequestId } = req.params
@@ -140,11 +177,18 @@ class PaymentController {
       const proofVideo = await Cloudinary.upload({
         file: rawProofOfVideo,
         isVideo: true,
-        publicId
+        publicId,
       })
-      const updatedPaymentRequest = await findAndUpdatePaymentRequestBy({ _id: paymentRequestId}, { proofVideo, status: 'pending' })
+      const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
+        { _id: paymentRequestId },
+        { proofVideo, status: 'pending' }
+      )
 
-      return Respond.success(res, 'Payment request successfully updated', updatedPaymentRequest)
+      return Respond.success(
+        res,
+        'Payment request successfully updated',
+        updatedPaymentRequest
+      )
     } catch (err) {
       next(err)
     }

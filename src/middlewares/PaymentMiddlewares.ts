@@ -38,6 +38,8 @@ class PaymentMiddlewares {
   ) {
     try {
       const { paymentRequestId } = req.params
+      if (!paymentRequestId)
+        return Respond.error(res, 'Payment request id was not sent', 400)
 
       const paymentRequest = await findPaymentRequestBy({
         _id: paymentRequestId,
@@ -54,7 +56,7 @@ class PaymentMiddlewares {
 
       next()
     } catch (err) {
-      next(err)
+      return Respond.error(res, (err as Error).message, 500)
     }
   }
 }

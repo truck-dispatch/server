@@ -38,14 +38,16 @@ class Cloudinary {
 
     try {
       const result = await cloudinary.uploader.upload(file.path, options)
-      fs.unlink(file.path, (err) => {
-        if (err) throw new Error(err.message)
-      })
       return result.secure_url!
     } catch (err) {
       // TODO: check format of error
       // @ts-ignore
       throw new Error(err.message)
+    } finally {
+      // Delete in both success and error cases
+      fs.unlink(file.path, (err) => {
+        if (err) throw new Error(err.message)
+      })
     }
   }
 }

@@ -1,6 +1,5 @@
 import { Request } from 'express'
-import fs from 'fs'
-import path from 'path'
+import { uuid } from 'uuidv4';
 
 export class Helpers {
   static isValidEmail(email: string) {
@@ -47,5 +46,15 @@ export class Helpers {
       )
     }
     return key
+  }
+  static nairaToKobo(amount: string | number) {
+    let value = amount
+    if (typeof value === 'string') {
+      value = parseInt(`${amount}`)
+    }
+    return value * 100
+  }
+  static generateUuid() {
+    return uuid()
   }
 }
