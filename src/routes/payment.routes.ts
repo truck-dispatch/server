@@ -1,25 +1,11 @@
 import { Router } from 'express'
-import multer from 'multer'
 import PaymentController from '../controllers/PaymentController'
+import multerInstance from '../helpers/multerInstance'
 import JWTMiddlewares from '../middlewares/JWTMiddlewares'
 import PaymentMiddlewares from '../middlewares/PaymentMiddlewares'
 import TripMiddlewares from '../middlewares/TripMiddlewares'
 
 const router = Router()
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public')
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split('/')[1]
-    cb(null, `files/admin-${file.fieldname}-${Date.now()}.${ext}`)
-  },
-})
-
-const multerInstance = multer({
-  storage,
-})
 
 router.post(
   '/request-payment/trip/:tripId',

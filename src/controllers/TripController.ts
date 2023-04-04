@@ -5,10 +5,12 @@ import { createPayment } from '../data/models/Payment/payment.repository'
 import {
   createTrip,
   findAndUpdateTripBy,
+  findTripBy,
   findTripsBy,
 } from '../data/models/Trip/trip.repository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
+import Cloudinary from '../services/Cloudinary'
 import { getUserFromReq } from '../services/JWT'
 import Trip from '../types/Trip'
 
@@ -136,6 +138,20 @@ class TripController {
         'Trip assigned to transporter successfully',
         trip
       )
+    } catch (err) {
+      next(err)
+    }
+  }
+  async uploadTDO(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tripId } = req.params
+      const rawTDO = Helpers.extractFileFromReq(req, 'TDO')
+      if (!rawTDO) return Respond.error(res, 'TDO file was not uploaded...')
+      const TDO = await Cloudinary.upload({ file: rawTDO })
+
+      const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { TDO })
+
+      return Respond.success(res, 'TDO has been uploaded', updatedTrip)
     } catch (err) {
       next(err)
     }
