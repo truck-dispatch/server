@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import TripController from '../controllers/TripController'
+import multerInstance from '../helpers/multerInstance'
 import JwtMiddlewares from '../middlewares/JWTMiddlewares'
 import TripMiddlewares from '../middlewares/TripMiddlewares'
 
@@ -34,5 +35,13 @@ router.post(
   TripMiddlewares.isTripCreator,
   TripMiddlewares.checkDataForTripAssignmentIsComplete,
   TripController.assignTrip
+)
+router.post(
+  '/:tripId/upload-tdo',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkisClientBasedUserType,
+  TripMiddlewares.isTripCreator,
+  multerInstance.fields([{ name: 'TDO', maxCount: 1 }]),
+  TripController.uploadTDO
 )
 export default router

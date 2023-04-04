@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { uuid } from 'uuidv4';
+import { uuid } from 'uuidv4'
 
 export class Helpers {
   static isValidEmail(email: string) {

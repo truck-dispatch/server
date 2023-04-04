@@ -131,7 +131,9 @@ class PaymentController {
   async approvePaymentRequest(req: Request, res: Response, next: NextFunction) {
     try {
       const { paymentRequestId } = req.params
-      const paymentRequest = await findPaymentRequestBy({ _id: paymentRequestId })
+      const paymentRequest = await findPaymentRequestBy({
+        _id: paymentRequestId,
+      })
       const user = await findUserBy({
         _id: paymentRequest?.transporterId,
       })
@@ -181,7 +183,7 @@ class PaymentController {
       })
       const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
         { _id: paymentRequestId },
-        { proofVideo, status: 'pending' }
+        { proofVideo, status: 'pending', reasonForReject: '' }
       )
 
       return Respond.success(
