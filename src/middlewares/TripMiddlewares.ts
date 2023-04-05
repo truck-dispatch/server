@@ -72,6 +72,28 @@ class TripMiddlewares {
       Respond.error(res, (err as Error).message)
     }
   }
+  async checkIfStatusChangeIsAccepted(req: Request, res: Response, next: NextFunction) {
+    try {
+      
+      const { tripId, status } = req.params
+      const statusIndex = tripStatus.findIndex((s) => status === s)
+      if (statusIndex === -1) {
+        return Respond.error(res, `${status} is not an acceptable status`, 400)
+      }
+      const trip = await findTripBy({ _id: tripId })
+      const presentStatusIndex = tripStatus.findIndex((s) => trip?.status === s)
+
+      if (presentStatusIndex > statusIndex)
+        return Respond.error(res, 'Trip is past this status stage')
+
+
+      next()
+    } catch (err) {
+      // Report error to our client..
+      console.log(err)
+      Respond.error(res, (err as Error).message)
+    }
+  }
 
   async isTripTransporter(req: Request, res: Response, next: NextFunction) {
     try {
@@ -87,28 +109,6 @@ class TripMiddlewares {
           res,
           'Only the transporter assigned to the trip can perform this operation'
         )
-
-      next()
-    } catch (err) {
-      // Report error to our client..
-      console.log(err)
-      Respond.error(res, (err as Error).message)
-    }
-  }
-  async checkIfStatusChangeIsAccepted(req: Request, res: Response, next: NextFunction) {
-    try {
-      
-      const { tripId, status } = req.params
-      const statusIndex = tripStatus.findIndex((s) => status === s)
-      if (statusIndex === -1) {
-        return Respond.error(res, `${status} is not an acceptable status`, 400)
-      }
-      const trip = await findTripBy({ _id: tripId })
-      const presentStatusIndex = tripStatus.findIndex((s) => trip?.status === s)
-
-      if (presentStatusIndex > statusIndex)
-        return Respond.error(res, 'Trip is past this status stage')
-
 
       next()
     } catch (err) {

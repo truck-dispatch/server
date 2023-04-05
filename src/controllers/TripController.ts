@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { clientUserTypes, tripStatus } from '../common/constants'
+import { clientUserTypes } from '../common/constants'
 import { findAndUpdateBidBy } from '../data/models/Bid/bid.repository'
 import { createPayment } from '../data/models/Payment/payment.repository'
 import {
@@ -99,6 +99,16 @@ class TripController {
     }
   }
 
+  async changeTripStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tripId, status } = req.params
+      
+      const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { status })
+
+      return Respond.success(res, 'Trip has been updated successfully', updatedTrip)
+    } catch (err) {}
+  }
+
   async assignTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const {
@@ -157,15 +167,5 @@ class TripController {
     }
   }
 
-  async changeTripStatus(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { tripId, status } = req.params
-      
-      const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { status })
-
-      return Respond.success(res, 'Trip has been updated successfully', updatedTrip)
-    } catch (err) {}
-  }
 }
-
 export default new TripController()
