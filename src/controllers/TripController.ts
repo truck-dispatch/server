@@ -142,6 +142,7 @@ class TripController {
       next(err)
     }
   }
+
   async uploadTDO(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params

@@ -9,6 +9,9 @@
     "dev": "tsc -w & nodemon .",
     "format": "prettier --write '**/*.ts'"
   },
+  "engines": {
+    "node": "18.13.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/truck-dispatch/server.git"
