@@ -173,9 +173,7 @@ class PaymentController {
       const paymentRequest = await findPaymentRequestBy({
         _id: paymentRequestId,
       })
-      const publicId = Helpers.extractPublicIdFromURL(
-        paymentRequest?.proofVideo!
-      )
+      const publicId = Helpers.extractPublicIdFromURL(paymentRequest.proofVideo)
 
       const rawProofOfVideo = Helpers.extractFileFromReq(req, 'proofVideo')
       const proofVideo = await Cloudinary.upload({
