@@ -44,4 +44,12 @@ router.post(
   multerInstance.fields([{ name: 'TDO', maxCount: 1 }]),
   TripController.uploadTDO
 )
+router.patch(
+  '/:tripId/change-status/:status',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkIsServiceBasedUserType,
+  TripMiddlewares.isTripTransporter,
+  TripMiddlewares.checkIfStatusChangeIsAccepted,
+  TripController.changeTripStatus
+)
 export default router
