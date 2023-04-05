@@ -99,6 +99,16 @@ class TripController {
     }
   }
 
+  async changeTripStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tripId, status } = req.params
+      
+      const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { status })
+
+      return Respond.success(res, 'Trip has been updated successfully', updatedTrip)
+    } catch (err) {}
+  }
+
   async assignTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const {
@@ -158,5 +168,4 @@ class TripController {
     }
   }
 }
-
 export default new TripController()

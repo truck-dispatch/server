@@ -16,7 +16,6 @@ import { PORT } from './common/privateKeys'
 
 import http from 'http'
 import { connectSocket } from './services/socket/connect.socket'
-import { Helpers } from './helpers'
 
 const app = express()
 const rateLimiter = rateLimit(rateLimitConfig)
@@ -88,7 +87,6 @@ app.use((_, res) =>
     msg: 'you seem to be lost',
   })
 )
-console.log(Helpers.generateUuid())
 server.listen(PORT, () => {
   console.log(`Running on port ${PORT}`)
 })
