@@ -74,7 +74,6 @@ class TripMiddlewares {
   }
   async checkIfStatusChangeIsAccepted(req: Request, res: Response, next: NextFunction) {
     try {
-      
       const { tripId, status } = req.params
       const statusIndex = tripStatus.findIndex((s) => status === s)
       if (statusIndex === -1) {
