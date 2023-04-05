@@ -5,7 +5,6 @@ import { createPayment } from '../data/models/Payment/payment.repository'
 import {
   createTrip,
   findAndUpdateTripBy,
-  findTripBy,
   findTripsBy,
 } from '../data/models/Trip/trip.repository'
 import { Helpers } from '../helpers'
