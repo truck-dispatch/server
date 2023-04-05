@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import { NextFunction, Request, Response } from 'express'
 import { findBidBy } from '../data/models/Bid/bid.repository'
 import {
@@ -13,7 +14,7 @@ import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'
 import { getUserFromReq } from '../services/JWT'
 import Paystack from '../services/Paystack'
-import Sms from '../services/Sms'
+import ApiError from '../types/ApiError'
 
 class PaymentController {
   async requestPaymentForTrip(req: Request, res: Response, next: NextFunction) {
@@ -146,8 +147,8 @@ class PaymentController {
         amount: Helpers.nairaToKobo(paymentRequest?.amount!),
       }
 
-      await Paystack.makeTransfer(transferData).catch((err) => {
-        throw new Error(err.response.data.message)
+      await Paystack.makeTransfer(transferData).catch((err: ApiError) => {
+        throw new Error(err.response?.data?.message)
       })
 
       const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
