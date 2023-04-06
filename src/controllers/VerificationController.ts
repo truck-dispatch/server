@@ -4,7 +4,7 @@ import {
   createVerification,
   findAndUpdateVerificationBy,
   findVerificationBy,
-} from '../data/models/Verification/VerificationRepository'
+} from '../data/models/verification/verification_repository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'
