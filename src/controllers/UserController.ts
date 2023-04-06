@@ -3,7 +3,7 @@ import {
   findAndUpdateUserBy,
   findUserBy,
   updateUserBankDetails,
-} from '../data/models/User/UserRepository'
+} from '../data/models/user/userRepository'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
 import Paystack from '../services/Paystack'

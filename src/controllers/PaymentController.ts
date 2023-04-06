@@ -1,14 +1,14 @@
 import { AxiosError } from 'axios'
 import { NextFunction, Request, Response } from 'express'
-import { findBidBy } from '../data/models/bid/BidRepository'
+import { findBidBy } from '../data/models/bid/bidRepository'
 import {
   createPaymentRequest,
   findAndUpdatePaymentRequestBy,
   findPaymentRequestBy,
   findPaymentRequestsBy,
-} from '../data/models/PaymentRequest/PaymentRequestRepository'
-import { findTripBy } from '../data/models/trip/trip_repository'
-import { findUserBy } from '../data/models/User/UserRepository'
+} from '../data/models/paymentRequest/paymentRequestRepository'
+import { findTripBy } from '../data/models/trip/tripRepository'
+import { findUserBy } from '../data/models/user/userRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'

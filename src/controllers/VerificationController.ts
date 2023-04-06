@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
-import { findAndUpdateUserBy } from '../data/models/User/UserRepository'
+import { findAndUpdateUserBy } from '../data/models/user/userRepository'
 import {
   createVerification,
   findAndUpdateVerificationBy,
   findVerificationBy,
-} from '../data/models/verification/verification_repository'
+} from '../data/models/verification/verificationRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'

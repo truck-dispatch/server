@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes, serviceBasedUserTypes } from '../common/constants'
-import { findUserBy } from '../data/models/User/UserRepository'
+import { findUserBy } from '../data/models/user/userRepository'
 import Respond from '../helpers/Respond'
 import { decodeToken, getUserFromReq } from '../services/JWT'
 

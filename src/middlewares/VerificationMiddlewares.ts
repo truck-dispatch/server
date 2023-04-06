@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { findVerificationBy } from '../data/models/verification/verification_repository'
+import { findVerificationBy } from '../data/models/verification/verificationRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'

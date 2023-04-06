@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { findBidBy } from '../data/models/bid/BidRepository'
+import { findBidBy } from '../data/models/bid/bidRepository'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
 
