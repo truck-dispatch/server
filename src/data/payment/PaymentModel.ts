@@ -1,38 +1,46 @@
 import { model, Schema } from 'mongoose'
-import Chat from '../../../types/Chat'
+import Payment from '../../types/Payment'
 
 const schema = new Schema(
   {
-    chatId: {
+    from: {
       type: String,
       required: true,
     },
-    message: {
+    to: {
       type: String,
       required: true,
     },
-    senderId: {
+    tripId: {
       type: String,
       required: true,
     },
-    receiverId: {
+    bidId: {
       type: String,
       required: true,
     },
-    agentId: {
+    paymentReference: {
       type: String,
       required: true,
     },
-    transporterId: {
+    transaction: {
       type: String,
       required: true,
     },
-    readAt: {
+    amountInBid: {
       type: Number,
-      required: false,
+      required: true,
+    },
+    totalAmountPaid: {
+      type: Number,
+      required: true,
+    },
+    tripReference: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }
 )
 
-export const ChatModel = model<Chat>('Chat', schema)
+export const PaymentModel = model<Payment>('Payment', schema)

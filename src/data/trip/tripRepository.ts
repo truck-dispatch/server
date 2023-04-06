@@ -1,5 +1,5 @@
-import NewTrip from '../../../types/NewTrip'
-import Trip from '../../../types/Trip'
+import NewTrip from '../../types/NewTrip'
+import Trip from '../../types/Trip'
 import { findUserBy } from '../user/userRepository'
 import { TripModel } from './TripModel'
 

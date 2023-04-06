@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import Trip from '../../../types/Trip'
+import Trip from '../../types/Trip'
 
 const schema = new Schema(
   {

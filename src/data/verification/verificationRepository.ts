@@ -1,4 +1,4 @@
-import Verification from '../../../types/Verification'
+import Verification from '../../types/Verification'
 import { VerificationModel } from './VerificationModel'
 
 export function createVerification(verification: Verification) {

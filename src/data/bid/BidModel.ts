@@ -1,13 +1,31 @@
 import { model, Schema } from 'mongoose'
-import Payment from '../../../types/Payment'
+import Bid from '../../types/Bid'
 
 const schema = new Schema(
   {
-    from: {
+    paymentId: {
+      type: String,
+    },
+    extraNotes: {
+      type: String,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    presentLocation: {
       type: String,
       required: true,
     },
-    to: {
+    transporterId: {
+      type: String,
+      required: true,
+    },
+    driverName: {
+      type: String,
+      required: true,
+    },
+    truckPlateNumber: {
       type: String,
       required: true,
     },
@@ -15,27 +33,7 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    bidId: {
-      type: String,
-      required: true,
-    },
-    paymentReference: {
-      type: String,
-      required: true,
-    },
-    transaction: {
-      type: String,
-      required: true,
-    },
-    amountInBid: {
-      type: Number,
-      required: true,
-    },
-    totalAmountPaid: {
-      type: Number,
-      required: true,
-    },
-    tripReference: {
+    status: {
       type: String,
       required: true,
     },
@@ -43,4 +41,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const PaymentModel = model<Payment>('Payment', schema)
+export const BidModel = model<Bid>('Bid', schema)

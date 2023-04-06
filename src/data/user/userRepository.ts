@@ -1,7 +1,6 @@
-import Paystack from '../../../services/Paystack'
-import BankDetails from '../../../types/BankDetails'
-import TransferRecipient from '../../../types/TransferRecipient'
-import User from '../../../types/User'
+import Paystack from '../../services/Paystack'
+import BankDetails from '../../types/BankDetails'
+import User from '../../types/User'
 import { UserModel } from './UserModel'
 
 export function createUser(user: Partial<User>) {

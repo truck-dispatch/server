@@ -1,4 +1,4 @@
-import PaymentRequest from '../../../types/PaymentRequest'
+import PaymentRequest from '../../types/PaymentRequest'
 import { PaymentRequestModel } from './PaymentRequestModel'
 
 export function createPaymentRequest(paymentRequest: PaymentRequest) {

@@ -1,4 +1,4 @@
-import Chat from '../../../types/Chat'
+import Chat from '../../types/Chat'
 import { ChatModel } from './ChatModel'
 
 export async function createMessage(message: Partial<Chat>) {

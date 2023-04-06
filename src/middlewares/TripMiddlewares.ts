@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { tripStatus } from '../common/constants'
-import { findTripBy } from '../data/models/trip/tripRepository'
-import { findUserBy } from '../data/models/user/userRepository'
+import { findTripBy } from '../data/trip/tripRepository'
+import { findUserBy } from '../data/user/userRepository'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
 

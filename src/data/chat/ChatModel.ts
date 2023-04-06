@@ -1,19 +1,25 @@
 import { model, Schema } from 'mongoose'
-import Bid from '../../../types/Bid'
+import Chat from '../../types/Chat'
 
 const schema = new Schema(
   {
-    paymentId: {
+    chatId: {
       type: String,
-    },
-    extraNotes: {
-      type: String,
-    },
-    price: {
-      type: Number,
       required: true,
     },
-    presentLocation: {
+    message: {
+      type: String,
+      required: true,
+    },
+    senderId: {
+      type: String,
+      required: true,
+    },
+    receiverId: {
+      type: String,
+      required: true,
+    },
+    agentId: {
       type: String,
       required: true,
     },
@@ -21,24 +27,12 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    driverName: {
-      type: String,
-      required: true,
-    },
-    truckPlateNumber: {
-      type: String,
-      required: true,
-    },
-    tripId: {
-      type: String,
-      required: true,
-    },
-    status: {
-      type: String,
-      required: true,
+    readAt: {
+      type: Number,
+      required: false,
     },
   },
   { timestamps: true }
 )
 
-export const BidModel = model<Bid>('Bid', schema)
+export const ChatModel = model<Chat>('Chat', schema)
