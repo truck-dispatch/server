@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { findBidBy } from '../data/models/Bid/BidRepository'
+import { findBidBy } from '../data/models/Bid/bidRepository'
 import { findPaymentRequestBy } from '../data/models/PaymentRequest/PaymentRequestRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'

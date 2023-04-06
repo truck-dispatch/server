@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios'
 import { NextFunction, Request, Response } from 'express'
-import { findBidBy } from '../data/models/Bid/BidRepository'
+import { findBidBy } from '../data/models/Bid/bidRepository'
 import {
   createPaymentRequest,
   findAndUpdatePaymentRequestBy,
