@@ -7,7 +7,7 @@ export default interface User {
   lastName: string
   email: string
   phone: string
-  avatar?: string | File
+  avatar?: string
   userType: (typeof userTypes)[number]
   status?:
     | 'pending_verification'

@@ -72,7 +72,11 @@ class TripMiddlewares {
       Respond.error(res, (err as Error).message)
     }
   }
-  async checkIfStatusChangeIsAccepted(req: Request, res: Response, next: NextFunction) {
+  async checkIfStatusChangeIsAccepted(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { tripId, status } = req.params
       const statusIndex = tripStatus.findIndex((s) => status === s)
@@ -84,7 +88,6 @@ class TripMiddlewares {
 
       if (presentStatusIndex > statusIndex)
         return Respond.error(res, 'Trip is past this status stage')
-
 
       next()
     } catch (err) {

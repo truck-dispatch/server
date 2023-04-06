@@ -1,5 +1,6 @@
 import { Request } from 'express'
-import { v4 } from 'uuid';
+import { v4 } from 'uuid'
+import { CLOUDINARY_FOLDER_NAME } from '../common/privateKeys'
 
 export class Helpers {
   static isValidEmail(email: string) {
@@ -12,14 +13,17 @@ export class Helpers {
     if (req.files?.[nameOfFile]) return req.files?.[nameOfFile][0]
     else return null
   }
-  static extractPublicIdFromURL(url: string) {
-    const regex = /\/v\d+\/(.+)\.mp4/i
-    const match = url.match(regex)
-    if (match && match.length > 1) {
-      const publicId = match[1]
-      console.log(publicId)
-    } else return ''
+
+  static extractPublicIdFromURL(cloudinaryUrl: string) {
+    const publicIdRegex = new RegExp(`\\/v\\d+\\/${CLOUDINARY_FOLDER_NAME}\\/([^\\.]+)`)
+    const matches = cloudinaryUrl.match(publicIdRegex)
+    if (matches && matches.length >= 2) {
+      return matches[1]
+    } else {
+      return ''
+    }
   }
+
   static convertPhone(phone: string) {
     // Remove any non-digits from the input phone
     phone = phone.replace(/\D/g, '')
@@ -55,6 +59,6 @@ export class Helpers {
     return value * 100
   }
   static generateUuid() {
-    return v4();
+    return v4()
   }
 }

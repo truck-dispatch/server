@@ -3,21 +3,25 @@ import { clientUserTypes, serviceBasedUserTypes } from '../common/constants'
 import { findUserBy } from '../data/user/userRepository'
 import Respond from '../helpers/Respond'
 import { decodeToken, getUserFromReq } from '../services/JWT'
+import User from '../types/User'
 
 class JWTMiddlewares {
-  jwtIsValid(req: Request, res: Response, next: NextFunction) {
+  async jwtIsValid(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.headers.authorization?.split(' ')[1]
       if (!token) {
         return Respond.error(res, 'No JWT was provided', 401)
       }
 
-      const decodedToken = decodeToken(token)
+      const decodedUser = decodeToken(token) as User
 
-      if (!decodedToken) {
+      if (!decodedUser) {
         return Respond.error(res, 'Invalid JWT', 401)
       }
 
+      const user = await findUserBy({ _id: decodedUser._id })
+
+      if (!user) return Respond.error(res, 'User does not exist', 401)
       next()
     } catch (err) {
       Respond.error(res, (err as Error).message)
