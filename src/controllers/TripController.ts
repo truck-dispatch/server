@@ -6,7 +6,7 @@ import {
   createTrip,
   findAndUpdateTripBy,
   findTripsBy,
-} from '../data/models/Trip/TripRepository'
+} from '../data/models/trip/trip_repository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'

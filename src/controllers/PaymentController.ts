@@ -7,7 +7,7 @@ import {
   findPaymentRequestBy,
   findPaymentRequestsBy,
 } from '../data/models/PaymentRequest/PaymentRequestRepository'
-import { findTripBy } from '../data/models/Trip/TripRepository'
+import { findTripBy } from '../data/models/trip/trip_repository'
 import { findUserBy } from '../data/models/User/UserRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
