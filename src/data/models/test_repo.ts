@@ -1,6 +1,6 @@
 import Bid from '../../types/Bid'
 import { findUserBy } from './User/UserRepository'
-import { BidModel } from './Bid/BidModel'
+import { BidModel } from './bid/BidModel'
 interface CreateBidBody extends Omit<Bid, '_id'> {
   _id?: string
 }
