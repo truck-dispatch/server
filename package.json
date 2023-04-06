@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc & node .",
-    "dev": "tsc -w & nodemon .",
+    "dev": "nodemon .",
     "format": "prettier --write '**/*.ts'"
   },
   "engines": {
