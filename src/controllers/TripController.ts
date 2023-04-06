@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes } from '../common/constants'
-import { findAndUpdateBidBy } from '../data/models/bid/bid.repository'
+import { findAndUpdateBidBy } from '../data/models/bid/BidRepository'
 import { createPayment } from '../data/models/Payment/PaymentRepository'
 import {
   createTrip,
