@@ -3,7 +3,7 @@ import {
   createUser,
   findAndUpdateUserBy,
   findUserBy,
-} from '../data/models/User/user.repository'
+} from '../data/models/User/UserRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { encrypt } from '../services/encrypt'

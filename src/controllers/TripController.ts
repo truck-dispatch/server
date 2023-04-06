@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes } from '../common/constants'
-import { findAndUpdateBidBy } from '../data/models/Bid/bid.repository'
-import { createPayment } from '../data/models/Payment/payment.repository'
+import { findAndUpdateBidBy } from '../data/models/Bid/BidRepository'
+import { createPayment } from '../data/models/Payment/PaymentRepository'
 import {
   createTrip,
   findAndUpdateTripBy,
   findTripsBy,
-} from '../data/models/Trip/trip.repository'
+} from '../data/models/Trip/TripRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'

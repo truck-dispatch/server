@@ -4,7 +4,7 @@ import {
   findAndUpdateBidBy,
   findBidBy,
   findBidsBy,
-} from '../data/models/Bid/bid.repository'
+} from '../data/models/Bid/BidRepository'
 import Respond from '../helpers/Respond'
 import { getUserFromReq } from '../services/JWT'
 

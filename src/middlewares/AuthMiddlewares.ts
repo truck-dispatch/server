@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { findUserBy } from '../data/models/User/user.repository'
+import { findUserBy } from '../data/models/User/UserRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { compareHashAndPassword } from '../services/encrypt'

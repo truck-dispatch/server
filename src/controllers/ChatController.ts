@@ -3,7 +3,7 @@ import {
   createMessage,
   getMessagesById,
   updateMessageById,
-} from '../data/models/Chat/chat.repository'
+} from '../data/models/Chat/ChatRepository'
 import Respond from '../helpers/Respond'
 import { getConnectedUserSocketByUserId } from '../services/socket/connectedUsers.socket'
 
