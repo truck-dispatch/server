@@ -174,14 +174,16 @@ class PaymentController {
       const paymentRequest = await findPaymentRequestBy({
         _id: paymentRequestId,
       })
-      const publicId = Helpers.extractPublicIdFromURL(paymentRequest?.proofVideo!)
 
       const rawProofOfVideo = Helpers.extractFileFromReq(req, 'proofVideo')
-      const proofVideo = await Cloudinary.upload({
-        file: rawProofOfVideo,
-        isVideo: true,
-        publicId,
-      })
+      const proofVideo = await Cloudinary.upload(
+        {
+          file: rawProofOfVideo,
+          isVideo: true,
+        },
+        paymentRequest?.proofVideo
+      )
+
       const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
         { _id: paymentRequestId },
         { proofVideo, status: 'pending', reasonForReject: '' }

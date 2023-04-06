@@ -6,6 +6,7 @@ import {
 } from '../common/privateKeys'
 import { v2 as cloudinaryV2 } from 'cloudinary'
 import fs from 'fs'
+import { Helpers } from '../helpers'
 
 const cloudinary = cloudinaryV2
 cloudinary.config({
@@ -16,23 +17,38 @@ cloudinary.config({
   secure: true,
 })
 
-interface UploadParams {
+export interface UploadParams {
   file: { path: string } // Change the type of file to 'any' or 'Buffer'
   isVideo?: boolean
-  publicId?: string
 }
 
 class Cloudinary {
-  async upload({ file, isVideo, publicId }: UploadParams): Promise<string> {
-    let options: Record<string, unknown> = {}
-
+  /**
+   * 
+   * @param uploadParams: this is of typee Upload params. it takes in details about the new upload about to happen.
+   * @param cloudinaryUrlForPreviousAsset: This is the url of the previous asset that was uploaded. The goal is to extract the upload preset from the url
+   * Which would give us the ability to update the image instead of creating a new one. This helps us save cost.
+   * @returns 
+   */
+  async upload(
+    { file, isVideo }: UploadParams,
+    cloudinaryUrlForPreviousAsset?: string
+  ): Promise<string> {
+    let options: Record<string, unknown> = {
+      upload_preset: CLOUDINARY_UPLOAD_PRESET,
+    }
     if (isVideo) options.resource_type = 'video'
-    if (publicId) {
-      options = {
-        ...options,
-        public_id: publicId,
-        overwrite: true,
-        invalidate: true,
+    if (cloudinaryUrlForPreviousAsset) {
+      const publicId = Helpers.extractPublicIdFromURL(
+        cloudinaryUrlForPreviousAsset!
+      )
+      if (publicId) {
+        options = {
+          ...options,
+          public_id: publicId,
+          overwrite: true,
+          invalidate: true,
+        }
       }
     }
 

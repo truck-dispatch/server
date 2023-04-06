@@ -4,9 +4,12 @@ import {
   findUserBy,
   updateUserBankDetails,
 } from '../data/user/userRepository'
+import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
+import Cloudinary, { UploadParams } from '../services/Cloudinary'
 import { getUserFromReq } from '../services/JWT'
 import Paystack from '../services/Paystack'
+import User from '../types/User'
 
 class UserController {
   async getUser(req: Request, res: Response, next: NextFunction) {
@@ -54,6 +57,32 @@ class UserController {
         { _id },
         { name, account_number, bank_code, bank_name }
       )
+      return Respond.success(
+        res,
+        'Your Account Has Been Sucessfully Updated',
+        updatedUser
+      )
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async updateUserProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { firstName, lastName } = req.body
+      const { _id } = getUserFromReq(req)
+      const avatar = Helpers.extractFileFromReq(req, 'avatar')
+      const data: Partial<User> = {}
+      let avatarUrl: string
+      if (firstName) data.firstName = firstName
+      if (lastName) data.lastName = lastName
+      if (avatar) {
+        const user = await findUserBy({ _id })
+        avatarUrl = await Cloudinary.upload({ file: avatar }, user?.avatar)
+        data.avatar = avatarUrl
+      }
+
+      const updatedUser = await findAndUpdateUserBy({ _id }, data)
       return Respond.success(
         res,
         'Your Account Has Been Sucessfully Updated',

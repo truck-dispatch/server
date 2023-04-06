@@ -1,7 +1,7 @@
 export default interface ApiError {
-    response: {
-        data: {
-            message: string
-        }
+  response: {
+    data: {
+      message: string
     }
+  }
 }
