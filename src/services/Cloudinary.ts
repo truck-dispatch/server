@@ -24,11 +24,11 @@ export interface UploadParams {
 
 class Cloudinary {
   /**
-   * 
+   *
    * @param uploadParams: this is of typee Upload params. it takes in details about the new upload about to happen.
    * @param cloudinaryUrlForPreviousAsset: This is the url of the previous asset that was uploaded. The goal is to extract the upload preset from the url
    * Which would give us the ability to update the image instead of creating a new one. This helps us save cost.
-   * @returns 
+   * @returns
    */
   async upload(
     { file, isVideo }: UploadParams,
