@@ -1,3 +1,4 @@
+import { findUserBy, findAndUpdateUserBy } from '../data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes } from '../common/constants'
 import { findAndUpdateBidBy } from '../data/bid/bidRepository'
@@ -103,13 +104,19 @@ class TripController {
       const { tripId, status } = req.params
 
       const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { status })
-
+      if (status === 'completed') {
+        const user = await findUserBy({_id: updatedTrip?.transporterId})
+        const completedTrips = user?.completedTrips! + 1
+        await findAndUpdateUserBy({_id: user?._id!}, { completedTrips})
+      }
       return Respond.success(
         res,
         'Trip has been updated successfully',
         updatedTrip
       )
-    } catch (err) {}
+    } catch (err) {
+      next(err)
+    }
   }
 
   async assignTrip(req: Request, res: Response, next: NextFunction) {

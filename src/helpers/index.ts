@@ -15,7 +15,9 @@ export class Helpers {
   }
 
   static extractPublicIdFromURL(cloudinaryUrl: string) {
-    const publicIdRegex = new RegExp(`\\/v\\d+\\/${CLOUDINARY_FOLDER_NAME}\\/([^\\.]+)`)
+    const publicIdRegex = new RegExp(
+      `\\/v\\d+\\/${CLOUDINARY_FOLDER_NAME}\\/([^\\.]+)`
+    )
     const matches = cloudinaryUrl.match(publicIdRegex)
     if (matches && matches.length >= 2) {
       return matches[1]

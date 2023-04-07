@@ -43,6 +43,7 @@ class JWTMiddlewares {
       console.log(err)
     }
   }
+
   checkIsServiceBasedUserType(req: Request, res: Response, next: NextFunction) {
     try {
       const { userType } = getUserFromReq(req)
@@ -58,6 +59,7 @@ class JWTMiddlewares {
       console.log(err)
     }
   }
+
   async checkUserStatusIsVerified(
     req: Request,
     res: Response,

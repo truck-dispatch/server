@@ -36,6 +36,15 @@ const schema = new Schema(
     },
     rating: {
       type: Number,
+      default: 0,
+    },
+    noOfRatingsReceived: {
+      type: Number,
+      default: 0,
+    },
+    completedTrips: {
+      type: Number,
+      default: 0,
     },
     avatar: {
       type: String,
@@ -46,10 +55,6 @@ const schema = new Schema(
     userType: {
       type: String,
       required: true,
-    },
-    completedTrips: {
-      type: Number,
-      default: 0,
     },
   },
   { timestamps: true }

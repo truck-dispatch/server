@@ -46,7 +46,7 @@ class TripMiddlewares {
 
       next()
     } catch (err) {
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 
@@ -69,7 +69,28 @@ class TripMiddlewares {
     } catch (err) {
       // Report error to our client..
       console.log(err)
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
+    }
+  }
+
+  async checkIfUserIsAssociatedToTrip(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { tripId } = req.params
+      const user = getUserFromReq(req)
+
+      const trip = await findTripBy({ _id: tripId })
+      if (trip?.tripOwner !== user._id && trip?.transporterId !== user._id) {
+        return Respond.error(res, 'User is not associated to this trip.', 401)
+      }
+      next()
+    } catch (err) {
+      // Report error to our client..
+      console.log(err)
+      return Respond.error(res, (err as Error).message)
     }
   }
   async checkIfStatusChangeIsAccepted(
@@ -93,7 +114,7 @@ class TripMiddlewares {
     } catch (err) {
       // Report error to our client..
       console.log(err)
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 
@@ -116,7 +137,7 @@ class TripMiddlewares {
     } catch (err) {
       // Report error to our client..
       console.log(err)
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 
@@ -131,7 +152,7 @@ class TripMiddlewares {
 
       next()
     } catch (err) {
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 
@@ -179,7 +200,7 @@ class TripMiddlewares {
 
       next()
     } catch (err) {
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 }

@@ -8,6 +8,7 @@ import user from './user.routes'
 import bids from './bid.routes'
 import payment from './payment.routes'
 import externals from './externals.routes'
+import rating from './rating.routes'
 
 const router = Router()
 
@@ -18,6 +19,7 @@ router.use('/trips', trip)
 router.use('/bids', bids)
 router.use('/chat', chat)
 router.use('/payment', payment)
+router.use('/rating', rating)
 // External services required by the frontend.
 router.use('/externals', externals)
 
