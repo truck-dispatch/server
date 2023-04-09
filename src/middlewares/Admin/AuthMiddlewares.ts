@@ -38,3 +38,5 @@ class AuthMiddlewares {
     }
   }
 }
+
+export default new AuthMiddlewares()
