@@ -4,8 +4,5 @@ export default interface Chat extends Document {
   message: string
   senderId: string
   receiverId: string
-  agentId: string
-  transporterId: string
-  status?: 'success' | 'pending' | 'failed'
   readAt?: number
 }

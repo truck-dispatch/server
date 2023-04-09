@@ -1,3 +1,5 @@
+import { createChatLog, findChatLogBy, findChatLogsBy } from '../data/chatLog/chatLogRepository'
+import { findUserBy } from '../data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
 import {
   createMessage,
@@ -6,18 +8,59 @@ import {
 } from '../data/chat/chatRepository'
 import Respond from '../helpers/Respond'
 import { getConnectedUserSocketByUserId } from '../services/socket/connectedUsers.socket'
+import { getUserFromReq } from '../services/JWT'
+import { serviceBasedUserTypes, clientUserTypes } from '../common/constants'
+import ChatLogQuery from '../types/ChatLogQuery'
 
 class ChatController {
+  async createChatLog(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { clientId, transporterId } = req.body
+      const client = await findUserBy({ _id: clientId })
+      const transporter = await findUserBy({ _id: transporterId })
+      const existingChatLog = await findChatLogBy({ clientId, transporterId })
+
+      if (existingChatLog) {
+        return Respond.success(res, 'A chatlog exists', {
+          ...existingChatLog,
+          client,
+          transporter,
+        })
+      }
+
+      const newChatLog = await createChatLog({ clientId, transporterId })
+
+      return Respond.success(res, 'New chat log created.', {
+        ...newChatLog,
+        client,
+        transporter,
+      })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async getChatLogs(req: Request, res: Response, next: NextFunction) {
+    const user = getUserFromReq(req)
+    const queryParam: Partial<ChatLogQuery> = {}
+    if (serviceBasedUserTypes.includes(user.userType)) {
+      queryParam.transporterId = user._id
+    } else if (clientUserTypes.includes(user.userType)) {
+      queryParam.clientId = user._id
+    }
+
+    const chatLogs = await findChatLogsBy(queryParam);
+
+    return Respond.success(res, 'Chat logs gotten', chatLogs)
+  }
   async createChat(req: Request, res: Response, next: NextFunction) {
     try {
-      const { message, senderId, receiverId, transporterId, agentId, chatId } =
+      const { message, senderId, receiverId, chatId } =
         req.body
       const messageToSave = await createMessage({
         message,
         senderId,
         receiverId,
-        transporterId,
-        agentId,
         chatId,
       })
 

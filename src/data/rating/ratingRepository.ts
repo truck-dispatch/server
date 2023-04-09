@@ -23,10 +23,10 @@ export async function getUsersNewRating(userId: string) {
     (accumulator, currentValue) => accumulator + currentValue
   )
 
-  const average = totalRating / starRatings.length;
-  const rounded = Math.round(average * 2) / 2; // round to nearest 0.5
+  const average = totalRating / starRatings.length
+  const rounded = Math.round(average * 2) / 2 // round to nearest 0.5
   if (rounded <= 2.5) {
-    return 1;
+    return 1
   }
-  return Math.min(rounded, 5); // cap at 5
+  return Math.min(rounded, 5) // cap at 5
 }

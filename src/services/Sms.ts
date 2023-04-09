@@ -18,12 +18,12 @@ const Api = new ApiService(SMS_API_URL!)
 class Sms {
   sendOTP({
     to,
-    message_text = 'Your TruckDispatch verification code is < 123456 >. This is a one time pin and it expires in 60 minutes.',
+    message_text = 'Your TruckDispatch verification code is < 123456 >. This is a one time pin and it expires in five minutes.',
     message_type = 'NUMERIC',
     from = 'N-Alert',
     pin_attempts = 10,
     pin_length = 6,
-    pin_time_to_live = 60,
+    pin_time_to_live = 5,
     channel = 'dnd',
     pin_placeholder = '< 123456 >',
   }: SendOTPParams) {

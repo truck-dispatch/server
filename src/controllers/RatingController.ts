@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import {
   createRating,
   getUsersNewRating,
-  findRatingBy
+  findRatingBy,
 } from '../data/rating/ratingRepository'
 import { findAndUpdateUserBy, findUserBy } from '../data/user/userRepository'
 import Respond from '../helpers/Respond'
@@ -39,9 +39,9 @@ class RatingController {
 
   async getTripRating(req: Request, res: Response, next: NextFunction) {
     try {
-      const { tripId } = req.params;
+      const { tripId } = req.params
 
-      const rating = await findRatingBy({ tripId})
+      const rating = await findRatingBy({ tripId })
 
       return Respond.success(
         res,
