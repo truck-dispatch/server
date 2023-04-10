@@ -10,4 +10,10 @@ router.post(
   AuthController.registerAdmin
 )
 
+router.post(
+  '/login',
+  AuthMiddlewares.loginCredentialChecks,
+  AuthController.loginAdmin
+)
+
 export default router
