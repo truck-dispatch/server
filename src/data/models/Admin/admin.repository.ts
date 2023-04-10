@@ -10,13 +10,13 @@ export async function findAdminBy(
   param: Partial<Admin>,
   deletePassword = true
 ): Promise<Admin | null> {
-  const user = await AdminModel.findOne(param)
-  if (!user) {
+  const admin = await AdminModel.findOne(param)
+  if (!admin) {
     return null
   }
+  
+  if (!deletePassword) return admin.toObject()
 
-  if (!deletePassword) return user.toObject()
-
-  const { password, ...userWithoutPassword } = user.toObject()
-  return userWithoutPassword as unknown as Admin
+  const { password, ...adminWithoutPassword } = admin.toObject()
+  return adminWithoutPassword as unknown as Admin
 }
