@@ -17,12 +17,8 @@ router.post(
   ChatMiddlewares.checkIfResponsibleUsersAreSent,
   ChatController.createChatLog
 )
-router.get(
-  '/logs',
-  JWTMiddlewares.jwtIsValid,
-  ChatController.getChatLogs
-)
-router.get('/', JWTMiddlewares.jwtIsValid, ChatController.getChatsByUserId)
+router.get('/logs', JWTMiddlewares.jwtIsValid, ChatController.getChatLogs)
+router.get('/', JWTMiddlewares.jwtIsValid, ChatController.getUserChats)
 router.patch(
   '/read/:chatId',
   JWTMiddlewares.jwtIsValid,

@@ -4,8 +4,7 @@ import Respond from '../helpers/Respond'
 
 class ChatMiddlewares {
   checkDataForCreateMessage(req: Request, res: Response, next: NextFunction) {
-    const { message, senderId, receiverId, chatId } =
-      req.body
+    const { message, senderId, receiverId, chatId } = req.body
 
     if (!message) return Respond.error(res, 'Message was not provided', 400)
     if (!senderId)
@@ -29,12 +28,17 @@ class ChatMiddlewares {
   ) {
     try {
       const { clientId, transporterId } = req.body
-      if (!clientId || !transporterId) return Respond.error(res, 'clientId, transporterId are compulsory fields')
+      if (!clientId || !transporterId)
+        return Respond.error(
+          res,
+          'clientId, transporterId are compulsory fields'
+        )
 
-      const client = await findUserBy({_id: clientId})
+      const client = await findUserBy({ _id: clientId })
       if (!client) return Respond.error(res, 'client does not exist...')
-      const transporter = await findUserBy({_id: transporterId})
-      if (!transporter) return Respond.error(res, 'transporter does not exist...')
+      const transporter = await findUserBy({ _id: transporterId })
+      if (!transporter)
+        return Respond.error(res, 'transporter does not exist...')
 
       next()
     } catch (err) {
