@@ -105,9 +105,9 @@ class TripController {
 
       const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { status })
       if (status === 'completed') {
-        const user = await findUserBy({_id: updatedTrip?.transporterId})
+        const user = await findUserBy({ _id: updatedTrip?.transporterId })
         const completedTrips = user?.completedTrips! + 1
-        await findAndUpdateUserBy({_id: user?._id!}, { completedTrips})
+        await findAndUpdateUserBy({ _id: user?._id! }, { completedTrips })
       }
       return Respond.success(
         res,

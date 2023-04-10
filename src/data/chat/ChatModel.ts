@@ -19,14 +19,6 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    agentId: {
-      type: String,
-      required: true,
-    },
-    transporterId: {
-      type: String,
-      required: true,
-    },
     readAt: {
       type: Number,
       required: false,
