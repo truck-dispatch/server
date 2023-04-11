@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { decodeToken } from '../services/JWT'
 import { findUserBy } from '../data/user/userRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
@@ -121,6 +122,28 @@ class AuthMiddlewares {
       // Report error to our client..
       console.log(err)
       Respond.error(res, 'Something went wrong...', 500)
+    }
+  }
+
+  async checkEmailVerification(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const token = req.body.token
+      if (!token) return Respond.error(res, 'Token was not passed.')
+      const tokenDetails = decodeToken<{ _id: string; email: string }>(token)
+      const user = await findUserBy({ _id: tokenDetails._id })
+
+      if (!user) return Respond.error(res, 'User does not exist')
+
+      if (user.isEmailVerified)
+        return Respond.success(res, 'User has already been verified')
+
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message)
     }
   }
   async requestSMSChecks(req: Request, res: Response, next: NextFunction) {
