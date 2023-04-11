@@ -6,7 +6,6 @@ import User from '../types/User'
 export function generateJWT(payload: any, expiresIn = '1w') {
   return jwt.sign(payload, JWT_SECRET!, { expiresIn })
 }
-
 export function decodeToken<T>(token: string): T {
   try {
     return jwt.verify(token, JWT_SECRET!) as T

@@ -93,11 +93,11 @@ class AuthController {
       const { _id } = getUserFromReq(req)
 
       const user = await findUserBy({ _id })
-      const token = generateJWT({ email: user?.email, _id: user?._id })
+      const token = generateJWT({ email: user?.email, _id: user?._id }, '1d')
       await Mail.verifyMail(
         user?.email!,
         user?.firstName!,
-        `${FRONTEND_URL}/auth/verify-email?token=${token}`
+        `${FRONTEND_URL}/my-trips?action=verify-email&token=${token}`
       )
       return Respond.success(res, 'Email sent successfully...')
     } catch (err) {
