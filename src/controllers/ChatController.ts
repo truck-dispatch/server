@@ -12,7 +12,7 @@ import {
 } from '../data/chat/chatRepository'
 import Respond from '../helpers/Respond'
 import { getConnectedUserSocketByUserId } from '../services/socket/connectedUsers.socket'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 import { serviceBasedUserTypes, clientUserTypes } from '../common/constants'
 import ChatLogQuery from '../types/ChatLogQuery'
 import { emitMessage, emitChatLog } from '../services/socket/events.socket'
@@ -35,7 +35,7 @@ class ChatController {
 
       const newChatLog = await createChatLog({ clientId, transporterId })
 
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
       const receiverId = _id === clientId ? transporterId : clientId
       const receiverSocket = getConnectedUserSocketByUserId(receiverId)
       if (receiverSocket) {
@@ -59,7 +59,7 @@ class ChatController {
 
   async getChatLogs(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
       const queryParam: Partial<ChatLogQuery> = {}
       if (serviceBasedUserTypes.includes(user.userType)) {
         queryParam.transporterId = user._id
@@ -106,7 +106,7 @@ class ChatController {
 
   async getUserChats(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
 
       const userChats = await findMessagesById(user._id)
       return Respond.success(res, 'Messages fetched successfully', userChats)

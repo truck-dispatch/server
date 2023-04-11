@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { findBidBy } from '../data/bid/bidRepository'
 import Respond from '../helpers/Respond'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 
 class BidMiddlewares {
   async allRequiredDataToCreateBidIsAvailable(
@@ -12,7 +12,7 @@ class BidMiddlewares {
     try {
       const { price, presentLocation, driverName, truckPlateNumber, tripId } =
         req.body
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
       const bid = await findBidBy({ tripId, transporterId: _id })
       if (bid) {
         return Respond.error(
@@ -44,7 +44,7 @@ class BidMiddlewares {
     next: NextFunction
   ) {
     try {
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
       const { tripId } = req.params
       if (!tripId) return Respond.error(res, 'Trip Id was not provided')
       const bid = await findBidBy({ transporterId: _id, tripId })

@@ -11,13 +11,13 @@ import {
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 import Trip from '../types/Trip'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
       const {
         pickUpAddress,
         deliveryAddress,
@@ -55,7 +55,7 @@ class TripController {
 
   async getTrips(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
 
       const paramToFetchWith: Partial<Trip> = {}
       if (clientUserTypes.includes(user.userType)) {

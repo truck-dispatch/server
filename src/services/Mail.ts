@@ -16,7 +16,7 @@ class Mail {
     },
   })
 
-  resetPassword(to: string) {
+  requestResetPasswordPassword(to: string, name: string, verifyEmailUrl: string) {
     const mailOptions = {
       to,
       from: NO_REPLY_EMAIL_ADDRESS,

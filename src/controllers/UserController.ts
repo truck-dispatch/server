@@ -7,14 +7,14 @@ import {
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary, { UploadParams } from '../services/Cloudinary'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 import Paystack from '../services/Paystack'
 import User from '../types/User'
 
 class UserController {
   async getUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
       const user = await findUserBy({ _id })
 
       if (!user) return Respond.error(res, 'Profile not found')
@@ -28,7 +28,7 @@ class UserController {
   async addBankAccount(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, account_number, bank_code, bank_name } = req.body
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
       const updatedUser = await updateUserBankDetails(
         { _id },
         { name, account_number, bank_code, bank_name }
@@ -46,7 +46,7 @@ class UserController {
   async updateBankAccount(req: Request, res: Response, next: NextFunction) {
     try {
       const { name, account_number, bank_code, bank_name } = req.body
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
 
       const user = await findUserBy({ _id })
 
@@ -70,7 +70,7 @@ class UserController {
   async updateUserProfile(req: Request, res: Response, next: NextFunction) {
     try {
       const { firstName, lastName } = req.body
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
       const avatar = Helpers.extractFileFromReq(req, 'avatar')
       const data: Partial<User> = {}
       let avatarUrl: string

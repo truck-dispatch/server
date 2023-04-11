@@ -12,7 +12,7 @@ import { findUserBy } from '../data/user/userRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 import Paystack from '../services/Paystack'
 import ApiError from '../types/ApiError'
 
@@ -20,7 +20,7 @@ class PaymentController {
   async requestPaymentForTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const transporter = getUserFromReq(req)
+      const transporter = getUserCredentialsFromReq(req)
       const rawProofOfVideo = Helpers.extractFileFromReq(req, 'proofVideo')
       const proofVideo = await Cloudinary.upload({
         file: rawProofOfVideo,
@@ -93,7 +93,7 @@ class PaymentController {
     next: NextFunction
   ) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
 
       const paymentRequests = await findPaymentRequestsBy({
         transporterId: user._id,

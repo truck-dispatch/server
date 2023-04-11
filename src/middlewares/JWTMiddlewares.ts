@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes, serviceBasedUserTypes } from '../common/constants'
 import { findUserBy } from '../data/user/userRepository'
 import Respond from '../helpers/Respond'
-import { decodeToken, getUserFromReq } from '../services/JWT'
+import { decodeToken, getUserCredentialsFromReq } from '../services/JWT'
 import User from '../types/User'
 
 class JWTMiddlewares {
@@ -30,7 +30,7 @@ class JWTMiddlewares {
 
   checkisClientBasedUserType(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userType } = getUserFromReq(req)
+      const { userType } = getUserCredentialsFromReq(req)
 
       if (!clientUserTypes.includes(userType))
         return Respond.error(
@@ -46,7 +46,7 @@ class JWTMiddlewares {
 
   checkIsServiceBasedUserType(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userType } = getUserFromReq(req)
+      const { userType } = getUserCredentialsFromReq(req)
 
       if (!serviceBasedUserTypes.includes(userType))
         return Respond.error(
@@ -65,7 +65,7 @@ class JWTMiddlewares {
     res: Response,
     next: NextFunction
   ) {
-    const { _id } = getUserFromReq(req)
+    const { _id } = getUserCredentialsFromReq(req)
 
     const user = await findUserBy({ _id })
     if (user?.status !== 'verified') {

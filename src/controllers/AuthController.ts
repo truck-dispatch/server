@@ -8,7 +8,7 @@ import {
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { encrypt } from '../services/encrypt'
-import { decodeToken, generateJWT, getUserFromReq } from '../services/JWT'
+import { decodeToken, generateJWT, getUserCredentialsFromReq } from '../services/JWT'
 import Sms from '../services/Sms'
 import User from '../types/User'
 import { FRONTEND_URL } from '../common/privateKeys'
@@ -49,9 +49,26 @@ class AuthController {
 
       const user = await findUserBy({ email: email.toLowerCase() })
       if (!user) return Respond.error(res, 'user does not exist')
-      const jwt = generateJWT(user)
+      const jwt = generateJWT({ _id: user._id , userType: user.userType})
 
       return Respond.success(res, 'Login successful', { jwt })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async requestForgotPasswordVerification(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.body
+
+      const user = await findUserBy({ email: email.toLowerCase() })
+      if (!user) return Respond.error(res, 'user does not exist')
+
+      const token  = generateJWT({ _id: user._id , userType: user.userType}, Math.floor(Date.now() / 1000) + (60 * 10))
+
+      await Mail.requestResetPasswordPassword(email, user.firstName, `${FRONTEND_URL}/profile/reset-password?action=sign-in&token=${token}`)
+
+      return Respond.success(res, 'One time sign in email has been configured.')
     } catch (err) {
       next(err)
     }
@@ -90,7 +107,7 @@ class AuthController {
 
   async requestVerifyEmail(req: Request, res: Response, next: NextFunction) {
     try {
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
 
       const user = await findUserBy({ _id })
       const token = generateJWT({ email: user?.email, _id: user?._id }, '1d')
@@ -104,6 +121,7 @@ class AuthController {
       next(err)
     }
   }
+
   async verifyEmail(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.body.token
