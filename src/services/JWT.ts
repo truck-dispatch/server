@@ -8,7 +8,11 @@ export function generateJWT(payload: any, expiresIn = '1w') {
 }
 
 export function decodeToken<T>(token: string): T {
-  return jwt.verify(token, JWT_SECRET!) as T
+  try {
+    return jwt.verify(token, JWT_SECRET!) as T
+  } catch (err) {
+    throw new Error((err as Error).message)
+  }
 }
 
 export function getUserFromReq(req: Request) {

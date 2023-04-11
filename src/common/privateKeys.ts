@@ -14,3 +14,6 @@ export const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY!
 export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET!
 export const PAYSTACK_PRIVATE_KEY = process.env.PAYSTACK_PRIVATE_KEY
 export const CLOUDINARY_FOLDER_NAME = process.env.CLOUDINARY_FOLDER_NAME
+export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD
+export const NO_REPLY_EMAIL_ADDRESS = process.env.NO_REPLY_EMAIL_ADDRESS
+export const COMPANY_NAME = process.env.COMPANY_NAME

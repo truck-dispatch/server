@@ -37,9 +37,7 @@ class ChatController {
 
       const { _id } = getUserFromReq(req)
       const receiverId = _id === clientId ? transporterId : clientId
-      const receiverSocket = getConnectedUserSocketByUserId(
-        receiverId
-        )
+      const receiverSocket = getConnectedUserSocketByUserId(receiverId)
       if (receiverSocket) {
         // @ts-ignore
         emitChatLog(global.io, receiverSocket, {

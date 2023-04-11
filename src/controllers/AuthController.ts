@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import Mail from '../services/Mail'
 import {
   createUser,
   findAndUpdateUserBy,
@@ -7,9 +8,10 @@ import {
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { encrypt } from '../services/encrypt'
-import { generateJWT } from '../services/JWT'
+import { decodeToken, generateJWT, getUserFromReq } from '../services/JWT'
 import Sms from '../services/Sms'
 import User from '../types/User'
+import { FRONTEND_URL } from '../common/privateKeys'
 
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
@@ -81,6 +83,37 @@ class AuthController {
         { isPhoneVerified: true }
       )
       return Respond.success(res, 'Phone number verification complete')
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async requestVerifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { _id } = getUserFromReq(req)
+
+      const user = await findUserBy({ _id })
+      const token = generateJWT({ email: user?.email, _id: user?._id })
+      await Mail.verifyMail(
+        user?.email!,
+        user?.firstName!,
+        `${FRONTEND_URL}/auth/verify-email?token=${token}`
+      )
+      return Respond.success(res, 'Email sent successfully...')
+    } catch (err) {
+      next(err)
+    }
+  }
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.body.token
+      const tokenDetails = decodeToken<{ _id: string; email: string }>(token)
+
+      const updatedUser = await findAndUpdateUserBy(
+        { _id: tokenDetails._id },
+        { isEmailVerified: true }
+      )
+      return Respond.success(res, 'Email has been verified', updatedUser)
     } catch (err) {
       next(err)
     }
