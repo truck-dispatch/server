@@ -34,18 +34,13 @@ class AuthController {
         lastName,
         isEmailVerified: false,
         isPhoneVerified: false,
-        // TODO: remove before deploy
-        fromFirebase: true,
       } as User
 
       if (status) data.status = status as User['status']
       await createUser(data)
-      let smsData
-      if (!data.fromFirebase) {
-        smsData = await Sms.sendOTP({
+      const smsData = await Sms.sendOTP({
           to: formattedPhone,
         })
-      }
       return Respond.success(res, 'User created successfully...', smsData)
     } catch (err) {
       next(err)

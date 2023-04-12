@@ -57,6 +57,7 @@ class Cloudinary {
       return result.secure_url!
     } catch (err) {
       // TODO: check format of error
+      console.log(err)
       // @ts-ignore
       throw new Error(err.message)
     } finally {
