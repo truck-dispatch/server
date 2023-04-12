@@ -17,10 +17,8 @@ class Mail {
   })
 
   portFromFirebase(to: string, name: string, url: string) {
-    try {} catch (err) {
-      console.log('error:',err)
-    }
-    const template = `<!DOCTYPE html>
+    try {
+      const template = `<!DOCTYPE html>
     <html>
     <head>
       <title>Reset Password</title>
@@ -43,22 +41,26 @@ class Mail {
     </body>
     </html>
     `
-    const mailOptions = {
-      to,
-      from: NO_REPLY_EMAIL_ADDRESS,
-      subject: 'Reset Password',
-      html: template,
-    }
+      const mailOptions = {
+        to,
+        from: NO_REPLY_EMAIL_ADDRESS,
+        subject: 'Reset Password',
+        html: template,
+      }
 
-    return this.transport.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log(err)
-        return Promise.reject(err)
-      } else return Promise.resolve(info)
-    })
+      return this.transport.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.log(err)
+          return Promise.reject(err)
+        } else return Promise.resolve(info)
+      })
+    } catch (err) {
+      console.log('error:', err)
+    }
   }
   requestResetPassword(to: string, name: string, url: string) {
-    const template = `<!DOCTYPE html>
+    try {
+      const template = `<!DOCTYPE html>
     <html>
     <head>
       <title>Reset Password</title>
@@ -81,23 +83,27 @@ class Mail {
     </body>
     </html>
     `
-    const mailOptions = {
-      to,
-      from: NO_REPLY_EMAIL_ADDRESS,
-      subject: 'Reset Password',
-      html: template,
-    }
+      const mailOptions = {
+        to,
+        from: NO_REPLY_EMAIL_ADDRESS,
+        subject: 'Reset Password',
+        html: template,
+      }
 
-    return this.transport.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log(err)
-        return Promise.reject(err)
-      } else return Promise.resolve(info)
-    })
+      return this.transport.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.log(err)
+          return Promise.reject(err)
+        } else return Promise.resolve(info)
+      })
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   verifyMail(to: string, name: string, verifyEmailUrl: string) {
-    const template = `<!DOCTYPE html>
+    try {
+      const template = `<!DOCTYPE html>
     <html>
     <head>
       <title>Verify Email</title>
@@ -120,18 +126,21 @@ class Mail {
     </html>
     `
 
-    const mailOptions = {
-      to,
-      from: NO_REPLY_EMAIL_ADDRESS,
-      subject: 'Verify Email',
-      html: template,
+      const mailOptions = {
+        to,
+        from: NO_REPLY_EMAIL_ADDRESS,
+        subject: 'Verify Email',
+        html: template,
+      }
+      return this.transport.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.log(err)
+          return Promise.reject(err)
+        } else return Promise.resolve(info)
+      })
+    } catch (err) {
+      console.log(err)
     }
-    return this.transport.sendMail(mailOptions, (err, info) => {
-      if (err) {
-        console.log(err)
-        return Promise.reject(err)
-      } else return Promise.resolve(info)
-    })
   }
 }
 
