@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { encrypt } from '../services/encrypt'
 import {
   findAndUpdateUserBy,
   findUserBy,
@@ -88,6 +89,23 @@ class UserController {
         'Your Account Has Been Sucessfully Updated',
         updatedUser
       )
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async changePassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { _id } = getUserCredentialsFromReq(req)
+
+      const { password } = req.body
+      const decodedPassword = await encrypt(password)
+
+      const updatedUser = await findAndUpdateUserBy(
+        { _id },
+        { password: decodedPassword }
+      )
+      return Respond.success(res, 'Password has been updated', updatedUser)
     } catch (err) {
       next(err)
     }

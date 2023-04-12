@@ -17,6 +17,6 @@ export function decodeToken<T>(token: string): T {
 export function getUserCredentialsFromReq(req: Request) {
   const token = req.headers.authorization?.split(' ')[1]
   const { _id, userType } = decodeToken<User>(token!)
-  
+
   return { _id, userType }
 }
