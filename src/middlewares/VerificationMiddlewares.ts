@@ -1,8 +1,9 @@
+import { findUserBy } from '../data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
 import { findVerificationBy } from '../data/verification/verificationRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 
 class VerificationMiddlewares {
   async checkVerificationSubmitDetails(
@@ -11,15 +12,16 @@ class VerificationMiddlewares {
     next: NextFunction
   ) {
     try {
-      const user = getUserFromReq(req)
-      if (user.status === 'verified' || user.userType === 'agent') {
+      const { _id } = getUserCredentialsFromReq(req)
+      const user = await findUserBy({ _id })
+      if (user?.status === 'verified' || user?.userType === 'agent') {
         return Respond.error(
           res,
           'User has either been verified, or is not allowed to partake in verification'
         )
       }
 
-      const verification = await findVerificationBy({ userId: user._id })
+      const verification = await findVerificationBy({ userId: user?._id })
 
       if (verification)
         return Respond.error(
@@ -60,12 +62,13 @@ class VerificationMiddlewares {
     next: NextFunction
   ) {
     try {
-      const user = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
+      const user = await findUserBy({ _id })
 
-      if (user.status === 'verified')
+      if (user?.status === 'verified')
         return Respond.error(res, 'User has already been verified', 400)
 
-      const verification = await findVerificationBy({ userId: user._id })
+      const verification = await findVerificationBy({ userId: user?._id })
 
       if (!verification)
         return Respond.error(res, 'User has not submitted a verification yet. ')
