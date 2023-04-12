@@ -29,6 +29,7 @@ class Mail {
       <p style="text-align: left;">Dear ${name},</p>
       <p style="text-align: left;">The ${COMPANY_NAME} development team recently underwent a database change. Due to that, previous passwords have been lost. To regain access to your dashboard, click this link to sign into your account and reset your password:</p>
     
+    
       <div style="text-align: left;">
         <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 4px; font-weight: bold;">Reset your password</a>
       </div>
