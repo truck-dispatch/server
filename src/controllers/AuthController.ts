@@ -76,7 +76,7 @@ class AuthController {
 
       const token = generateJWT(
         { _id: user._id, userType: user.userType },
-        Math.floor(Date.now() / 1000) + 60 * 10
+        '10m'
       )
 
       await Mail.requestResetPassword(
@@ -129,7 +129,7 @@ class AuthController {
       const user = await findUserBy({ _id })
       const token = generateJWT(
         { email: user?.email, _id: user?._id },
-        Math.floor(Date.now() / 1000) + 60 * 10
+        '10m'
       )
       await Mail.verifyMail(
         user?.email!,

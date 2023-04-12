@@ -138,9 +138,6 @@ class AuthMiddlewares {
 
       if (!user) return Respond.error(res, 'User does not exist')
 
-      if (user.isEmailVerified)
-        return Respond.success(res, 'User has already been verified')
-
       next()
     } catch (err) {
       return Respond.error(res, (err as Error).message)

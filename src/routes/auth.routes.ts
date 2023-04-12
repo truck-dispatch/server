@@ -33,6 +33,7 @@ router.post('/request-email-verification', JWTMiddlewares.jwtIsValid, AuthContro
 router.post('/request-reset-password', AuthController.requestResetPasswordLink)
 router.post(
   '/verify-email',
+  JWTMiddlewares.jwtIsValid,
   AuthMiddlewares.checkEmailVerification,
   AuthController.verifyEmail
 )
