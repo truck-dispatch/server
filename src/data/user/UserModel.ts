@@ -56,6 +56,9 @@ const schema = new Schema(
       type: String,
       required: true,
     },
+    fromFirebase: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 )

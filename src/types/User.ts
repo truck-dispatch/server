@@ -22,4 +22,5 @@ export default interface User {
   password: string
   isEmailVerified: boolean
   isPhoneVerified: boolean
+  fromFirebase: boolean
 }

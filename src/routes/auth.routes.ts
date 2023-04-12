@@ -29,7 +29,11 @@ router.post(
   AuthController.requestSmsVerificationCode
 )
 
-router.post('/request-email-verification', JWTMiddlewares.jwtIsValid, AuthController.requestVerifyEmail)
+router.post(
+  '/request-email-verification',
+  JWTMiddlewares.jwtIsValid,
+  AuthController.requestVerifyEmail
+)
 router.post('/request-reset-password', AuthController.requestResetPasswordLink)
 router.post(
   '/verify-email',

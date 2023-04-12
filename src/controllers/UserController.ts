@@ -103,7 +103,7 @@ class UserController {
 
       const updatedUser = await findAndUpdateUserBy(
         { _id },
-        { password: decodedPassword }
+        { password: decodedPassword, fromFirebase: false }
       )
       return Respond.success(res, 'Password has been updated', updatedUser)
     } catch (err) {

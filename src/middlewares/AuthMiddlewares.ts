@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
-import { decodeToken } from '../services/JWT'
-import { findUserBy } from '../data/user/userRepository'
+import { decodeToken, generateJWT } from '../services/JWT'
+import { findAndUpdateUserBy, findUserBy } from '../data/user/userRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { compareHashAndPassword } from '../services/encrypt'
 import Sms from '../services/Sms'
+import Mail from '../services/Mail'
+import { FRONTEND_URL } from '../common/privateKeys'
 
 class AuthMiddlewares {
   async registrationCredentialChecks(
@@ -67,6 +69,23 @@ class AuthMiddlewares {
           res,
           'A user with this email does not exist in our database',
           400
+        )
+      }
+      // TODO: remove this line of code when all users from firebase have migrated away from firebase.
+      if (user.fromFirebase) {
+        const token = generateJWT(
+          { _id: user._id, userType: user.userType },
+          '1d'
+        )
+        await Mail.portFromFirebase(
+          user.email,
+          user.firstName,
+          `${FRONTEND_URL}/profile/manage-password?action=sign-in&token=${token}&isPhoneVerified=${user.isPhoneVerified}`
+        )
+        await findAndUpdateUserBy({ _id: user._id }, { isEmailVerified: true })
+        return Respond.error(
+          res,
+          'Login directions have been sent to your email'
         )
       }
       const passwordsMatch = await compareHashAndPassword(

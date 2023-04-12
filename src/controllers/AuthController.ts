@@ -34,6 +34,8 @@ class AuthController {
         lastName,
         isEmailVerified: false,
         isPhoneVerified: false,
+        // TODO: remove before deploy
+        fromFirebase: true,
       } as User
 
       if (status) data.status = status as User['status']
@@ -127,10 +129,7 @@ class AuthController {
       const { _id } = getUserCredentialsFromReq(req)
 
       const user = await findUserBy({ _id })
-      const token = generateJWT(
-        { email: user?.email, _id: user?._id },
-        '10m'
-      )
+      const token = generateJWT({ email: user?.email, _id: user?._id }, '10m')
       await Mail.verifyMail(
         user?.email!,
         user?.firstName!,
