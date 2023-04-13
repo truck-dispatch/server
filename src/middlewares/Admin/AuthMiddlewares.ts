@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { Helpers } from '../../helpers'
 import Respond from '../../helpers/Respond'
-import { findAdminBy } from '../../data/models/Admin/admin.repository'
+import { findAdminBy } from '../../data/Admin/adminRepository'
 import { compareHashAndPassword } from '../../services/encrypt'
 
 class AuthMiddlewares {

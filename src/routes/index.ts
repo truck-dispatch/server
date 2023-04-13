@@ -19,7 +19,7 @@ router.use('/trips', trip)
 router.use('/bids', bids)
 router.use('/chat', chat)
 router.use('/payment', payment)
-router.use('/admin/auth', admin)
+router.use('/admin', admin)
 // External services required by the frontend.
 router.use('/externals', externals)
 

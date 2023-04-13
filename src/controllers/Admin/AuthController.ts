@@ -5,7 +5,7 @@ import Respond from '../../helpers/Respond'
 import {
   createAdmin,
   findAdminBy,
-} from '../../data/models/Admin/admin.repository'
+} from '../../data/Admin/adminRepository'
 import { generateJWT } from '../../services/JWT'
 
 class AuthController {

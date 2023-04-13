@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import Admin from "../../../types/Admin"
+import Admin from "../../types/Admin"
 
 const schema = new Schema(
     {
