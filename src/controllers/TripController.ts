@@ -1,23 +1,23 @@
+import { findUserBy, findAndUpdateUserBy } from '../data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes } from '../common/constants'
-import { findAndUpdateBidBy } from '../data/models/Bid/bid.repository'
-import { createPayment } from '../data/models/Payment/payment.repository'
+import { findAndUpdateBidBy } from '../data/bid/bidRepository'
+import { createPayment } from '../data/payment/paymentRepository'
 import {
   createTrip,
   findAndUpdateTripBy,
-  findTripBy,
   findTripsBy,
-} from '../data/models/Trip/trip.repository'
+} from '../data/trip/tripRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 import Trip from '../types/Trip'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
       const {
         pickUpAddress,
         deliveryAddress,
@@ -55,7 +55,7 @@ class TripController {
 
   async getTrips(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
 
       const paramToFetchWith: Partial<Trip> = {}
       if (clientUserTypes.includes(user.userType)) {
@@ -102,11 +102,21 @@ class TripController {
   async changeTripStatus(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId, status } = req.params
-      
-      const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { status })
 
-      return Respond.success(res, 'Trip has been updated successfully', updatedTrip)
-    } catch (err) {}
+      const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { status })
+      if (status === 'completed') {
+        const user = await findUserBy({ _id: updatedTrip?.transporterId })
+        const completedTrips = user?.completedTrips! + 1
+        await findAndUpdateUserBy({ _id: user?._id! }, { completedTrips })
+      }
+      return Respond.success(
+        res,
+        'Trip has been updated successfully',
+        updatedTrip
+      )
+    } catch (err) {
+      next(err)
+    }
   }
 
   async assignTrip(req: Request, res: Response, next: NextFunction) {

@@ -1,25 +1,26 @@
+import { AxiosError } from 'axios'
 import { NextFunction, Request, Response } from 'express'
-import { findBidBy } from '../data/models/Bid/bid.repository'
+import { findBidBy } from '../data/bid/bidRepository'
 import {
   createPaymentRequest,
   findAndUpdatePaymentRequestBy,
   findPaymentRequestBy,
   findPaymentRequestsBy,
-} from '../data/models/PaymentRequest/payment-request.repository'
-import { findTripBy } from '../data/models/Trip/trip.repository'
-import { findUserBy } from '../data/models/User/user.repository'
+} from '../data/paymentRequest/paymentRequestRepository'
+import { findTripBy } from '../data/trip/tripRepository'
+import { findUserBy } from '../data/user/userRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 import Paystack from '../services/Paystack'
-import Sms from '../services/Sms'
+import ApiError from '../types/ApiError'
 
 class PaymentController {
   async requestPaymentForTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const transporter = getUserFromReq(req)
+      const transporter = getUserCredentialsFromReq(req)
       const rawProofOfVideo = Helpers.extractFileFromReq(req, 'proofVideo')
       const proofVideo = await Cloudinary.upload({
         file: rawProofOfVideo,
@@ -92,7 +93,7 @@ class PaymentController {
     next: NextFunction
   ) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
 
       const paymentRequests = await findPaymentRequestsBy({
         transporterId: user._id,
@@ -146,8 +147,8 @@ class PaymentController {
         amount: Helpers.nairaToKobo(paymentRequest?.amount!),
       }
 
-      await Paystack.makeTransfer(transferData).catch((err) => {
-        throw new Error(err.response.data.message)
+      await Paystack.makeTransfer(transferData).catch((err: ApiError) => {
+        throw new Error(err.response?.data?.message)
       })
 
       const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
@@ -173,14 +174,16 @@ class PaymentController {
       const paymentRequest = await findPaymentRequestBy({
         _id: paymentRequestId,
       })
-      const publicId = Helpers.extractPublicIdFromURL(paymentRequest?.proofVideo!)
 
       const rawProofOfVideo = Helpers.extractFileFromReq(req, 'proofVideo')
-      const proofVideo = await Cloudinary.upload({
-        file: rawProofOfVideo,
-        isVideo: true,
-        publicId,
-      })
+      const proofVideo = await Cloudinary.upload(
+        {
+          file: rawProofOfVideo,
+          isVideo: true,
+        },
+        paymentRequest?.proofVideo
+      )
+
       const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
         { _id: paymentRequestId },
         { proofVideo, status: 'pending', reasonForReject: '' }

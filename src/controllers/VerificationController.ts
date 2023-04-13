@@ -1,21 +1,21 @@
 import { NextFunction, Request, Response } from 'express'
-import { findAndUpdateUserBy } from '../data/models/User/user.repository'
+import { findAndUpdateUserBy } from '../data/user/userRepository'
 import {
   createVerification,
   findAndUpdateVerificationBy,
   findVerificationBy,
-} from '../data/models/Verification/verification.repository'
+} from '../data/verification/verificationRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import Cloudinary from '../services/Cloudinary'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 import Verification from '../types/Verification'
 
 class VerificationController {
   async submitVerification(req: Request, res: Response, next: NextFunction) {
     try {
       const data = await extractedVerificationData(req)
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
       const verificationResponse = await createVerification({
         ...data,
         userId: user._id,
@@ -37,7 +37,7 @@ class VerificationController {
 
   async getVerification(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
 
       const verificationResponse = await findVerificationBy({
         userId: user._id,
@@ -58,7 +58,7 @@ class VerificationController {
   async updateVerification(req: Request, res: Response, next: NextFunction) {
     try {
       let verificationData = await extractedVerificationData(req)
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
       const prevVerification = await findVerificationBy({ userId: user?._id })
       if (verificationData.guarantor) {
         verificationData.guarantor = {

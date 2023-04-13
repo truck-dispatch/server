@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import Bid from '../../../types/Bid'
+import Bid from '../../types/Bid'
 
 const schema = new Schema(
   {

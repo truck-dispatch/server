@@ -7,7 +7,9 @@ export default interface User {
   lastName: string
   email: string
   phone: string
-  avatar?: string | File
+  avatar?: string
+  noOfRatingsReceived?: number
+  completedTrips?: number
   userType: (typeof userTypes)[number]
   status?:
     | 'pending_verification'
@@ -20,4 +22,5 @@ export default interface User {
   password: string
   isEmailVerified: boolean
   isPhoneVerified: boolean
+  fromFirebase: boolean
 }

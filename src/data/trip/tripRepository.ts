@@ -1,6 +1,6 @@
-import NewTrip from '../../../types/NewTrip'
-import Trip from '../../../types/Trip'
-import { findUserBy } from '../User/user.repository'
+import NewTrip from '../../types/NewTrip'
+import Trip from '../../types/Trip'
+import { findUserBy } from '../user/userRepository'
 import { TripModel } from './TripModel'
 
 export async function createTrip(trip: NewTrip) {

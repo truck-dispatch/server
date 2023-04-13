@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import User from '../../../types/User'
+import User from '../../types/User'
 
 const schema = new Schema(
   {
@@ -36,6 +36,15 @@ const schema = new Schema(
     },
     rating: {
       type: Number,
+      default: 0,
+    },
+    noOfRatingsReceived: {
+      type: Number,
+      default: 0,
+    },
+    completedTrips: {
+      type: Number,
+      default: 0,
     },
     avatar: {
       type: String,
@@ -47,9 +56,8 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    completedTrips: {
-      type: Number,
-      default: 0,
+    fromFirebase: {
+      type: Boolean,
     },
   },
   { timestamps: true }

@@ -1,9 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
-import { findUserBy } from '../data/models/User/user.repository'
+import { decodeToken, generateJWT } from '../services/JWT'
+import { findAndUpdateUserBy, findUserBy } from '../data/user/userRepository'
 import { Helpers } from '../helpers'
 import Respond from '../helpers/Respond'
 import { compareHashAndPassword } from '../services/encrypt'
 import Sms from '../services/Sms'
+import Mail from '../services/Mail'
+import { FRONTEND_URL } from '../common/privateKeys'
 
 class AuthMiddlewares {
   async registrationCredentialChecks(
@@ -68,6 +71,23 @@ class AuthMiddlewares {
           400
         )
       }
+      // TODO: remove this line of code when all users from firebase have migrated away from firebase.
+      if (user.fromFirebase) {
+        const token = generateJWT(
+          { _id: user._id, userType: user.userType },
+          '1d'
+        )
+        await Mail.portFromFirebase(
+          user.email,
+          user.firstName,
+          `${FRONTEND_URL}/profile/manage-password?action=sign-in&token=${token}&isPhoneVerified=${user.isPhoneVerified}`
+        )
+        await findAndUpdateUserBy({ _id: user._id }, { isEmailVerified: true })
+        return Respond.error(
+          res,
+          'Login directions have been sent to your email'
+        )
+      }
       const passwordsMatch = await compareHashAndPassword(
         user.password,
         password
@@ -121,6 +141,25 @@ class AuthMiddlewares {
       // Report error to our client..
       console.log(err)
       Respond.error(res, 'Something went wrong...', 500)
+    }
+  }
+
+  async checkEmailVerification(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const token = req.body.token
+      if (!token) return Respond.error(res, 'Token was not passed.')
+      const tokenDetails = decodeToken<{ _id: string; email: string }>(token)
+      const user = await findUserBy({ _id: tokenDetails._id })
+
+      if (!user) return Respond.error(res, 'User does not exist')
+
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message)
     }
   }
   async requestSMSChecks(req: Request, res: Response, next: NextFunction) {

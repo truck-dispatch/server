@@ -4,9 +4,9 @@ import {
   findAndUpdateBidBy,
   findBidBy,
   findBidsBy,
-} from '../data/models/Bid/bid.repository'
+} from '../data/bid/bidRepository'
 import Respond from '../helpers/Respond'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 
 class BidController {
   async createBid(req: Request, res: Response, next: NextFunction) {
@@ -19,7 +19,7 @@ class BidController {
         truckPlateNumber,
         tripId,
       } = req.body
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
       const bidResponse = await createBid({
         extraNotes,
         price,
@@ -42,7 +42,7 @@ class BidController {
 
   async updateBid(req: Request, res: Response, next: NextFunction) {
     try {
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
       const bidResponse = await findAndUpdateBidBy(
         { transporterId: _id, tripId: req.body.tripId },
         req.body
@@ -70,7 +70,7 @@ class BidController {
     next: NextFunction
   ) {
     try {
-      const { _id } = getUserFromReq(req)
+      const { _id } = getUserCredentialsFromReq(req)
       const { tripId } = req.params
       const bidResponse = await findBidBy({
         tripId: tripId,

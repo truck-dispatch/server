@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import { tripStatus } from '../common/constants'
-import { findTripBy } from '../data/models/Trip/trip.repository'
-import { findUserBy } from '../data/models/User/user.repository'
+import { findTripBy } from '../data/trip/tripRepository'
+import { findUserBy } from '../data/user/userRepository'
 import Respond from '../helpers/Respond'
-import { getUserFromReq } from '../services/JWT'
+import { getUserCredentialsFromReq } from '../services/JWT'
 
 class TripMiddlewares {
   canCreateTrip(req: Request, res: Response, next: NextFunction) {
@@ -46,13 +46,13 @@ class TripMiddlewares {
 
       next()
     } catch (err) {
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 
   async isTripCreator(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
       const { tripId } = req.params
 
       if (!tripId) return Respond.error(res, 'Trip ID was not provided', 400)
@@ -69,12 +69,36 @@ class TripMiddlewares {
     } catch (err) {
       // Report error to our client..
       console.log(err)
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
-  async checkIfStatusChangeIsAccepted(req: Request, res: Response, next: NextFunction) {
+
+  async checkIfUserIsAssociatedToTrip(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
-      
+      const { tripId } = req.params
+      const user = getUserCredentialsFromReq(req)
+
+      const trip = await findTripBy({ _id: tripId })
+      if (trip?.tripOwner !== user._id && trip?.transporterId !== user._id) {
+        return Respond.error(res, 'User is not associated to this trip.', 401)
+      }
+      next()
+    } catch (err) {
+      // Report error to our client..
+      console.log(err)
+      return Respond.error(res, (err as Error).message)
+    }
+  }
+  async checkIfStatusChangeIsAccepted(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
       const { tripId, status } = req.params
       const statusIndex = tripStatus.findIndex((s) => status === s)
       if (statusIndex === -1) {
@@ -86,18 +110,17 @@ class TripMiddlewares {
       if (presentStatusIndex > statusIndex)
         return Respond.error(res, 'Trip is past this status stage')
 
-
       next()
     } catch (err) {
       // Report error to our client..
       console.log(err)
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 
   async isTripTransporter(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = getUserFromReq(req)
+      const user = getUserCredentialsFromReq(req)
       const { tripId } = req.params
 
       if (!tripId) return Respond.error(res, 'Trip ID was not provided', 400)
@@ -114,7 +137,7 @@ class TripMiddlewares {
     } catch (err) {
       // Report error to our client..
       console.log(err)
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 
@@ -129,7 +152,7 @@ class TripMiddlewares {
 
       next()
     } catch (err) {
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 
@@ -177,7 +200,7 @@ class TripMiddlewares {
 
       next()
     } catch (err) {
-      Respond.error(res, (err as Error).message)
+      return Respond.error(res, (err as Error).message)
     }
   }
 }

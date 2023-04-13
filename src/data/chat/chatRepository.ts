@@ -1,4 +1,5 @@
-import Chat from '../../../types/Chat'
+import { ObjectId } from 'mongodb'
+import Chat from '../../types/Chat'
 import { ChatModel } from './ChatModel'
 
 export async function createMessage(message: Partial<Chat>) {
@@ -6,12 +7,19 @@ export async function createMessage(message: Partial<Chat>) {
   return data.save()
 }
 
-export async function getMessagesById(userId: string) {
+export async function findMessagesById(userId: string) {
   const chatsSentByMe = await ChatModel.find({ senderId: userId })
   const chatsSentToMe = await ChatModel.find({ receiverId: userId })
   return [...chatsSentByMe, ...chatsSentToMe]
 }
 
+export async function findLastMessage(chatId: ObjectId) {
+  const lastMessage = await ChatModel.findOne({ chatId }).sort({
+    createdAt: -1,
+  })
+  if (!lastMessage) return null
+  return lastMessage
+}
 export async function updateMessageById(chatId: string, data: Partial<Chat>) {
   return ChatModel.findOneAndUpdate({ _id: chatId }, data)
 }

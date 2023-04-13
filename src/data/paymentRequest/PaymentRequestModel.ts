@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import PaymentRequest from '../../../types/PaymentRequest'
+import PaymentRequest from '../../types/PaymentRequest'
 
 const schema = new Schema(
   {

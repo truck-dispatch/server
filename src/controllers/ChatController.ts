@@ -1,23 +1,88 @@
+import {
+  createChatLog,
+  findChatLogBy,
+  findChatLogsBy,
+} from '../data/chatLog/chatLogRepository'
+import { findUserBy } from '../data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
 import {
   createMessage,
-  getMessagesById,
+  findMessagesById,
   updateMessageById,
-} from '../data/models/Chat/chat.repository'
+} from '../data/chat/chatRepository'
 import Respond from '../helpers/Respond'
 import { getConnectedUserSocketByUserId } from '../services/socket/connectedUsers.socket'
+import { getUserCredentialsFromReq } from '../services/JWT'
+import { serviceBasedUserTypes, clientUserTypes } from '../common/constants'
+import ChatLogQuery from '../types/ChatLogQuery'
+import { emitMessage, emitChatLog } from '../services/socket/events.socket'
 
 class ChatController {
+  async createChatLog(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { clientId, transporterId } = req.body
+      const client = await findUserBy({ _id: clientId })
+      const transporter = await findUserBy({ _id: transporterId })
+      const existingChatLog = await findChatLogBy({ clientId, transporterId })
+
+      if (existingChatLog) {
+        return Respond.success(res, 'A chatlog exists', {
+          ...existingChatLog,
+          client,
+          transporter,
+        })
+      }
+
+      const newChatLog = await createChatLog({ clientId, transporterId })
+
+      const { _id } = getUserCredentialsFromReq(req)
+      const receiverId = _id === clientId ? transporterId : clientId
+      const receiverSocket = getConnectedUserSocketByUserId(receiverId)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitChatLog(global.io, receiverSocket, {
+          ...newChatLog,
+          client,
+          transporter,
+        })
+      }
+
+      return Respond.success(res, 'New chat log created.', {
+        ...newChatLog,
+        client,
+        transporter,
+      })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async getChatLogs(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = getUserCredentialsFromReq(req)
+      const queryParam: Partial<ChatLogQuery> = {}
+      if (serviceBasedUserTypes.includes(user.userType)) {
+        queryParam.transporterId = user._id
+      } else if (clientUserTypes.includes(user.userType)) {
+        queryParam.clientId = user._id
+      }
+
+      const chatLogs = await findChatLogsBy(queryParam)
+
+      return Respond.success(res, 'Chat logs gotten', chatLogs)
+    } catch (err) {
+      next(err)
+    }
+  }
+
   async createChat(req: Request, res: Response, next: NextFunction) {
     try {
-      const { message, senderId, receiverId, transporterId, agentId, chatId } =
-        req.body
+      const { message, senderId, receiverId, chatId } = req.body
+
       const messageToSave = await createMessage({
         message,
         senderId,
         receiverId,
-        transporterId,
-        agentId,
         chatId,
       })
 
@@ -27,7 +92,7 @@ class ChatController {
 
       if (receiverSocket) {
         // @ts-ignore
-        global.io?.to(receiverSocket).emit('message', messageToSave)
+        emitMessage(global.io, receiverSocket, messageToSave)
       }
       return Respond.success(
         res,
@@ -39,12 +104,11 @@ class ChatController {
     }
   }
 
-  async getChatsByUserId(req: Request, res: Response, next: NextFunction) {
+  async getUserChats(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId } = req.params
+      const user = getUserCredentialsFromReq(req)
 
-      const userChats = await getMessagesById(userId)
-
+      const userChats = await findMessagesById(user._id)
       return Respond.success(res, 'Messages fetched successfully', userChats)
     } catch (err) {
       next(err)
