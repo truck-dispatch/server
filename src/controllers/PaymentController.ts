@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import { NextFunction, Request, Response } from 'express'
 import { findBidBy } from '../data/bid/bidRepository'
 import {
@@ -32,8 +31,8 @@ class PaymentController {
         tripId,
       })
       const trip = await findTripBy({ _id: tripId })
-
-      const paymentRequestRespond = await createPaymentRequest({
+      if (!bid) return Respond.error(res, 'bid does not exist')
+      const paymentRequestResponse = await createPaymentRequest({
         vehicle: {
           // TODO: add driver phone number
           driver: {
@@ -48,13 +47,13 @@ class PaymentController {
         tripReference: trip?.reference!,
         reference: Helpers.generateReference(),
         paymentReference: Helpers.generateUuid(),
-        amount: 1000,
+        amount: bid.amount,
       })
 
       return Respond.success(
         res,
         'Payment request created.',
-        paymentRequestRespond
+        paymentRequestResponse
       )
     } catch (err) {
       next(err)
@@ -155,7 +154,6 @@ class PaymentController {
         { _id: paymentRequestId },
         { status: 'completed' }
       )
-      // await sms.
 
       return Respond.success(
         res,
