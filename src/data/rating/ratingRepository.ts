@@ -1,4 +1,4 @@
-import Rating from '../../types/Rating'
+import Rating from 'interfaces/Rating'
 import { RatingModel } from './RatingModel'
 
 interface CreateRatingBody extends Omit<Rating, '_id'> {

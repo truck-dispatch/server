@@ -1,6 +1,15 @@
 {
     "compilerOptions": {
       "baseUrl": "./src",
+      "paths": {
+        "@common/*": ["common/*"],
+        "@controllers/*": ["controllers/*"],
+        "@helpers/*": ["helpers/*"],
+        "@services/*": ["services/*"],
+        "@interfaces/*": ["interfaces/*"],
+        "@middlewares/*": ["middlewares/*"],
+        "@data/*": ["data/*"],
+      },
       "target": "es6",
       "module": "commonjs",
       "outDir": "./dist",

@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import Verification from '../../types/Verification'
+import Verification from 'interfaces/Verification'
 
 const schema = new Schema(
   {

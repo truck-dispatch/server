@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import ExternalServicesController from '../controllers/ExternalServicesController'
+import ExternalServicesController from '@controllers/ExternalServicesController'
 
 const router = Router()
 

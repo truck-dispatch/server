@@ -1,6 +1,6 @@
-import { findUserBy } from '../data/user/userRepository'
+import { findUserBy } from '@data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
-import Respond from '../helpers/Respond'
+import Respond from '@helpers/Respond'
 
 class ChatMiddlewares {
   checkDataForCreateMessage(req: Request, res: Response, next: NextFunction) {

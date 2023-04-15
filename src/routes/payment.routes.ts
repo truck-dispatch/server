@@ -1,9 +1,9 @@
 import { Router } from 'express'
-import PaymentController from '../controllers/PaymentController'
-import multerInstance from '../helpers/multerInstance'
-import JWTMiddlewares from '../middlewares/JWTMiddlewares'
-import PaymentMiddlewares from '../middlewares/PaymentMiddlewares'
-import TripMiddlewares from '../middlewares/TripMiddlewares'
+import PaymentController from '@controllers/PaymentController'
+import multerInstance from '@helpers/multerInstance'
+import JWTMiddlewares from '@middlewares/JWTMiddlewares'
+import PaymentMiddlewares from '@middlewares/PaymentMiddlewares'
+import TripMiddlewares from '@middlewares/TripMiddlewares'
 
 const router = Router()
 

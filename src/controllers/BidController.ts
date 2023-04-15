@@ -4,9 +4,9 @@ import {
   findAndUpdateBidBy,
   findBidBy,
   findBidsBy,
-} from '../data/bid/bidRepository'
-import Respond from '../helpers/Respond'
-import { getUserCredentialsFromReq } from '../services/JWT'
+} from '@data/bid/bidRepository'
+import Respond from '@helpers/Respond'
+import { getUserCredentialsFromReq } from '@services/JWT'
 
 class BidController {
   async createBid(req: Request, res: Response, next: NextFunction) {

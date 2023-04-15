@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import { clientUserTypes, serviceBasedUserTypes } from '../common/constants'
-import { findUserBy } from '../data/user/userRepository'
-import Respond from '../helpers/Respond'
-import { decodeToken, getUserCredentialsFromReq } from '../services/JWT'
-import User from '../types/User'
+import { clientUserTypes, serviceBasedUserTypes } from '@common/constants'
+import { findUserBy } from '@data/user/userRepository'
+import Respond from '@helpers/Respond'
+import { decodeToken, getUserCredentialsFromReq } from '@services/JWT'
+import User from 'interfaces/User'
 
 class JWTMiddlewares {
   async jwtIsValid(req: Request, res: Response, next: NextFunction) {

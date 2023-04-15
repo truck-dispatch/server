@@ -1,12 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import { encrypt } from '../../services/encrypt'
-import Admin from '../../types/Admin'
-import Respond from '../../helpers/Respond'
-import {
-  createAdmin,
-  findAdminBy,
-} from '../../data/Admin/adminRepository'
-import { generateJWT } from '../../services/JWT'
+import { encrypt } from '@services/encrypt'
+import Admin from 'interfaces/Admin'
+import Respond from '@helpers/Respond'
+import { createAdmin, findAdminBy } from '@data/Admin/adminRepository'
+import { generateJWT } from '@services/JWT'
 
 class AuthController {
   async registerAdmin(req: Request, res: Response, next: NextFunction) {

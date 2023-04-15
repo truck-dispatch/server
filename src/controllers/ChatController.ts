@@ -2,20 +2,20 @@ import {
   createChatLog,
   findChatLogBy,
   findChatLogsBy,
-} from '../data/chatLog/chatLogRepository'
-import { findUserBy } from '../data/user/userRepository'
+} from '@data/chatLog/chatLogRepository'
+import { findUserBy } from '@data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
 import {
   createMessage,
   findMessagesById,
   updateMessageById,
-} from '../data/chat/chatRepository'
-import Respond from '../helpers/Respond'
-import { getConnectedUserSocketByUserId } from '../services/socket/connectedUsers.socket'
-import { getUserCredentialsFromReq } from '../services/JWT'
-import { serviceBasedUserTypes, clientUserTypes } from '../common/constants'
-import ChatLogQuery from '../types/ChatLogQuery'
-import { emitMessage, emitChatLog } from '../services/socket/events.socket'
+} from '@data/chat/chatRepository'
+import Respond from '@helpers/Respond'
+import { getConnectedUserSocketByUserId } from '@services/socket/connectedUsers.socket'
+import { getUserCredentialsFromReq } from '@services/JWT'
+import { serviceBasedUserTypes, clientUserTypes } from '@common/constants'
+import ChatLogQuery from 'interfaces/ChatLogQuery'
+import { emitMessage, emitChatLog } from '@services/socket/events.socket'
 
 class ChatController {
   async createChatLog(req: Request, res: Response, next: NextFunction) {

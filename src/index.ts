@@ -1,3 +1,4 @@
+import 'module-alias/register';
 import express, { ErrorRequestHandler } from 'express'
 import logger from 'morgan'
 import bodyParser from 'body-parser'
@@ -36,7 +37,7 @@ app.use(
   })
 )
 
-/*                                                                                        *
+/*
  * Cors is enabled so the client can acces enpoint on this API wthout having to make request *
  *  from the same Origin
  */

@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
-import { decodeToken, generateJWT } from '../services/JWT'
-import { findAndUpdateUserBy, findUserBy } from '../data/user/userRepository'
-import { Helpers } from '../helpers'
-import Respond from '../helpers/Respond'
-import { compareHashAndPassword } from '../services/encrypt'
-import Sms from '../services/Sms'
-import Mail from '../services/Mail'
-import { FRONTEND_URL } from '../common/privateKeys'
+import { decodeToken, generateJWT } from '@services/JWT'
+import { findAndUpdateUserBy, findUserBy } from '@data/user/userRepository'
+import { Helpers } from '@helpers/index'
+import Respond from '@helpers/Respond'
+import { compareHashAndPassword } from '@services/encrypt'
+import Sms from '@services/Sms'
+import Mail from '@services/Mail'
+import { FRONTEND_URL } from '@common/privateKeys'
 
 class AuthMiddlewares {
   async registrationCredentialChecks(

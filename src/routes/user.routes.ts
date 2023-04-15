@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import UserController from '../controllers/UserController'
-import multerInstance from '../helpers/multerInstance'
-import JWTMiddlewares from '../middlewares/JWTMiddlewares'
-import UserMiddlewares from '../middlewares/UserMiddlewares'
+import UserController from '@controllers/UserController'
+import multerInstance from '@helpers/multerInstance'
+import JWTMiddlewares from '@middlewares/JWTMiddlewares'
+import UserMiddlewares from '@middlewares/UserMiddlewares'
 
 const router = Router()
 

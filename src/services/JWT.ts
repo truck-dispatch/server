@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from '../common/privateKeys'
-import User from '../types/User'
+import { JWT_SECRET } from '@common/privateKeys'
+import User from 'interfaces/User'
 
 export function generateJWT(payload: any, expiresIn: string | number = '1w') {
   return jwt.sign(payload, JWT_SECRET!, { expiresIn })
