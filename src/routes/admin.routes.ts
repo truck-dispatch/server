@@ -5,5 +5,5 @@ import trip from './admin/trip.routes'
 const router = Router()
 
 router.use('/auth', auth)
-router.use('/trip', trip)
+router.use('/trips', trip)
 export default router
