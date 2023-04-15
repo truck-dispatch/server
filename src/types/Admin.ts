@@ -1,6 +1,6 @@
-export default interface Admin{
-    firstName: string
-    lastName: string
-    email: string
-    password: string
+export default interface Admin {
+  firstName: string
+  lastName: string
+  email: string
+  password: string
 }

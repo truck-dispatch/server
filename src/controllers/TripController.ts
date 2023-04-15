@@ -152,7 +152,6 @@ class TripController {
         { _id: tripId },
         { transporterId: to, status: 'payment_complete' }
       )
-
       return Respond.success(
         res,
         'Trip assigned to transporter successfully',

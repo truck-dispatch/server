@@ -14,7 +14,7 @@ export async function findAdminBy(
   if (!admin) {
     return null
   }
-  
+
   if (!deletePassword) return admin.toObject()
 
   const { password, ...adminWithoutPassword } = admin.toObject()

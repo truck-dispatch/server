@@ -39,8 +39,8 @@ class AuthController {
       if (status) data.status = status as User['status']
       await createUser(data)
       const smsData = await Sms.sendOTP({
-          to: formattedPhone,
-        })
+        to: formattedPhone,
+      })
       return Respond.success(res, 'User created successfully...', smsData)
     } catch (err) {
       next(err)
