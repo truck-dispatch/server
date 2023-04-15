@@ -47,7 +47,7 @@ class PaymentController {
         tripReference: trip?.reference!,
         reference: Helpers.generateReference(),
         paymentReference: Helpers.generateUuid(),
-        amount: bid.amount,
+        amount: bid.price,
       })
 
       return Respond.success(
