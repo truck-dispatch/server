@@ -8,6 +8,7 @@ export async function createTrip(trip: NewTrip) {
   await data.save()
   return data
 }
+
 export async function findTripBy(param: Partial<Trip>): Promise<Trip | null> {
   const trip = await TripModel.findOne(param)
   if (!trip) {
@@ -21,25 +22,33 @@ export async function findTripsBy(param: Partial<Trip>) {
   const trips = await TripModel.find(param).lean()
 
   const tripsWithResponsibleUsers = await Promise.all(
-    trips.map(async (trip) => {
-      if (!trip.transporterId) return trip
-
-      const transporter = await findUserBy({ _id: trip.transporterId })
-      const tripOwner = await findUserBy({ _id: trip.tripOwner })
-      return {
-        ...trip,
-        transporter,
-        tripOwner,
-      }
-    })
+    trips.map(async (trip) => await getCompleteTripDetail(trip))
   )
 
   return tripsWithResponsibleUsers
 }
 
-export function findAndUpdateTripBy(
+export async function findAndUpdateTripBy(
   searchParam: Partial<Trip>,
   data: Partial<Trip>
 ) {
-  return TripModel.findOneAndUpdate(searchParam, data, { new: true })
+  const updatedTrip = await TripModel.findOneAndUpdate(searchParam, data, {
+    new: true,
+  }).lean()
+
+  if (!updatedTrip) return updatedTrip
+
+  return getCompleteTripDetail(updatedTrip)
+}
+
+async function getCompleteTripDetail(trip: Trip) {
+  if (!trip.transporterId) return trip
+
+  const transporter = await findUserBy({ _id: trip.transporterId })
+  const tripOwner = await findUserBy({ _id: trip.tripOwner })
+  return {
+    ...trip,
+    transporter,
+    tripOwner,
+  }
 }
