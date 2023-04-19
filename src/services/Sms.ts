@@ -1,4 +1,4 @@
-import { SMS_API_KEY, SMS_API_URL } from '../common/privateKeys'
+import { SMS_API_KEY, SMS_API_URL } from '@common/privateKeys'
 import ApiService from './ApiService'
 
 type SMSType = 'NUMERIC' | 'ALPHANUMERIC'

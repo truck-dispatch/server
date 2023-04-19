@@ -2,7 +2,7 @@ import {
   COMPANY_NAME,
   EMAIL_PASSWORD,
   NO_REPLY_EMAIL_ADDRESS,
-} from '../common/privateKeys'
+} from '@common/privateKeys'
 import nodemailer from 'nodemailer'
 
 class Mail {

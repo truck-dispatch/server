@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import VerificationController from '../controllers/VerificationController'
-import multerInstance from '../helpers/multerInstance'
-import JWTMiddlewares from '../middlewares/JWTMiddlewares'
-import VerificationMiddlewares from '../middlewares/VerificationMiddlewares'
+import VerificationController from '@controllers/VerificationController'
+import multerInstance from '@helpers/multerInstance'
+import JWTMiddlewares from '@middlewares/JWTMiddlewares'
+import VerificationMiddlewares from '@middlewares/VerificationMiddlewares'
 
 const router = Router()
 

@@ -1,9 +1,9 @@
-import { findUserBy } from '../data/user/userRepository'
+import { findUserBy } from '@data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
-import { findVerificationBy } from '../data/verification/verificationRepository'
-import { Helpers } from '../helpers'
-import Respond from '../helpers/Respond'
-import { getUserCredentialsFromReq } from '../services/JWT'
+import { findVerificationBy } from '@data/verification/verificationRepository'
+import { Helpers } from '@helpers/index'
+import Respond from '@helpers/Respond'
+import { getUserCredentialsFromReq } from '@services/JWT'
 
 class VerificationMiddlewares {
   async checkVerificationSubmitDetails(

@@ -1,21 +1,21 @@
 import { NextFunction, Request, Response } from 'express'
-import Mail from '../services/Mail'
+import Mail from '@services/Mail'
 import {
   createUser,
   findAndUpdateUserBy,
   findUserBy,
-} from '../data/user/userRepository'
-import { Helpers } from '../helpers'
-import Respond from '../helpers/Respond'
-import { encrypt } from '../services/encrypt'
+} from '@data/user/userRepository'
+import { Helpers } from '@helpers/index'
+import Respond from '@helpers/Respond'
+import { encrypt } from '@services/encrypt'
 import {
   decodeToken,
   generateJWT,
   getUserCredentialsFromReq,
-} from '../services/JWT'
-import Sms from '../services/Sms'
-import User from '../types/User'
-import { FRONTEND_URL } from '../common/privateKeys'
+} from '@services/JWT'
+import Sms from '@services/Sms'
+import User from 'interfaces/User'
+import { FRONTEND_URL } from '@common/privateKeys'
 
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {

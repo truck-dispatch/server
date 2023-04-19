@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import BidController from '../controllers/BidController'
-import BidMiddlewares from '../middlewares/BidMiddlewares'
-import JWTMiddlewares from '../middlewares/JWTMiddlewares'
-import TripMiddlewares from '../middlewares/TripMiddlewares'
+import BidController from '@controllers/BidController'
+import BidMiddlewares from '@middlewares/BidMiddlewares'
+import JWTMiddlewares from '@middlewares/JWTMiddlewares'
+import TripMiddlewares from '@middlewares/TripMiddlewares'
 
 const router = Router()
 

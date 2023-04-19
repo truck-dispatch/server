@@ -1,5 +1,5 @@
 import { findUserBy } from '../user/userRepository'
-import ChatLogQuery from 'types/ChatLogQuery'
+import ChatLogQuery from 'interfaces/ChatLogQuery'
 import { ChatLogModel } from './ChatLogModel'
 import { findLastMessage } from '../chat/chatRepository'
 

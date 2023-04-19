@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import Respond from '../helpers/Respond'
-import Paystack from '../services/Paystack'
+import Respond from '@helpers/Respond'
+import Paystack from '@services/Paystack'
 
 class ExternalServicesController {
   async loadBanks(_: Request, res: Response, next: NextFunction) {

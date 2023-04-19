@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import JWTMiddlewares from '../middlewares/JWTMiddlewares'
-import ChatController from '../controllers/ChatController'
-import ChatMiddlewares from '../middlewares/ChatMiddlewares'
+import JWTMiddlewares from '@middlewares/JWTMiddlewares'
+import ChatController from '@controllers/ChatController'
+import ChatMiddlewares from '@middlewares/ChatMiddlewares'
 
 const router = Router()
 

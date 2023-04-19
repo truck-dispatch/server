@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import RatingMiddlewares from '../middlewares/RatingMiddlewares'
-import RatingController from '../controllers/RatingController'
-import JWTMiddlewares from '../middlewares/JWTMiddlewares'
-import TripMiddlewares from '../middlewares/TripMiddlewares'
+import RatingMiddlewares from '@middlewares/RatingMiddlewares'
+import RatingController from '@controllers/RatingController'
+import JWTMiddlewares from '@middlewares/JWTMiddlewares'
+import TripMiddlewares from '@middlewares/TripMiddlewares'
 
 const router = Router()
 

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import { findBidBy } from '../data/bid/bidRepository'
-import { findPaymentRequestBy } from '../data/paymentRequest/paymentRequestRepository'
-import { Helpers } from '../helpers'
-import Respond from '../helpers/Respond'
-import { getUserCredentialsFromReq } from '../services/JWT'
+import { findBidBy } from '@data/bid/bidRepository'
+import { findPaymentRequestBy } from '@data/paymentRequest/paymentRequestRepository'
+import { Helpers } from '@helpers/index'
+import Respond from '@helpers/Respond'
+import { getUserCredentialsFromReq } from '@services/JWT'
 
 class PaymentMiddlewares {
   async checkDataRequiredForRequestPayment(

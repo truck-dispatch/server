@@ -1,16 +1,16 @@
 import { NextFunction, Request, Response } from 'express'
-import { encrypt } from '../services/encrypt'
+import { encrypt } from '@services/encrypt'
 import {
   findAndUpdateUserBy,
   findUserBy,
   updateUserBankDetails,
-} from '../data/user/userRepository'
-import { Helpers } from '../helpers'
-import Respond from '../helpers/Respond'
-import Cloudinary, { UploadParams } from '../services/Cloudinary'
-import { getUserCredentialsFromReq } from '../services/JWT'
-import Paystack from '../services/Paystack'
-import User from '../types/User'
+} from '@data/user/userRepository'
+import { Helpers } from '@helpers/index'
+import Respond from '@helpers/Respond'
+import Cloudinary, { UploadParams } from '@services/Cloudinary'
+import { getUserCredentialsFromReq } from '@services/JWT'
+import Paystack from '@services/Paystack'
+import User from 'interfaces/User'
 
 class UserController {
   async getUser(req: Request, res: Response, next: NextFunction) {

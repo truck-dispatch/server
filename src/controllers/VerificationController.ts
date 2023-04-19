@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from 'express'
-import { findAndUpdateUserBy } from '../data/user/userRepository'
+import { findAndUpdateUserBy } from '@data/user/userRepository'
 import {
   createVerification,
   findAndUpdateVerificationBy,
   findVerificationBy,
-} from '../data/verification/verificationRepository'
-import { Helpers } from '../helpers'
-import Respond from '../helpers/Respond'
-import Cloudinary from '../services/Cloudinary'
-import { getUserCredentialsFromReq } from '../services/JWT'
-import Verification from '../types/Verification'
+} from '@data/verification/verificationRepository'
+import { Helpers } from '@helpers/index'
+import Respond from '@helpers/Respond'
+import Cloudinary from '@services/Cloudinary'
+import { getUserCredentialsFromReq } from '@services/JWT'
+import Verification from 'interfaces/Verification'
 
 class VerificationController {
   async submitVerification(req: Request, res: Response, next: NextFunction) {

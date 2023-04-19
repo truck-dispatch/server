@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import Respond from '../helpers/Respond'
+import Respond from '@helpers/Respond'
 
 class RatingMiddlewares {
   allDataForRatingIsCorrect(req: Request, res: Response, next: NextFunction) {

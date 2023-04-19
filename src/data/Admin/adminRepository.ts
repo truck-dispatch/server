@@ -1,5 +1,5 @@
 import { AdminModel } from './AdminModel'
-import Admin from '../../types/Admin'
+import Admin from 'interfaces/Admin'
 
 export function createAdmin(admin: Partial<Admin>) {
   const data = new AdminModel(admin)

@@ -3,10 +3,10 @@ import {
   CLOUDINARY_API_SECRET,
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
-} from '../common/privateKeys'
+} from '@common/privateKeys'
 import { v2 as cloudinaryV2 } from 'cloudinary'
 import fs from 'fs'
-import { Helpers } from '../helpers'
+import { Helpers } from '@helpers/index'
 
 const cloudinary = cloudinaryV2
 cloudinary.config({
