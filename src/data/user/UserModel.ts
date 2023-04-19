@@ -59,6 +59,9 @@ const schema = new Schema(
     fromFirebase: {
       type: Boolean,
     },
+    isSuspended: {
+      type: Boolean
+    }
   },
   { timestamps: true }
 )
