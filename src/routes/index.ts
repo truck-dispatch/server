@@ -22,7 +22,7 @@ router.use('/chat', chat)
 router.use('/payment', payment)
 router.use('/rating', rating)
 // Admin
-// router.use('/admin', admin)
+router.use('/admin', admin)
 // External services required by the frontend.
 router.use('/externals', externals)
 

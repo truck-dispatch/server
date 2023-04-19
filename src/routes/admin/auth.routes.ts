@@ -1,19 +1,19 @@
 import { Router } from 'express'
-import AuthController from '@controllers/admin/AuthController'
-import AuthMiddlewares from '@middlewares/Admin/AuthMiddlewares'
+// import AuthController from '@controllers/admin/AuthController'
+// import AuthMiddlewares from '@middlewares/Admin/AuthMiddlewares'
 
 const router = Router()
 
-router.post(
-  '/join',
-  AuthMiddlewares.registrationCredentialsChecks,
-  AuthController.registerAdmin
-)
+// router.post(
+//   '/join',
+//   AuthMiddlewares.registrationCredentialsChecks,
+//   AuthController.registerAdmin
+// )
 
-router.post(
-  '/login',
-  AuthMiddlewares.loginCredentialChecks,
-  AuthController.loginAdmin
-)
+// router.post(
+//   '/login',
+//   AuthMiddlewares.loginCredentialChecks,
+//   AuthController.loginAdmin
+// )
 
 export default router
