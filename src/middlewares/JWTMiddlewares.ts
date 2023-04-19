@@ -4,6 +4,7 @@ import { findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { decodeToken, getUserCredentialsFromReq } from '@services/JWT'
 import User from 'interfaces/User'
+import { findAdminBy } from '@data/Admin/adminRepository'
 
 class JWTMiddlewares {
   async jwtIsValid(req: Request, res: Response, next: NextFunction) {
@@ -72,6 +73,27 @@ class JWTMiddlewares {
       return Respond.error(res, 'Verification is required to access this route')
     }
     next()
+  }
+
+  async checkAdminJwt(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.headers.authorization?.split(' ')[1]
+      if (!token) {
+        return Respond.error(res, 'No JWT was provided', 401)
+      }
+
+      const decodedUser = decodeToken(token) as User
+
+      if (!decodedUser) {
+        return Respond.error(res, 'Invalid JWT', 401)
+      }
+
+      const admin = await findAdminBy({ _id: decodedUser._id })
+      if (!admin) return Respond.error(res, 'Admin does not exist', 401)
+      next()
+    } catch (err) {
+      Respond.error(res, (err as Error).message)
+    }
   }
 }
 
