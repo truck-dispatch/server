@@ -1,4 +1,4 @@
-import 'module-alias/register';
+import 'module-alias/register'
 import express, { ErrorRequestHandler } from 'express'
 import logger from 'morgan'
 import bodyParser from 'body-parser'

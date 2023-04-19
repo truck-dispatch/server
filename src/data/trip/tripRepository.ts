@@ -38,14 +38,16 @@ export async function findAndUpdateTripBy(
 
   if (!updatedTrip) return updatedTrip
 
-  return getCompleteTripDetail(updatedTrip)
+  return getCompleteTripDetail(updatedTrip) as unknown as Trip
 }
 
 async function getCompleteTripDetail(trip: Trip) {
-  if (!trip.transporterId) return trip
-
   const transporter = await findUserBy({ _id: trip.transporterId })
   const tripOwner = await findUserBy({ _id: trip.tripOwner })
+
+  const data: Record<string, unknown> = { ...trip, tripOwner }
+
+  if (transporter) data.transporter = transporter
   return {
     ...trip,
     transporter,

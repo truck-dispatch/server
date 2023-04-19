@@ -5,6 +5,7 @@ import {
   tripStatus,
   typeOfGoods,
 } from '../common/constants'
+
 export default interface Trip {
   _id: string
   pickUpAddress: string
@@ -22,5 +23,7 @@ export default interface Trip {
   TDO?: string
   paymentId?: string
   reference: string
+  startTime?: string
+  completionTime?: string
   status: (typeof tripStatus)[number]
 }

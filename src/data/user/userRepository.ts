@@ -53,6 +53,12 @@ export async function updateUserBankDetails(
   })
 }
 
+export async function findUsersBy(param: Partial<User>) {
+  const users = await UserModel.find(param).lean()
+
+  return users
+}
+
 export function deleteAllUsers() {
   console.log('all users are about to be deleted')
   UserModel.deleteMany({})

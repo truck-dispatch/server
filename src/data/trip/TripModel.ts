@@ -55,6 +55,12 @@ const schema = new Schema(
     reference: {
       type: String,
     },
+    startTime: {
+      type: String,
+    },
+    completionTime: {
+      type: String,
+    },
     status: {
       type: String,
       required: true,

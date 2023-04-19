@@ -102,17 +102,25 @@ class TripController {
   async changeTripStatus(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId, status } = req.params
-
-      const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { status })
+      let updatedTrip: Trip | null
       if (status === 'completed') {
+        updatedTrip = await findAndUpdateTripBy(
+          { _id: tripId },
+          { status, completionTime: new Date().toISOString() }
+        )
         const user = await findUserBy({ _id: updatedTrip?.transporterId })
         const completedTrips = user?.completedTrips! + 1
         await findAndUpdateUserBy({ _id: user?._id! }, { completedTrips })
+      } else {
+        updatedTrip = await findAndUpdateTripBy(
+          { _id: tripId },
+          { status, startTime: new Date().toISOString() }
+        )
       }
       return Respond.success(
         res,
         'Trip has been updated successfully',
-        updatedTrip
+        updatedTrip!
       )
     } catch (err) {
       next(err)
