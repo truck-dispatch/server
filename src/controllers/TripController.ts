@@ -13,6 +13,8 @@ import Respond from '@helpers/Respond'
 import Cloudinary from '@services/Cloudinary'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import Trip from 'interfaces/Trip'
+import Mail from '@services/Mail'
+import { FRONTEND_URL } from '@common/privateKeys'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
@@ -140,10 +142,12 @@ class TripController {
         transaction,
       } = req.body
 
+      const tripOwner = await findUserBy({ _id: from })
+      const transporter = await findUserBy({ _id: to })
       await Promise.all([
         createPayment({
-          from,
-          to,
+          from: tripOwner?._id!,
+          to: transporter?._id!,
           tripId,
           bidId,
           amountInBid,
@@ -159,6 +163,13 @@ class TripController {
       const trip = await findAndUpdateTripBy(
         { _id: tripId },
         { transporterId: to, status: 'payment_complete' }
+      )
+      Mail.bidHasBeenAccepted(
+        transporter?.email!,
+        trip?.pickUpAddress!,
+        trip?.deliveryAddress!,
+        `${tripOwner?.firstName} ${tripOwner?.lastName}`,
+        `${FRONTEND_URL}/my-trips/${tripId}`
       )
       return Respond.success(
         res,

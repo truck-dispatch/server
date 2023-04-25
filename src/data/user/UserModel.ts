@@ -60,8 +60,8 @@ const schema = new Schema(
       type: Boolean,
     },
     isSuspended: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   { timestamps: true }
 )

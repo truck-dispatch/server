@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "tsc & node .",
     "dev": "tsc -w & nodemon .",
-    "format": "prettier --write '**/*.ts'"
+    "lint": "prettier --write '**/*.ts'"
   },
   "engines": {
     "node": "18.13.0"

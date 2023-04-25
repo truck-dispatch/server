@@ -72,7 +72,8 @@ class AuthController {
       if (!email) return Respond.error(res, 'Email was not passed')
 
       const user = await findUserBy({ email: email.toLowerCase() })
-      if (!user) return Respond.error(res, 'user does not exist')
+      if (!user)
+        return Respond.error(res, 'user does not exist in our database')
 
       const token = generateJWT(
         { _id: user._id, userType: user.userType },
@@ -81,7 +82,6 @@ class AuthController {
 
       await Mail.requestResetPassword(
         email,
-        user.firstName,
         `${FRONTEND_URL}/profile/manage-password?action=sign-in&token=${token}`
       )
 
@@ -130,7 +130,6 @@ class AuthController {
       const token = generateJWT({ email: user?.email, _id: user?._id }, '10m')
       await Mail.verifyMail(
         user?.email!,
-        user?.firstName!,
         `${FRONTEND_URL}/my-trips?action=verify-email&token=${token}`
       )
       return Respond.success(res, 'Email sent successfully...')

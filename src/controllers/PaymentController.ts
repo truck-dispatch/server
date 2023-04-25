@@ -14,6 +14,7 @@ import Cloudinary from '@services/Cloudinary'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import Paystack from '@services/Paystack'
 import ApiError from 'interfaces/ApiError'
+import Mail from '@services/Mail'
 
 class PaymentController {
   async requestPaymentForTrip(req: Request, res: Response, next: NextFunction) {
@@ -49,6 +50,8 @@ class PaymentController {
         paymentReference: Helpers.generateUuid(),
         amount: bid.price,
       })
+      // Send mail here
+      Mail
 
       return Respond.success(
         res,
@@ -123,6 +126,7 @@ class PaymentController {
         'Payment request rejected',
         updatedPaymentRequest
       )
+      // Send mail here
     } catch (err) {
       next(err)
     }
