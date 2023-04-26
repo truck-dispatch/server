@@ -20,8 +20,7 @@ import { FRONTEND_URL } from '@common/privateKeys'
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, phone, userType, firstName, lastName, status } =
-        req.body
+      const { email, password, phone, userType, firstName, lastName } = req.body
       const encryptedPassword = await encrypt(password)
       const formattedPhone = Helpers.convertPhone(phone)
 
@@ -36,7 +35,7 @@ class AuthController {
         isPhoneVerified: false,
       } as User
 
-      if (status) data.status = status as User['status']
+      if (userType !== 'agent') data.status = 'unverified'
       await createUser(data)
       const smsData = await Sms.sendOTP({
         to: formattedPhone,
@@ -127,6 +126,8 @@ class AuthController {
       const { _id } = getUserCredentialsFromReq(req)
 
       const user = await findUserBy({ _id })
+      if (user?.isEmailVerified)
+        return Respond.error(res, 'User has already been verified')
       const token = generateJWT({ email: user?.email, _id: user?._id }, '10m')
       await Mail.verifyMail(
         user?.email!,

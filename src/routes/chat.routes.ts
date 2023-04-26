@@ -20,9 +20,9 @@ router.post(
 router.get('/logs', JWTMiddlewares.jwtIsValid, ChatController.getChatLogs)
 router.get('/', JWTMiddlewares.jwtIsValid, ChatController.getUserChats)
 router.patch(
-  '/read/:chatId',
+  '/read/:messageId',
   JWTMiddlewares.jwtIsValid,
-  ChatMiddlewares.chatIdExistsInParam,
+  ChatMiddlewares.messageIdExistsInParam,
   ChatController.setChatIsReadByChatId
 )
 
