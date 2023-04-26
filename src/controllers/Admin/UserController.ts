@@ -15,11 +15,18 @@ class UserController {
 
   async suspendUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId } = req.params;
+      const { userId } = req.params
       if (!userId) return Respond.error(res, 'userId param was not passed')
-      const updatedUser = await findAndUpdateUserBy({_id: userId}, { isSuspended: true})
+      const updatedUser = await findAndUpdateUserBy(
+        { _id: userId },
+        { isSuspended: true }
+      )
 
-      return Respond.success(res, 'User has been suspended successfully', updatedUser)
+      return Respond.success(
+        res,
+        'User has been suspended successfully',
+        updatedUser
+      )
     } catch (err) {
       next(err)
     }
@@ -27,11 +34,18 @@ class UserController {
 
   async unSuspendUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId } = req.params;
+      const { userId } = req.params
       if (!userId) return Respond.error(res, 'userId param was not passed')
-      const updatedUser = await findAndUpdateUserBy({_id: userId}, { isSuspended: false})
+      const updatedUser = await findAndUpdateUserBy(
+        { _id: userId },
+        { isSuspended: false }
+      )
 
-      return Respond.success(res, 'User has been suspended successfully', updatedUser)
+      return Respond.success(
+        res,
+        'User has been suspended successfully',
+        updatedUser
+      )
     } catch (err) {
       next(err)
     }

@@ -23,5 +23,7 @@ export async function findAndUpdatePaymentRequestBy(
   searchParam: Partial<PaymentRequest>,
   data: Partial<PaymentRequest>
 ) {
-  return PaymentRequestModel.findOneAndUpdate(searchParam, data, { new: true })
+  return PaymentRequestModel.findOneAndUpdate(searchParam, data, {
+    new: true,
+  }).lean()
 }

@@ -13,6 +13,8 @@ import Respond from '@helpers/Respond'
 import Cloudinary from '@services/Cloudinary'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import Trip from 'interfaces/Trip'
+import Mail from '@services/Mail'
+import { FRONTEND_URL } from '@common/privateKeys'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
@@ -43,7 +45,7 @@ class TripController {
         shippingLine,
         jobType,
         instructions,
-        status: 'awaiting_bid',
+        status: 'awaiting-bid',
         reference: Helpers.generateReference(),
       })
 
@@ -91,7 +93,7 @@ class TripController {
    */
   async getJobs(_: Request, res: Response, next: NextFunction) {
     try {
-      const trips = await findTripsBy({ status: 'awaiting_bid' })
+      const trips = await findTripsBy({ status: 'awaiting-bid' })
 
       return Respond.success(res, 'Trips fetched successfully.', trips)
     } catch (err) {
@@ -104,22 +106,15 @@ class TripController {
       const { tripId, status } = req.params
       let updatedTrip: Trip | null
       if (status === 'completed') {
-        updatedTrip = await findAndUpdateTripBy(
-          { _id: tripId },
-          { status, completionTime: new Date().toISOString() }
-        )
-        const user = await findUserBy({ _id: updatedTrip?.transporterId })
-        const completedTrips = user?.completedTrips! + 1
-        await findAndUpdateUserBy({ _id: user?._id! }, { completedTrips })
+        updatedTrip = await setTripToCompleted(tripId)
+      } else if (status === 'in-progress') {
+        updatedTrip = await setTripToInProgress(tripId)
       } else {
-        updatedTrip = await findAndUpdateTripBy(
-          { _id: tripId },
-          { status, startTime: new Date().toISOString() }
-        )
+        return Respond.error(res, 'This is not an acceptable status')
       }
       return Respond.success(
         res,
-        'Trip has been updated successfully',
+        'Trip status has been changed successfully.',
         updatedTrip!
       )
     } catch (err) {
@@ -140,10 +135,12 @@ class TripController {
         transaction,
       } = req.body
 
+      const tripOwner = await findUserBy({ _id: from })
+      const transporter = await findUserBy({ _id: to })
       await Promise.all([
         createPayment({
-          from,
-          to,
+          from: tripOwner?._id!,
+          to: transporter?._id!,
           tripId,
           bidId,
           amountInBid,
@@ -158,7 +155,14 @@ class TripController {
 
       const trip = await findAndUpdateTripBy(
         { _id: tripId },
-        { transporterId: to, status: 'payment_complete' }
+        { transporterId: to, status: 'payment-complete' }
+      )
+      Mail.bidHasBeenAccepted(
+        transporter?.email!,
+        trip?.pickUpAddress!,
+        trip?.deliveryAddress!,
+        `${tripOwner?.firstName} ${tripOwner?.lastName}`,
+        `${FRONTEND_URL}/my-trips/${tripId}`
       )
       return Respond.success(
         res,
@@ -186,3 +190,37 @@ class TripController {
   }
 }
 export default new TripController()
+
+async function setTripToCompleted(tripId: string) {
+  const updatedTrip = await findAndUpdateTripBy(
+    { _id: tripId },
+    { status: 'completed', completionTime: new Date().toISOString() }
+  )
+  const user = await findUserBy({ _id: updatedTrip?.transporterId })
+  const completedTrips = user?.completedTrips! + 1
+  await findAndUpdateUserBy({ _id: user?._id! }, { completedTrips })
+  const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner })
+  Mail.tripHasBeenSetToCompleted(
+    tripOwner?.email!,
+    `${FRONTEND_URL}/my-trips/${tripId}/status`,
+    `${user?.firstName} ${user?.lastName}`
+  )
+
+  return updatedTrip
+}
+
+async function setTripToInProgress(tripId: string) {
+  const updatedTrip = await findAndUpdateTripBy(
+    { _id: tripId },
+    { status: 'in-progress', startTime: new Date().toISOString() }
+  )
+  const user = await findUserBy({ _id: updatedTrip?.transporterId })
+  const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner })
+  Mail.tripHasBeenSetToInProgress(
+    tripOwner?.email!,
+    `${FRONTEND_URL}/my-trips/${tripId}/status`,
+    `${user?.firstName} ${user?.lastName}`
+  )
+
+  return updatedTrip
+}

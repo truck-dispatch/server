@@ -1,9 +1,4 @@
-export const userTypes = [
-  'agent',
-  'transporter',
-  'transport_company',
-  'company',
-]
+export const userTypes = ['agent', 'transporter', 'transportCompany', 'company']
 
 export const shippingLines = [
   'Maersk line',
@@ -24,12 +19,12 @@ export const jobTypes = ['Empty', 'Import', 'Export']
 export const sizeOfContainer = ['20ft', '2 By 20ft', '40ft', '45ft']
 // Don't change the order of the statuses
 export const tripStatus = [
-  'awaiting_bid',
-  'payment_complete',
+  'awaiting-bid',
+  'payment-complete',
   'in-progress',
   'completed',
 ]
 
 export const clientUserTypes = ['agent', 'company']
 
-export const serviceBasedUserTypes = ['transporter', 'transport_company']
+export const serviceBasedUserTypes = ['transporter', 'transportCompany']
