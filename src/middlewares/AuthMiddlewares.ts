@@ -7,6 +7,7 @@ import { compareHashAndPassword } from '@services/encrypt'
 import Sms from '@services/Sms'
 import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
+import { userTypes } from '@common/constants'
 
 class AuthMiddlewares {
   async registrationCredentialChecks(
@@ -20,6 +21,8 @@ class AuthMiddlewares {
       if (!isValidEmail) {
         return Respond.error(res, 'Provide a valid email address', 400)
       }
+      if (!userTypes.includes(userType))
+        return Respond.error(res, 'This is not an accepted user type')
       if (!phone || !password || !userType || !firstName || !lastName) {
         return Respond.error(
           res,

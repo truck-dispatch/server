@@ -26,12 +26,5 @@ router.post(
   JWTMiddlewares.jwtIsValid,
   UserController.changePassword
 )
-router.patch(
-  '/bank-details',
-  JWTMiddlewares.jwtIsValid,
-  JWTMiddlewares.checkIsServiceBasedUserType,
-  UserMiddlewares.checkBankAccountDetails,
-  UserController.addBankAccount
-)
 
 export default router
