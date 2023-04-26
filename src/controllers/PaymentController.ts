@@ -15,12 +15,13 @@ import { getUserCredentialsFromReq } from '@services/JWT'
 import Paystack from '@services/Paystack'
 import ApiError from 'interfaces/ApiError'
 import Mail from '@services/Mail'
+import { FRONTEND_URL } from '@common/privateKeys'
 
 class PaymentController {
   async requestPaymentForTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const transporter = getUserCredentialsFromReq(req)
+      const transporterCredentials = getUserCredentialsFromReq(req)
       const rawProofOfVideo = Helpers.extractFileFromReq(req, 'proofVideo')
       const proofVideo = await Cloudinary.upload({
         file: rawProofOfVideo,
@@ -28,30 +29,38 @@ class PaymentController {
       })
 
       const bid = await findBidBy({
-        transporterId: transporter._id,
+        transporterId: transporterCredentials._id,
         tripId,
       })
       const trip = await findTripBy({ _id: tripId })
+
       if (!bid) return Respond.error(res, 'bid does not exist')
+      if (!trip) return Respond.error(res, 'trip does not exist')
+
       const paymentRequestResponse = await createPaymentRequest({
         vehicle: {
-          // TODO: add driver phone number
           driver: {
             name: bid?.driverName!,
           },
           plateNumber: bid?.truckPlateNumber!,
         },
         status: 'pending',
-        transporterId: transporter._id,
+        transporterId: transporterCredentials._id,
         tripId,
         proofVideo,
-        tripReference: trip?.reference!,
+        tripReference: trip?.reference,
         reference: Helpers.generateReference(),
         paymentReference: Helpers.generateUuid(),
         amount: bid.price,
       })
-      // Send mail here
-      Mail
+
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner })
+      const transporter = await findUserBy({ _id: transporterCredentials._id })
+      Mail.paymentHasBeenRequestedByTransporter(
+        tripOwner?.email!,
+        `${FRONTEND_URL}/my-trips/${tripId}/view-payment-request`,
+        `${transporter?.firstName} ${transporter?.lastName}`
+      )
 
       return Respond.success(
         res,
@@ -120,13 +129,19 @@ class PaymentController {
         { _id: paymentRequestId },
         { reasonForReject, status: 'rejected' }
       )
-
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner! })
+      const transporter = await findUserBy({ _id: trip?.transporterId })
+      Mail.paymentRequestHasBeenRejected(
+        transporter?.email!,
+        `${FRONTEND_URL}/my-trips/${trip?._id}/request-payment-for-trip`,
+        `${tripOwner?.firstName} ${tripOwner?.lastName}`
+      )
       return Respond.success(
         res,
         'Payment request rejected',
         updatedPaymentRequest
       )
-      // Send mail here
     } catch (err) {
       next(err)
     }
@@ -157,6 +172,14 @@ class PaymentController {
       const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
         { _id: paymentRequestId },
         { status: 'completed' }
+      )
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner! })
+      const transporter = await findUserBy({ _id: trip?.transporterId })
+      Mail.paymentRequestHasBeenApproved(
+        transporter?.email!,
+        `${FRONTEND_URL}/my-trips/${trip?._id}/status`,
+        `${tripOwner?.firstName} ${tripOwner?.lastName}`
       )
 
       return Respond.success(
@@ -191,6 +214,14 @@ class PaymentController {
         { proofVideo, status: 'pending', reasonForReject: '' }
       )
 
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner! })
+      const transporter = await findUserBy({ _id: trip?.transporterId })
+      Mail.paymentHasBeenUpdatedByTransporter(
+        tripOwner?.email!,
+        `${FRONTEND_URL}/my-trips/${trip?._id}/view-payment-request`,
+        `${transporter?.firstName} ${transporter?.lastName}`
+      )
       return Respond.success(
         res,
         'Payment request successfully updated',

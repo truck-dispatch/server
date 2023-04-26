@@ -37,7 +37,7 @@ Expected parameters
   email: string,
   password: string,
   phone: string,
-  userType: 'agent' | 'transporter' | 'company', | 'transport_company'
+  userType: 'agent' | 'transporter' | 'company', | 'transportCompany'
   firstName,
   lastName,
 }
