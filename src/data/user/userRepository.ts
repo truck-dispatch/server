@@ -33,7 +33,7 @@ export function findAndUpdateUserBy(
 export async function getUsers(param: Partial<User>) {
   const users = await UserModel.find(param).lean()
 
-  const getAllUsers = await Promise.all(users.map(async (users) => await users))
+  const getAllUsers = await Promise.all(users.map(async (users) => users))
 
   return getAllUsers
 }
