@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes, serviceBasedUserTypes } from '../common/constants'
 import { findUserBy } from '../data/user/userRepository'
+import { findAdminBy } from '../data/admin/adminRepository'
 import Respond from '../helpers/Respond'
 import { decodeToken, getUserCredentialsFromReq } from '../services/JWT'
 import User from '../types/User'
+import Admin from '../types/Admin'
 
 class JWTMiddlewares {
   async jwtIsValid(req: Request, res: Response, next: NextFunction) {
@@ -27,6 +29,29 @@ class JWTMiddlewares {
       Respond.error(res, (err as Error).message)
     }
   }
+
+  async adminJwtIsValid(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.headers.authorization?.split(' ')[1]
+      if (!token) {
+        return Respond.error(res, 'No JWT was provided', 401)
+      }
+
+      const decodedUser = decodeToken(token) as Admin
+
+      if (!decodedUser) {
+        return Respond.error(res, 'Invalid JWT', 401)
+      }
+
+      const user = await findAdminBy({ email: decodedUser.email })
+
+      if (!user) return Respond.error(res, 'Admin does not exist', 401)
+      next()
+    } catch (err) {
+      Respond.error(res, (err as Error).message)
+    }
+  }
+
 
   checkisClientBasedUserType(req: Request, res: Response, next: NextFunction) {
     try {
