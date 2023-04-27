@@ -29,7 +29,7 @@ class AuthController {
 
       const admin = await findAdminBy({ email: email.toLowerCase() })
       if (!admin) return Respond.error(res, 'admin does not exist')
-      const jwt = generateJWT(admin)
+      const jwt = generateJWT({email:admin.email})
 
       return Respond.success(res, 'Login successful', { jwt })
     } catch (err) {
