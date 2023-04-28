@@ -62,6 +62,12 @@ const schema = new Schema(
     isSuspended: {
       type: Boolean,
     },
+    roleInCompany: {
+      type: String,
+    },
+    companyDetails: {
+      type: Object,
+    },
   },
   { timestamps: true }
 )

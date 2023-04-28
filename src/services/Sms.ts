@@ -48,6 +48,9 @@ class Sms {
       api_key: SMS_API_KEY,
       pin_id,
       pin,
+    }).then((data) => {
+      if (!data.verified) return Promise.reject({ response: { data } })
+      return data
     })
   }
 }

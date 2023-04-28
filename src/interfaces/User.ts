@@ -1,4 +1,5 @@
 import { userTypes } from '../common/constants'
+import Company from './Company'
 import TransferRecipient from './TransferRecipient'
 
 export default interface User {
@@ -24,4 +25,6 @@ export default interface User {
   isPhoneVerified: boolean
   fromFirebase: boolean
   isSuspended: boolean
+  roleInCompany: string
+  companyDetails: Company
 }

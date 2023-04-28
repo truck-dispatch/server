@@ -20,13 +20,12 @@ import { FRONTEND_URL } from '@common/privateKeys'
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, phone, userType, firstName, lastName } = req.body
-      const encryptedPassword = await encrypt(password)
+      const { email, phone, userType, firstName, lastName } = req.body
       const formattedPhone = Helpers.convertPhone(phone)
 
       const data = {
         email: email.toLowerCase(),
-        password: encryptedPassword,
+        password: 'dummy-password',
         phone: formattedPhone,
         userType,
         firstName,
@@ -107,15 +106,33 @@ class AuthController {
   async verifyPhoneNumber(req: Request, res: Response, next: NextFunction) {
     try {
       const { phone, pin, pin_id } = req.body
-      await Sms.verifyOTP(pin_id, pin).catch((err) => {
-        return Respond.error(res, err.response.data.message)
-      })
-
-      await findAndUpdateUserBy(
-        { phone: Helpers.convertPhone(phone) },
-        { isPhoneVerified: true }
-      )
-      return Respond.success(res, 'Phone number verification complete')
+      return Sms.verifyOTP(pin_id, pin)
+        .then(async () => {
+          const user = await findAndUpdateUserBy(
+            { phone: Helpers.convertPhone(phone) },
+            { isPhoneVerified: true }
+          )
+          const token = generateJWT({
+            _id: user?._id,
+            userType: user?.userType,
+          })
+          return Respond.success(res, 'Phone number verification complete', {
+            token,
+          })
+        })
+        .catch((err) => {
+          if (err.response.data.verified === 'Expired') return Respond.error(res, 'Token has expired. Kindly request another.')
+          if (!err.response.data.verified) {
+            return Respond.error(
+              res,
+              `Invalid code. ${err.response.data.attemptsRemaining} attempts left`
+            )
+          }
+          return Respond.error(
+            res,
+            'An error occured. It could be an invalid or expired code. If the issue persists, contact support'
+          )
+        })
     } catch (err) {
       next(err)
     }

@@ -7,7 +7,7 @@ import { compareHashAndPassword } from '@services/encrypt'
 import Sms from '@services/Sms'
 import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
-import { userTypes } from '@common/constants'
+import { rolesInACompany, userTypes } from '@common/constants'
 
 class AuthMiddlewares {
   async registrationCredentialChecks(
@@ -16,20 +16,30 @@ class AuthMiddlewares {
     next: NextFunction
   ) {
     try {
-      const { email, password, phone, userType, firstName, lastName } = req.body
+      const { email, phone, userType, firstName, lastName, roleInCompany } =
+        req.body
       const isValidEmail = Helpers.isValidEmail(email)
       if (!isValidEmail) {
         return Respond.error(res, 'Provide a valid email address', 400)
       }
       if (!userTypes.includes(userType))
         return Respond.error(res, 'This is not an accepted user type')
-      if (!phone || !password || !userType || !firstName || !lastName) {
+      if (!phone || !userType || !firstName || !lastName) {
         return Respond.error(
           res,
-          'phone, password, userType, firstName, lastName are compulsory fields.',
+          'phone, userType, firstName, lastName are compulsory fields.',
           400
         )
       }
+
+      if (roleInCompany && !rolesInACompany.includes(roleInCompany)) {
+        return Respond.error(
+          res,
+          'The selected role is currently not supported.',
+          400
+        )
+      }
+
       const userWithEmailExists = await findUserBy({ email })
       const userWithPhoneExists = await findUserBy({
         phone: Helpers.convertPhone(phone),
@@ -52,8 +62,6 @@ class AuthMiddlewares {
 
       next()
     } catch (err) {
-      // Report error to our client..
-      console.log(err)
       Respond.error(res, 'Something went wrong...')
     }
   }
