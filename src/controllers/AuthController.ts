@@ -1,27 +1,26 @@
 import { NextFunction, Request, Response } from 'express'
-import Mail from '../services/Mail'
+import Mail from '@services/Mail'
 import {
   createUser,
   findAndUpdateUserBy,
   findUserBy,
-} from '../data/user/userRepository'
-import { Helpers } from '../helpers'
-import Respond from '../helpers/Respond'
-import { encrypt } from '../services/encrypt'
+} from '@data/user/userRepository'
+import { Helpers } from '@helpers/index'
+import Respond from '@helpers/Respond'
+import { encrypt } from '@services/encrypt'
 import {
   decodeToken,
   generateJWT,
   getUserCredentialsFromReq,
-} from '../services/JWT'
-import Sms from '../services/Sms'
-import User from '../types/User'
-import { FRONTEND_URL } from '../common/privateKeys'
+} from '@services/JWT'
+import Sms from '@services/Sms'
+import User from 'interfaces/User'
+import { FRONTEND_URL } from '@common/privateKeys'
 
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, phone, userType, firstName, lastName, status } =
-        req.body
+      const { email, password, phone, userType, firstName, lastName } = req.body
       const encryptedPassword = await encrypt(password)
       const formattedPhone = Helpers.convertPhone(phone)
 
@@ -36,7 +35,7 @@ class AuthController {
         isPhoneVerified: false,
       } as User
 
-      if (status) data.status = status as User['status']
+      if (userType !== 'agent') data.status = 'unverified'
       await createUser(data)
       const smsData = await Sms.sendOTP({
         to: formattedPhone,
@@ -72,7 +71,8 @@ class AuthController {
       if (!email) return Respond.error(res, 'Email was not passed')
 
       const user = await findUserBy({ email: email.toLowerCase() })
-      if (!user) return Respond.error(res, 'user does not exist')
+      if (!user)
+        return Respond.error(res, 'user does not exist in our database')
 
       const token = generateJWT(
         { _id: user._id, userType: user.userType },
@@ -81,7 +81,6 @@ class AuthController {
 
       await Mail.requestResetPassword(
         email,
-        user.firstName,
         `${FRONTEND_URL}/profile/manage-password?action=sign-in&token=${token}`
       )
 
@@ -127,10 +126,11 @@ class AuthController {
       const { _id } = getUserCredentialsFromReq(req)
 
       const user = await findUserBy({ _id })
+      if (user?.isEmailVerified)
+        return Respond.error(res, 'User has already been verified')
       const token = generateJWT({ email: user?.email, _id: user?._id }, '10m')
       await Mail.verifyMail(
         user?.email!,
-        user?.firstName!,
         `${FRONTEND_URL}/my-trips?action=verify-email&token=${token}`
       )
       return Respond.success(res, 'Email sent successfully...')

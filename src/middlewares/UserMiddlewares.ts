@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import Respond from '../helpers/Respond'
+import Respond from '@helpers/Respond'
 
 class UserMiddlewares {
   checkBankAccountDetails(req: Request, res: Response, next: NextFunction) {

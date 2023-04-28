@@ -7,7 +7,8 @@
     "build": "tsc -p tsconfig.json",
     "start": "tsc & node .",
     "dev": "tsc -w & nodemon .",
-    "format": "prettier --write '**/*.ts'"
+    "dev-win": " nodemon .",
+    "lint": "prettier --write '**/*.ts'"
   },
   "engines": {
     "node": "18.13.0"
@@ -20,6 +21,15 @@
     "server",
     "truckdispatch"
   ],
+	"_moduleAliases": {
+		"@common": "dist/common",
+		"@controllers": "dist/controllers",
+		"@data": "dist/data",
+		"@helpers": "dist/helpers",
+		"@middlewares": "dist/middlewares",
+		"@services": "dist/services",
+    "@interfaces": "dist/interfaces"
+	},
   "author": "god-of-js",
   "license": "ISC",
   "bugs": {
@@ -36,6 +46,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+		"module-alias": "^2.2.2",
     "express-rate-limit": "^6.7.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.3",

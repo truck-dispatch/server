@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { v4 } from 'uuid'
-import { CLOUDINARY_FOLDER_NAME } from '../common/privateKeys'
+import { CLOUDINARY_FOLDER_NAME } from '@common/privateKeys'
 
 export class Helpers {
   static isValidEmail(email: string) {

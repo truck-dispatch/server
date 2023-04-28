@@ -1,4 +1,4 @@
-import Bid from '../../types/Bid'
+import Bid from 'interfaces/Bid'
 import { findUserBy } from '../user/userRepository'
 import { BidModel } from './BidModel'
 

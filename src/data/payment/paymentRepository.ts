@@ -1,4 +1,4 @@
-import Payment from '../../types/Payment'
+import Payment from 'interfaces/Payment'
 import { PaymentModel } from './PaymentModel'
 
 export function createPayment(paymentData: Payment) {

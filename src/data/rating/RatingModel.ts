@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import Rating from '../../types/Rating'
+import Rating from 'interfaces/Rating'
 
 const schema = new Schema(
   {

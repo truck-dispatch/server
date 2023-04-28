@@ -4,9 +4,13 @@ import {
   findAndUpdateBidBy,
   findBidBy,
   findBidsBy,
-} from '../data/bid/bidRepository'
-import Respond from '../helpers/Respond'
-import { getUserCredentialsFromReq } from '../services/JWT'
+} from '@data/bid/bidRepository'
+import Respond from '@helpers/Respond'
+import { getUserCredentialsFromReq } from '@services/JWT'
+import Mail from '@services/Mail'
+import { findTripBy } from '@data/trip/tripRepository'
+import { findUserBy } from '@data/user/userRepository'
+import { FRONTEND_URL } from '@common/privateKeys'
 
 class BidController {
   async createBid(req: Request, res: Response, next: NextFunction) {
@@ -30,6 +34,15 @@ class BidController {
         tripId,
         status: 'pending',
       })
+      const trip = await findTripBy({ _id: tripId })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner })
+      const transporter = await findUserBy({ _id: user?._id! })
+
+      Mail.transporterHasSentBid(
+        tripOwner?.email!,
+        `${transporter?.firstName} ${transporter?.lastName}`,
+        `${FRONTEND_URL}/my-trips/${tripId}/bids/${bidResponse._id}`
+      )
       return Respond.success(
         res,
         'Bid has been created successfully',
@@ -43,9 +56,19 @@ class BidController {
   async updateBid(req: Request, res: Response, next: NextFunction) {
     try {
       const { _id } = getUserCredentialsFromReq(req)
+      const { tripId } = req.body
       const bidResponse = await findAndUpdateBidBy(
         { transporterId: _id, tripId: req.body.tripId },
         req.body
+      )
+      const trip = await findTripBy({ _id: tripId })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner })
+      const transporter = await findUserBy({ _id })
+
+      Mail.transporterHasUpdatedBid(
+        tripOwner?.email!,
+        `${transporter?.firstName} ${transporter?.lastName}`,
+        `${FRONTEND_URL}/my-trips/${tripId}/bids/${bidResponse?._id}`
       )
 
       return Respond.success(res, 'Bid updated successfully', bidResponse)

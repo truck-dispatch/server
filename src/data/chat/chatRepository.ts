@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb'
-import Chat from '../../types/Chat'
+import Chat from 'interfaces/Chat'
 import { ChatModel } from './ChatModel'
 
 export async function createMessage(message: Partial<Chat>) {

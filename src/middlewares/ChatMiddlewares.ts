@@ -1,6 +1,6 @@
-import { findUserBy } from '../data/user/userRepository'
+import { findUserBy } from '@data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
-import Respond from '../helpers/Respond'
+import Respond from '@helpers/Respond'
 
 class ChatMiddlewares {
   checkDataForCreateMessage(req: Request, res: Response, next: NextFunction) {
@@ -52,10 +52,10 @@ class ChatMiddlewares {
 
     next()
   }
-  chatIdExistsInParam(req: Request, res: Response, next: NextFunction) {
-    const { chatId } = req.params
+  messageIdExistsInParam(req: Request, res: Response, next: NextFunction) {
+    const { messageId } = req.params
 
-    if (!chatId) return Respond.error(res, 'User ID is a compulsory field')
+    if (!messageId ) return Respond.error(res, 'User ID is a compulsory field')
 
     next()
   }

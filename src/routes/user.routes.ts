@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import UserController from '../controllers/UserController'
-import multerInstance from '../helpers/multerInstance'
-import JWTMiddlewares from '../middlewares/JWTMiddlewares'
-import UserMiddlewares from '../middlewares/UserMiddlewares'
+import UserController from '@controllers/UserController'
+import multerInstance from '@helpers/multerInstance'
+import JWTMiddlewares from '@middlewares/JWTMiddlewares'
+import UserMiddlewares from '@middlewares/UserMiddlewares'
 
 const router = Router()
 
@@ -25,13 +25,6 @@ router.post(
   '/update-password',
   JWTMiddlewares.jwtIsValid,
   UserController.changePassword
-)
-router.patch(
-  '/bank-details',
-  JWTMiddlewares.jwtIsValid,
-  JWTMiddlewares.checkIsServiceBasedUserType,
-  UserMiddlewares.checkBankAccountDetails,
-  UserController.addBankAccount
 )
 
 export default router

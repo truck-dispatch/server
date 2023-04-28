@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import Trip from '../../types/Trip'
+import Trip from 'interfaces/Trip'
 
 const schema = new Schema(
   {
@@ -53,6 +53,12 @@ const schema = new Schema(
       type: String,
     },
     reference: {
+      type: String,
+    },
+    startTime: {
+      type: String,
+    },
+    completionTime: {
       type: String,
     },
     status: {

@@ -1,4 +1,4 @@
-import PaymentRequest from '../../types/PaymentRequest'
+import PaymentRequest from 'interfaces/PaymentRequest'
 import { PaymentRequestModel } from './PaymentRequestModel'
 
 export function createPaymentRequest(paymentRequest: PaymentRequest) {
@@ -23,5 +23,7 @@ export async function findAndUpdatePaymentRequestBy(
   searchParam: Partial<PaymentRequest>,
   data: Partial<PaymentRequest>
 ) {
-  return PaymentRequestModel.findOneAndUpdate(searchParam, data, { new: true })
+  return PaymentRequestModel.findOneAndUpdate(searchParam, data, {
+    new: true,
+  }).lean()
 }

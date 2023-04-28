@@ -3,9 +3,9 @@ import {
   createRating,
   getUsersNewRating,
   findRatingBy,
-} from '../data/rating/ratingRepository'
-import { findAndUpdateUserBy, findUserBy } from '../data/user/userRepository'
-import Respond from '../helpers/Respond'
+} from '@data/rating/ratingRepository'
+import { findAndUpdateUserBy, findUserBy } from '@data/user/userRepository'
+import Respond from '@helpers/Respond'
 
 class RatingController {
   async rateUser(req: Request, res: Response, next: NextFunction) {

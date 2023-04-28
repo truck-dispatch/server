@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import ChatLogQuery from 'types/ChatLogQuery'
+import ChatLogQuery from 'interfaces/ChatLogQuery'
 
 const schema = new Schema(
   {

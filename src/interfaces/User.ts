@@ -23,4 +23,5 @@ export default interface User {
   isEmailVerified: boolean
   isPhoneVerified: boolean
   fromFirebase: boolean
+  isSuspended: boolean
 }

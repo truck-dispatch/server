@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
-import { decodeToken, generateJWT } from '../services/JWT'
-import { findAndUpdateUserBy, findUserBy } from '../data/user/userRepository'
-import { Helpers } from '../helpers'
-import Respond from '../helpers/Respond'
-import { compareHashAndPassword } from '../services/encrypt'
-import Sms from '../services/Sms'
-import Mail from '../services/Mail'
-import { FRONTEND_URL } from '../common/privateKeys'
+import { decodeToken, generateJWT } from '@services/JWT'
+import { findAndUpdateUserBy, findUserBy } from '@data/user/userRepository'
+import { Helpers } from '@helpers/index'
+import Respond from '@helpers/Respond'
+import { compareHashAndPassword } from '@services/encrypt'
+import Sms from '@services/Sms'
+import Mail from '@services/Mail'
+import { FRONTEND_URL } from '@common/privateKeys'
+import { userTypes } from '@common/constants'
 
 class AuthMiddlewares {
   async registrationCredentialChecks(
@@ -20,6 +21,8 @@ class AuthMiddlewares {
       if (!isValidEmail) {
         return Respond.error(res, 'Provide a valid email address', 400)
       }
+      if (!userTypes.includes(userType))
+        return Respond.error(res, 'This is not an accepted user type')
       if (!phone || !password || !userType || !firstName || !lastName) {
         return Respond.error(
           res,
@@ -79,7 +82,6 @@ class AuthMiddlewares {
         )
         await Mail.portFromFirebase(
           user.email,
-          user.firstName,
           `${FRONTEND_URL}/profile/manage-password?action=sign-in&token=${token}&isPhoneVerified=${user.isPhoneVerified}`
         )
         await findAndUpdateUserBy({ _id: user._id }, { isEmailVerified: true })

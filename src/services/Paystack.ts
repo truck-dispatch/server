@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { PAYSTACK_PRIVATE_KEY } from '../common/privateKeys'
-import BankDetails from '../types/BankDetails'
+import { PAYSTACK_PRIVATE_KEY } from '@common/privateKeys'
+import BankDetails from 'interfaces/BankDetails'
 
 const api = axios.create({
   baseURL: 'https://api.paystack.co',

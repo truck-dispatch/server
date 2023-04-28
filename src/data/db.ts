@@ -1,5 +1,5 @@
 import mongoose, { ConnectOptions } from 'mongoose'
-import { MONGO_DB_URL } from '../common/privateKeys'
+import { MONGO_DB_URL } from '@common/privateKeys'
 
 const options: ConnectOptions = {
   // useNewUrlParser: true,

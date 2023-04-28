@@ -1,6 +1,6 @@
-import Paystack from '../../services/Paystack'
-import BankDetails from '../../types/BankDetails'
-import User from '../../types/User'
+import Paystack from '@services/Paystack'
+import BankDetails from 'interfaces/BankDetails'
+import User from 'interfaces/User'
 import { UserModel } from './UserModel'
 
 export function createUser(user: Partial<User>) {
@@ -59,6 +59,12 @@ export async function updateUserBankDetails(
       paystackRecipientCode: transferRecipient.recipient_code,
     },
   })
+}
+
+export async function findUsersBy(param: Partial<User>) {
+  const users = await UserModel.find(param).lean()
+
+  return users
 }
 
 export function deleteAllUsers() {

@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import JWTMiddlewares from '../middlewares/JWTMiddlewares'
-import ChatController from '../controllers/ChatController'
-import ChatMiddlewares from '../middlewares/ChatMiddlewares'
+import JWTMiddlewares from '@middlewares/JWTMiddlewares'
+import ChatController from '@controllers/ChatController'
+import ChatMiddlewares from '@middlewares/ChatMiddlewares'
 
 const router = Router()
 
@@ -20,9 +20,9 @@ router.post(
 router.get('/logs', JWTMiddlewares.jwtIsValid, ChatController.getChatLogs)
 router.get('/', JWTMiddlewares.jwtIsValid, ChatController.getUserChats)
 router.patch(
-  '/read/:chatId',
+  '/read/:messageId',
   JWTMiddlewares.jwtIsValid,
-  ChatMiddlewares.chatIdExistsInParam,
+  ChatMiddlewares.messageIdExistsInParam,
   ChatController.setChatIsReadByChatId
 )
 

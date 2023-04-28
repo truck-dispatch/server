@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
-import { findBidBy } from '../data/bid/bidRepository'
-import Respond from '../helpers/Respond'
-import { getUserCredentialsFromReq } from '../services/JWT'
+import { findBidBy } from '@data/bid/bidRepository'
+import Respond from '@helpers/Respond'
+import { getUserCredentialsFromReq } from '@services/JWT'
 
 class BidMiddlewares {
   async allRequiredDataToCreateBidIsAvailable(
