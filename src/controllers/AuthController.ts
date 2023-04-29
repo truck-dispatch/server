@@ -7,7 +7,6 @@ import {
 } from '@data/user/userRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
-import { encrypt } from '@services/encrypt'
 import {
   decodeToken,
   generateJWT,
@@ -20,26 +19,34 @@ import { FRONTEND_URL } from '@common/privateKeys'
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, phone, userType, firstName, lastName } = req.body
+      const { email, phone, userType, firstName, lastName, roleInCompany } = req.body
       const formattedPhone = Helpers.convertPhone(phone)
 
       const data = {
         email: email.toLowerCase(),
-        password: 'dummy-password',
         phone: formattedPhone,
         userType,
         firstName,
         lastName,
         isEmailVerified: false,
         isPhoneVerified: false,
+        roleInCompany
       } as User
 
       if (userType !== 'agent') data.status = 'unverified'
-      await createUser(data)
+      const user = await createUser(data)
       const smsData = await Sms.sendOTP({
         to: formattedPhone,
       })
-      return Respond.success(res, 'User created successfully...', smsData)
+
+      const token = generateJWT({
+        _id: user?._id,
+        userType: user?.userType,
+      })
+      return Respond.success(res, 'User created successfully...', {
+        smsData,
+        token,
+      })
     } catch (err) {
       next(err)
     }
@@ -108,20 +115,18 @@ class AuthController {
       const { phone, pin, pin_id } = req.body
       return Sms.verifyOTP(pin_id, pin)
         .then(async () => {
-          const user = await findAndUpdateUserBy(
+          await findAndUpdateUserBy(
             { phone: Helpers.convertPhone(phone) },
             { isPhoneVerified: true }
           )
-          const token = generateJWT({
-            _id: user?._id,
-            userType: user?.userType,
-          })
-          return Respond.success(res, 'Phone number verification complete', {
-            token,
-          })
+          return Respond.success(res, 'Phone number verification complete')
         })
         .catch((err) => {
-          if (err.response.data.verified === 'Expired') return Respond.error(res, 'Token has expired. Kindly request another.')
+          if (err.response.data.verified === 'Expired')
+            return Respond.error(
+              res,
+              'Token has expired. Kindly request another.'
+            )
           if (!err.response.data.verified) {
             return Respond.error(
               res,

@@ -10,6 +10,7 @@ import Respond from '@helpers/Respond'
 import Cloudinary from '@services/Cloudinary'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import Verification from 'interfaces/Verification'
+import { createCompanyVerification } from '@data/companyVerification/companyVerificationRepository'
 
 class VerificationController {
   async submitVerification(req: Request, res: Response, next: NextFunction) {
@@ -76,6 +77,37 @@ class VerificationController {
       )
 
       return Respond.success(res, 'Verification updated', verificationResponse)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async companyVerification(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { _id } = getUserCredentialsFromReq(req)
+      const { companyName, companyLocation, cacReference } = req.body
+      const cacDocFile = Helpers.extractFileFromReq(req, 'cacDocument')
+      const cacDocument = await Cloudinary.upload({ file: cacDocFile })
+      const companyDetails = {
+        name: companyName,
+        location: companyLocation,
+        cacReference,
+        cacDocument,
+      }
+      const updatedUser = await findAndUpdateUserBy(
+        { _id },
+        {
+          companyVerificationStatus: 'pending_verification',
+          companyDetails,
+        }
+      )
+      await createCompanyVerification({ ...companyDetails, userId: _id })
+
+      return Respond.success(
+        res,
+        `Your upgrade to company request has been submitted.`,
+        updatedUser
+      )
     } catch (err) {
       next(err)
     }
