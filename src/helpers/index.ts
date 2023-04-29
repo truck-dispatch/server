@@ -39,9 +39,14 @@ export class Helpers {
     if (phone.startsWith('234')) {
       phone = '+234' + phone.substring(3)
     }
+
+    if (!phone.startsWith('0') && !phone.startsWith('+234')) {
+      phone = '+234' + phone
+    }
     // Return the formatted phone
     return phone
   }
+
   static generateReference() {
     const alphanumeric =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

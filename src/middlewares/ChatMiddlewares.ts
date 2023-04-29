@@ -55,7 +55,7 @@ class ChatMiddlewares {
   messageIdExistsInParam(req: Request, res: Response, next: NextFunction) {
     const { messageId } = req.params
 
-    if (!messageId ) return Respond.error(res, 'User ID is a compulsory field')
+    if (!messageId) return Respond.error(res, 'User ID is a compulsory field')
 
     next()
   }

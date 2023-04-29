@@ -28,3 +28,5 @@ export const tripStatus = [
 export const clientUserTypes = ['agent', 'company']
 
 export const serviceBasedUserTypes = ['transporter', 'transportCompany']
+
+export const rolesInACompany = ['CEO', 'manager', 'secretary', 'accountant']
