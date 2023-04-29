@@ -90,7 +90,7 @@ class AuthController {
         `${FRONTEND_URL}/profile/manage-password?action=sign-in&token=${token}`
       )
 
-      return Respond.success(res, 'One time sign in email has been configured.')
+      return Respond.success(res, 'Password recovery link has been sent to your email.')
     } catch (err) {
       next(err)
     }
