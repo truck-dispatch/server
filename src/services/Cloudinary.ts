@@ -34,6 +34,7 @@ class Cloudinary {
     { file, isVideo }: UploadParams,
     cloudinaryUrlForPreviousAsset?: string
   ): Promise<string> {
+    console.log(file)
     let options: Record<string, unknown> = {
       upload_preset: CLOUDINARY_UPLOAD_PRESET,
     }

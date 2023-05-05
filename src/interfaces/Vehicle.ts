@@ -1,4 +1,5 @@
 export default interface Vehicle {
+  _id?: string
   plateNumber: string
   vehicleType: string
   ownerId: string

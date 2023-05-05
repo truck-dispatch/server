@@ -1,4 +1,4 @@
-import { createVehicle } from '@data/vehicle/vehicleRepository'
+import { createVehicle, findVehiclesBy } from '@data/vehicle/vehicleRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
 import Vehicle from '@interfaces/Vehicle'
@@ -15,6 +15,18 @@ class VehicleController {
       const vehicle = await createVehicle({ ...data, ownerId: _id })
 
       return Respond.success(res, 'vehicle created successfully', vehicle)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async getVehicles(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { _id } = getUserCredentialsFromReq(req)
+
+      const vehicles = await findVehiclesBy({ ownerId: _id })
+
+      return Respond.success(res, 'Vehicles fetched successfully', vehicles)
     } catch (err) {
       next(err)
     }
