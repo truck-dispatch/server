@@ -38,12 +38,7 @@ class PaymentController {
       if (!trip) return Respond.error(res, 'trip does not exist')
 
       const paymentRequestResponse = await createPaymentRequest({
-        vehicle: {
-          driver: {
-            name: bid?.driverName!,
-          },
-          plateNumber: bid?.truckPlateNumber!,
-        },
+        vehicle: bid.vehicle,
         status: 'pending',
         transporterId: transporterCredentials._id,
         tripId,
