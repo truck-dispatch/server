@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { findUsersBy } from '../../data/user/userRepository'
+import { findUsersBy, findUserBy } from '../../data/user/userRepository'
 import Respond from '../../helpers/Respond'
 
 class VerificationControllers {
@@ -10,6 +10,20 @@ class VerificationControllers {
         res,
         'All Verifications fetched successfully',
         Users
+      )
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async getVerification(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { userId } = req.params
+      const User = await findUserBy({ _id:userId })
+      return Respond.success(
+        res,
+        'Verification details fetched successfully',
+        User
       )
     } catch (err) {
       next(err)

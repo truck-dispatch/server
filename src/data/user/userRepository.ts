@@ -55,8 +55,7 @@ export async function updateUserBankDetails(
 
 export async function findUsersBy(param: Partial<User>) {
   const users = await UserModel.find(param).lean()
-
-  return users
+  return users.map(({ password, ...user }) => user)
 }
 
 export function deleteAllUsers() {
