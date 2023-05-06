@@ -21,11 +21,7 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    driverName: {
-      type: String,
-      required: true,
-    },
-    truckPlateNumber: {
+    vehicle: {
       type: String,
       required: true,
     },

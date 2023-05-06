@@ -1,3 +1,5 @@
+import Vehicle from './Vehicle'
+
 export default interface Bid {
   _id: string
   paymentId?: string
@@ -5,8 +7,7 @@ export default interface Bid {
   price: number
   presentLocation?: string
   transporterId: string
-  driverName: string
-  truckPlateNumber: string
   tripId: string
   status: 'pending' | 'accepted' | 'rejected'
+  vehicle: string
 }

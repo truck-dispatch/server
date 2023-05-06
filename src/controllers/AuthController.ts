@@ -19,7 +19,8 @@ import { FRONTEND_URL } from '@common/privateKeys'
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, phone, userType, firstName, lastName, roleInCompany } = req.body
+      const { email, phone, userType, firstName, lastName, roleInCompany } =
+        req.body
       const formattedPhone = Helpers.convertPhone(phone)
 
       const data = {
@@ -30,7 +31,7 @@ class AuthController {
         lastName,
         isEmailVerified: false,
         isPhoneVerified: false,
-        roleInCompany
+        roleInCompany,
       } as User
 
       if (userType !== 'agent') data.status = 'unverified'
@@ -90,7 +91,10 @@ class AuthController {
         `${FRONTEND_URL}/profile/manage-password?action=sign-in&token=${token}`
       )
 
-      return Respond.success(res, 'Password recovery link has been sent to your email.')
+      return Respond.success(
+        res,
+        'Password recovery link has been sent to your email.'
+      )
     } catch (err) {
       next(err)
     }

@@ -20,7 +20,7 @@ class BidController {
         price,
         presentLocation,
         driverName,
-        truckPlateNumber,
+        vehicle,
         tripId,
       } = req.body
       const user = getUserCredentialsFromReq(req)
@@ -29,9 +29,8 @@ class BidController {
         price,
         presentLocation,
         transporterId: user._id,
-        driverName,
-        truckPlateNumber,
         tripId,
+        vehicle,
         status: 'pending',
       })
       const trip = await findTripBy({ _id: tripId })
