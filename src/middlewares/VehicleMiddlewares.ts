@@ -31,24 +31,24 @@ class VehicleMiddlewares {
       )
       const rawAvatar = Helpers.extractFileFromReq(req, 'driver.avatar')
 
-      if (!plateNumber && !vehicleType)
+      if (!plateNumber || !vehicleType)
         return Respond.error(
           res,
           'Plate Number and vehicleType are compulsory fields'
         )
 
-      if (!rawAvatar && !rawDriverLicense)
+      if (!rawAvatar || !rawDriverLicense)
         return Respond.error(
           res,
           'Driver avatar or driver license seems to be missing.'
         )
 
       if (
-        !rawBackInnerView &&
-        !rawBackView &&
-        !rawRightSideView &&
-        !rawDriversCockPit &&
-        !rawFrontView &&
+        !rawBackInnerView ||
+        !rawBackView ||
+        !rawRightSideView ||
+        !rawDriversCockPit ||
+        !rawFrontView ||
         !rawLeftSideView
       )
         return Respond.error(

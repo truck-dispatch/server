@@ -11,7 +11,6 @@ class VehicleController {
     try {
       const data = await extractData(req)
       const { _id } = getUserCredentialsFromReq(req)
-      console.log(data)
       const vehicle = await createVehicle({ ...data, ownerId: _id })
 
       return Respond.success(res, 'vehicle created successfully', vehicle)

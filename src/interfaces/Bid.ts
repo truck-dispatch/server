@@ -7,7 +7,6 @@ export default interface Bid {
   price: number
   presentLocation?: string
   transporterId: string
-  driverName: string
   tripId: string
   status: 'pending' | 'accepted' | 'rejected'
   vehicle: Vehicle
