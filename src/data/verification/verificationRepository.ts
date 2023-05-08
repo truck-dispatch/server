@@ -1,3 +1,4 @@
+import { findUserBy } from '@data/user/userRepository'
 import Verification from 'interfaces/Verification'
 import { VerificationModel } from './VerificationModel'
 
@@ -17,4 +18,18 @@ export async function findVerificationBy(param: Partial<Verification>) {
   const verification = await VerificationModel.findOne(param)
   if (!verification) return null
   return verification
+}
+
+export async function findVerificationsBy(param: Partial<Verification>) {
+  const verifications = await VerificationModel.find(param).lean()
+  const data = await Promise.all(
+    verifications.map(async (verification) => {
+      const user = await findUserBy({ _id: verification.userId })
+      return {
+        ...verification,
+        user,
+      }
+    })
+  )
+  return data
 }
