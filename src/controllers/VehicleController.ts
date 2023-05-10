@@ -48,8 +48,12 @@ class VehicleController {
 
 export default new VehicleController()
 
+function fileIsAvailableForUpload(file: File | string) {
+  return file instanceof File;
+}
 async function extractData(req: Request): Promise<Vehicle> {
   const { plateNumber, vehicleType } = req.body
+  const data = {} as Vehicle;
   const rawFrontView = Helpers.extractFileFromReq(req, 'images.frontView')
   const rawBackView = Helpers.extractFileFromReq(req, 'images.backView')
   const rawLeftSideView = Helpers.extractFileFromReq(req, 'images.leftSideView')
@@ -71,15 +75,16 @@ async function extractData(req: Request): Promise<Vehicle> {
   )
   const rawAvatar = Helpers.extractFileFromReq(req, 'driver.avatar')
 
-  const frontView = await Cloudinary.upload({ file: rawFrontView })
+  if (fileIsAvailableForUpload(rawFrontView)) data.images.frontView = await Cloudinary.upload({ file: rawFrontView })
   const backView = await Cloudinary.upload({ file: rawBackView })
   const leftSideView = await Cloudinary.upload({ file: rawLeftSideView })
   const rightSideView = await Cloudinary.upload({ file: rawRightSideView })
   const driversCockPit = await Cloudinary.upload({ file: rawDriversCockPit })
   const backInnerView = await Cloudinary.upload({ file: rawBackInnerView })
-  const driverLicense = await Cloudinary.upload({ file: rawDriverLicense })
+  if (rawDriverLicense && typeof rawDriverLicense !== 'string') data.driver.driverLicense = await Cloudinary.upload({ file: rawDriverLicense })
   const avatar = await Cloudinary.upload({ file: rawAvatar })
 
+  
   return {
     ownerId: '',
     plateNumber,
