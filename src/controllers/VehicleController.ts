@@ -1,4 +1,4 @@
-import { createVehicle, findVehiclesBy } from '@data/vehicle/vehicleRepository'
+import { createVehicle, findAndUpdateVehicleBy, findVehiclesBy } from '@data/vehicle/vehicleRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
 import Vehicle from '@interfaces/Vehicle'
@@ -26,6 +26,20 @@ class VehicleController {
       const vehicles = await findVehiclesBy({ ownerId: _id })
 
       return Respond.success(res, 'Vehicles fetched successfully', vehicles)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async updateVehicle(req: Request, res: Response, next: NextFunction) {
+    try {
+      const vehicleUpdateData = await extractData(req);
+      const { vehicleId } = req.body;
+
+      const vehicleUpdateResponse = await findAndUpdateVehicleBy(vehicleId,  vehicleUpdateData);
+
+      return Respond.success( res, 'Vehicle Updated',  vehicleUpdateResponse)
+
     } catch (err) {
       next(err)
     }

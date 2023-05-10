@@ -9,3 +9,10 @@ export function createVehicle(data: Vehicle) {
 export function findVehiclesBy(data: Partial<Vehicle>) {
   return VehicleModel.find(data).lean()
 }
+
+export function findAndUpdateVehicleBy(
+  searchParam: Partial<Vehicle>,
+  data:  Partial<Vehicle>,
+) {
+  return VehicleModel.findOneAndUpdate( searchParam, data, { new: true } )
+}
