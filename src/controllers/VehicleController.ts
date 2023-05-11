@@ -76,32 +76,18 @@ async function extractData(req: Request): Promise<Vehicle> {
   const rawAvatar = Helpers.extractFileFromReq(req, 'driver.avatar')
 
   if (fileIsAvailableForUpload(rawFrontView)) data.images.frontView = await Cloudinary.upload({ file: rawFrontView })
-  const backView = await Cloudinary.upload({ file: rawBackView })
-  const leftSideView = await Cloudinary.upload({ file: rawLeftSideView })
-  const rightSideView = await Cloudinary.upload({ file: rawRightSideView })
-  const driversCockPit = await Cloudinary.upload({ file: rawDriversCockPit })
-  const backInnerView = await Cloudinary.upload({ file: rawBackInnerView })
-  if (rawDriverLicense && typeof rawDriverLicense !== 'string') data.driver.driverLicense = await Cloudinary.upload({ file: rawDriverLicense })
-  const avatar = await Cloudinary.upload({ file: rawAvatar })
-
+  if (fileIsAvailableForUpload(rawBackView)) data.images.backView = await Cloudinary.upload({ file: rawBackView})
+  if (fileIsAvailableForUpload(rawLeftSideView)) data.images.leftSideView = await Cloudinary.upload({ file: rawLeftSideView})
+  if (fileIsAvailableForUpload(rawRightSideView)) data.images.rightSideView = await Cloudinary.upload({ file: rawRightSideView})
+  if (fileIsAvailableForUpload(rawDriversCockPit)) data.images.driversCockPit = await Cloudinary.upload({ file: rawDriversCockPit})
+  if (fileIsAvailableForUpload(rawBackInnerView)) data.images.backInnerView = await Cloudinary.upload({ file: rawBackInnerView})
+  if ( fileIsAvailableForUpload(rawDriverLicense)) data.driver.driverLicense = await Cloudinary.upload({ file: rawDriverLicense })
+  if (fileIsAvailableForUpload(rawAvatar))  data.driver.avatar =  await Cloudinary.upload({ file: rawAvatar })
   
-  return {
-    ownerId: '',
-    plateNumber,
-    vehicleType,
-    images: {
-      frontView,
-      backView,
-      leftSideView,
-      rightSideView,
-      driversCockPit,
-      backInnerView,
-    },
-    driver: {
-      name: req.body['driver.name'],
-      phone: req.body['driver.phone'],
-      avatar,
-      driverLicense,
-    },
-  }
+  if (plateNumber) data.plateNumber = plateNumber
+  if (vehicleType) data.vehicleType = vehicleType
+  if (req.body['driver.name']) data.driver.name = req.body['driver.name']
+  if (req.body['driver.phone']) data.driver.phone = req.body['driver.phone']
+
+  return data
 }
