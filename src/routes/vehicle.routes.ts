@@ -31,4 +31,16 @@ router.get(
   VehicleController.getVehicles
 )
 
+router.patch(
+  '/:vehicleId',
+  JWTMiddlewares.jwtIsValid,
+  JWTMiddlewares.checkIsServiceBasedUserType,
+  VehicleMiddlewares.checkIfVehicleExists,
+  multerInstance.fields([
+    { name: 'driver.avatar', maxCount: 1 },
+    { name: 'driver.driverLicense', maxCount: 1 },
+  ]),
+  VehicleController.updateVehicle
+)
+
 export default router

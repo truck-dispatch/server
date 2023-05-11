@@ -1,3 +1,4 @@
+import { findVehicleBy } from '@data/vehicle/vehicleRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
 import { NextFunction, Request, Response } from 'express'
@@ -55,6 +56,21 @@ class VehicleMiddlewares {
           res,
           `backInnerView or BackView or RightSideView or DriversCockPit or FrontView or LeftSideView seems to be missing`
         )
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message, 500)
+    }
+  }
+  async checkIfVehicleExists(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { vehicleId } = req.params
+
+      if (!vehicleId) return Respond.error(res, 'Vehicle ID was not passed...')
+
+      const vehicle = await findVehicleBy({ _id: vehicleId })
+
+      if (!vehicle) return Respond.error(res, 'Vehicle does not exist')
+
       next()
     } catch (err) {
       return Respond.error(res, (err as Error).message, 500)
