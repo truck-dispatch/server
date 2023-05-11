@@ -35,6 +35,7 @@ router.patch(
   '/:vehicleId',
   JWTMiddlewares.jwtIsValid,
   JWTMiddlewares.checkIsServiceBasedUserType,
+  VehicleMiddlewares.checkIfVehicleExists,
   multerInstance.fields([
     { name: 'driver.avatar', maxCount: 1 },
     { name: 'driver.driverLicense', maxCount: 1 },

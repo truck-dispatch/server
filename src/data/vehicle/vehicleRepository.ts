@@ -6,13 +6,16 @@ export function createVehicle(data: Vehicle) {
   return vehicle.save()
 }
 
+export function findVehicleBy(data: Partial<Vehicle>) {
+  return VehicleModel.findOne(data).lean()
+}
 export function findVehiclesBy(data: Partial<Vehicle>) {
   return VehicleModel.find(data).lean()
 }
 
 export function findAndUpdateVehicleBy(
   searchParam: Partial<Vehicle>,
-  data:  Partial<Vehicle>,
+  data: Partial<Vehicle>
 ) {
-  return VehicleModel.findOneAndUpdate( searchParam, data, { new: true } )
+  return VehicleModel.findOneAndUpdate(searchParam, data, { new: true })
 }
