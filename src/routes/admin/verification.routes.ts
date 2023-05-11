@@ -3,5 +3,6 @@ import VerificationControllers from '../../controllers/Admin/VerificationControl
 
 const router = Router()
 router.get('/', VerificationControllers.getAllVerifications)
+router.post('/verify/:userId', VerificationControllers.verifyVerification)
 
 export default router

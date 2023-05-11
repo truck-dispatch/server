@@ -15,7 +15,7 @@ export function findAndUpdateVerificationBy(
 }
 
 export async function findVerificationBy(param: Partial<Verification>) {
-  const verification = await VerificationModel.findOne(param)
+  const verification = await VerificationModel.findOne(param).lean()
   if (!verification) return null
   return verification
 }
@@ -31,5 +31,5 @@ export async function findVerificationsBy(param: Partial<Verification>) {
       }
     })
   )
-  return data
+  return data;
 }
