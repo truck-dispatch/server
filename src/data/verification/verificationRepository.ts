@@ -11,7 +11,9 @@ export function findAndUpdateVerificationBy(
   searchParam: Partial<Verification>,
   data: Partial<Verification>
 ) {
-  return VerificationModel.findOneAndUpdate(searchParam, data, { new: true })
+  return VerificationModel.findOneAndUpdate(searchParam, data, {
+    new: true,
+  }).lean()
 }
 
 export async function findVerificationBy(param: Partial<Verification>) {
@@ -31,5 +33,5 @@ export async function findVerificationsBy(param: Partial<Verification>) {
       }
     })
   )
-  return data;
+  return data
 }

@@ -30,7 +30,6 @@ class JWTMiddlewares {
     }
   }
 
-  
   checkisClientBasedUserType(req: Request, res: Response, next: NextFunction) {
     try {
       const { userType } = getUserCredentialsFromReq(req)

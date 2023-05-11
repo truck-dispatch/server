@@ -31,10 +31,6 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    response: {
-      type: String,
-      required: false,
-    },
     guarantor: {
       name: {
         type: String,
@@ -61,6 +57,7 @@ const schema = new Schema(
         required: true,
       },
     },
+    // Reason for reject.
     adminMessage: {
       type: String,
       required: false,

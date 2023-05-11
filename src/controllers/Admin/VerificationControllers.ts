@@ -1,10 +1,17 @@
 import { NextFunction, Request, Response } from 'express'
-import { findVerificationsBy,findVerificationBy } from '../../data/verification/verificationRepository'
-import { findAndUpdateUserBy } from '../../data/user/userRepository'
+import {
+  findVerificationsBy,
+  findVerificationBy,
+  findAndUpdateVerificationBy,
+} from '../../data/verification/verificationRepository'
+import {
+  findAndUpdateUserBy,
+  findUsersBy,
+} from '../../data/user/userRepository'
 import Respond from '../../helpers/Respond'
 
 class VerificationControllers {
-  async getAllVerifications(req: Request, res: Response, next: NextFunction) {
+  async getAllVerifications(_: Request, res: Response, next: NextFunction) {
     try {
       const verifications = await findVerificationsBy({})
       return Respond.success(
@@ -26,17 +33,39 @@ class VerificationControllers {
         { _id: userId },
         { status: 'verified' }
       )
-      const verification = await findVerificationBy(
-        {userId}
-      )
+      const verification = await findVerificationBy({ userId })
       return Respond.success(
         res,
         'Verification has been Verified successfully',
         {
-        ...verification,
-        user
+          ...verification,
+          user,
         }
       )
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async rejectVerification(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { adminMessage, verificationId } = req.body
+      const { userId } = req.params
+
+      const user = await findAndUpdateUserBy(
+        { _id: userId },
+        { status: 'rejected' }
+      )
+
+      const verification = await findAndUpdateVerificationBy(
+        { _id: verificationId },
+        { adminMessage }
+      )
+
+      return Respond.success(res, 'User has been rejected', {
+        ...verification,
+        user,
+      })
     } catch (err) {
       next(err)
     }
