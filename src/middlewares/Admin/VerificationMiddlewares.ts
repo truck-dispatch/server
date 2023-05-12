@@ -10,12 +10,12 @@ class VerificationMiddleware {
     next: NextFunction
   ) {
     try {
-      const { adminMessage, verificationId } = req.body
+      const { adminMessage, _id } = req.body
 
       if (!adminMessage) return Respond.error(res, 'Admin message was not sent')
-      if (!verificationId)
+      if (!_id)
         return Respond.error(res, 'Admin message was not sent')
-      const verification = await findVerificationBy({ _id: verificationId })
+      const verification = await findVerificationBy({ _id })
 
       if (!verification)
         return Respond.error(res, 'Verification does not exist', 404)

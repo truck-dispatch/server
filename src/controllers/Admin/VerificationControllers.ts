@@ -49,7 +49,7 @@ class VerificationControllers {
 
   async rejectVerification(req: Request, res: Response, next: NextFunction) {
     try {
-      const { adminMessage, verificationId } = req.body
+      const { adminMessage, _id } = req.body
       const { userId } = req.params
 
       const user = await findAndUpdateUserBy(
@@ -58,7 +58,7 @@ class VerificationControllers {
       )
 
       const verification = await findAndUpdateVerificationBy(
-        { _id: verificationId },
+        { _id },
         { adminMessage }
       )
 
