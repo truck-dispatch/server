@@ -70,7 +70,7 @@ Expected parameters
   email: [string, unique],
   phone: [string, unique],
   password: string,
-  userType: 'agent' | 'transporter' | 'company', | 'transportCompany'
+  userType: 'shipper' | 'transporter' | 'company', | 'transportCompany'
 }
 ```
 
