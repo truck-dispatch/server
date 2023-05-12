@@ -34,7 +34,7 @@ class AuthController {
         roleInCompany,
       } as User
 
-      if (userType !== 'agent') data.status = 'unverified'
+      if (userType !== 'shipper') data.status = 'unverified'
       const user = await createUser(data)
       const smsData = await Sms.sendOTP({
         to: formattedPhone,

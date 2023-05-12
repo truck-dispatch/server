@@ -14,7 +14,7 @@ class VerificationMiddlewares {
     try {
       const { _id } = getUserCredentialsFromReq(req)
       const user = await findUserBy({ _id })
-      if (user?.status === 'verified' || user?.userType === 'agent') {
+      if (user?.status === 'verified' || user?.userType === 'shipper') {
         return Respond.error(
           res,
           'User has either been verified, or is not allowed to partake in verification'

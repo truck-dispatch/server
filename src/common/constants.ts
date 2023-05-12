@@ -1,4 +1,4 @@
-export const userTypes = ['agent', 'transporter', 'transportCompany', 'company']
+
 
 export const shippingLines = [
   'Maersk line',
@@ -25,8 +25,8 @@ export const tripStatus = [
   'completed',
 ]
 
-export const clientUserTypes = ['agent', 'company']
+export const clientUserTypes = ['shipper', 'company']
 
 export const serviceBasedUserTypes = ['transporter', 'transportCompany']
-
+export const userTypes = [...clientUserTypes, ...serviceBasedUserTypes]
 export const rolesInACompany = ['CEO', 'manager', 'secretary', 'accountant']
