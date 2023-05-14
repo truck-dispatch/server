@@ -35,6 +35,7 @@ class TripController {
 
       const trip = await createTrip({
         tripOwner: user?._id,
+        tripOwnerUserType: user?.userType!,
         pickUpAddress,
         deliveryAddress,
         pickUpDate,
@@ -91,9 +92,15 @@ class TripController {
    * @param next
    * @returns
    */
-  async getJobs(_: Request, res: Response, next: NextFunction) {
+  async getJobs(req: Request, res: Response, next: NextFunction) {
     try {
-      const trips = await findTripsBy({ status: 'awaiting-bid' })
+      const { page, limit, senderType } = req.query
+
+      const query: Partial<Trip> = { status: 'awaiting-bid' };
+
+      if (clientUserTypes.includes(senderType as string)) query.tripOwnerUserType = senderType as string;
+
+      const trips = await findTripsBy(query, page as string, limit as string)
 
       return Respond.success(res, 'Trips fetched successfully.', trips)
     } catch (err) {

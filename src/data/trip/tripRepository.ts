@@ -1,3 +1,4 @@
+import paginate from '@data/paginate'
 import NewTrip from 'interfaces/NewTrip'
 import Trip from 'interfaces/Trip'
 import { findUserBy } from '../user/userRepository'
@@ -18,14 +19,26 @@ export async function findTripBy(param: Partial<Trip>): Promise<Trip | null> {
   return trip.toObject()
 }
 
-export async function findTripsBy(param: Partial<Trip>) {
-  const trips = await TripModel.find(param).lean()
+export async function findTripsBy(
+  query: Partial<Trip>,
+  page?: string,
+  limit?: string
+) {
+  const paginatedData = await paginate<Trip>(TripModel, query, page, limit);
 
   const tripsWithResponsibleUsers = await Promise.all(
-    trips.map(async (trip) => await getCompleteTripDetail(trip))
+    paginatedData.data.map(async (trip) => await getCompleteTripDetail(trip))
   )
 
-  return tripsWithResponsibleUsers
+  const data: Record<string, unknown> = { ...paginatedData, data: tripsWithResponsibleUsers};
+  // GET number of trips created by company and by shipper for jobs.
+  if (query.status === 'awaiting-bid'){
+    data.byCompany = await TripModel.countDocuments({ tripOwnerUserType: 'company',status: 'awaiting-bid'})
+    data.byShipper = await TripModel.countDocuments({ tripOwnerUserType: 'shipper', status: 'awaiting_bid'})
+    console.log(data.byCompany, data.byShipper, 'data');
+  }
+
+  return data
 }
 
 export async function findAndUpdateTripBy(
