@@ -7,7 +7,7 @@ export default interface NewTrip {
   pickUpDate: string
   deliveryDate: string
   typeOfGoods: string
-  tripOwnerUserType: string;
+  tripOwnerUserType: string
   weight: string
   sizeOfContainer: string
   shippingLine: string

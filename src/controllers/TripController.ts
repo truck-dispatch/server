@@ -1,12 +1,14 @@
 import { findUserBy, findAndUpdateUserBy } from '@data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
-import { clientUserTypes } from '@common/constants'
+import { clientUserTypes, tripStatus } from '@common/constants'
 import { findAndUpdateBidBy } from '@data/bid/bidRepository'
 import { createPayment } from '@data/payment/paymentRepository'
 import {
   createTrip,
   findAndUpdateTripBy,
   findTripsBy,
+  getAvailableJobNumbers,
+  getTripNumbers,
 } from '@data/trip/tripRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
@@ -59,6 +61,7 @@ class TripController {
   async getTrips(req: Request, res: Response, next: NextFunction) {
     try {
       const user = getUserCredentialsFromReq(req)
+      const { page, limit, status } = req.query
 
       const paramToFetchWith: Partial<Trip> = {}
       if (clientUserTypes.includes(user.userType)) {
@@ -66,9 +69,14 @@ class TripController {
       } else {
         paramToFetchWith.transporterId = user._id
       }
-      const trips = await findTripsBy(paramToFetchWith)
+      const tripNumbers = await getTripNumbers(paramToFetchWith)
+      if (tripStatus.includes(status as string)) paramToFetchWith.status = status as string;
+      const paginatedTripsData = await findTripsBy(paramToFetchWith, page as string, limit as string)
 
-      return Respond.success(res, 'Trips fetched successfully', trips)
+      return Respond.success(res, 'Trips fetched successfully', {
+        ...paginatedTripsData,
+        ...tripNumbers,
+      })
     } catch (err) {
       next(err)
     }
@@ -96,13 +104,22 @@ class TripController {
     try {
       const { page, limit, senderType } = req.query
 
-      const query: Partial<Trip> = { status: 'awaiting-bid' };
+      const query: Partial<Trip> = { status: 'awaiting-bid' }
 
-      if (clientUserTypes.includes(senderType as string)) query.tripOwnerUserType = senderType as string;
+      if (clientUserTypes.includes(senderType as string))
+        query.tripOwnerUserType = senderType as string
 
-      const trips = await findTripsBy(query, page as string, limit as string)
+      const paginatedJobsData = await findTripsBy(
+        query,
+        page as string,
+        limit as string
+      )
+      const jobNumbers = await getAvailableJobNumbers()
 
-      return Respond.success(res, 'Trips fetched successfully.', trips)
+      return Respond.success(res, 'Trips fetched successfully.', {
+        ...paginatedJobsData,
+        ...jobNumbers,
+      })
     } catch (err) {
       next(err)
     }

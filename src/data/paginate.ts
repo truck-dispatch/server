@@ -5,7 +5,7 @@ export default async function paginate<T>(
   limitParam?: string
 ) {
   const page = pageParam ? parseInt(pageParam) : 1
-  const limit = limitParam ? parseInt(limitParam) : 5
+  const limit = limitParam ? parseInt(limitParam) : 10
 
   try {
     const totalItems = await model.countDocuments(query)

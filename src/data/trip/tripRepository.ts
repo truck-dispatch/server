@@ -24,21 +24,45 @@ export async function findTripsBy(
   page?: string,
   limit?: string
 ) {
-  const paginatedData = await paginate<Trip>(TripModel, query, page, limit);
+  const paginatedData = await paginate<Trip>(TripModel, query, page, limit)
 
   const tripsWithResponsibleUsers = await Promise.all(
     paginatedData.data.map(async (trip) => await getCompleteTripDetail(trip))
   )
 
-  const data: Record<string, unknown> = { ...paginatedData, data: tripsWithResponsibleUsers};
-  // GET number of trips created by company and by shipper for jobs.
-  if (query.status === 'awaiting-bid'){
-    data.byCompany = await TripModel.countDocuments({ tripOwnerUserType: 'company',status: 'awaiting-bid'})
-    data.byShipper = await TripModel.countDocuments({ tripOwnerUserType: 'shipper', status: 'awaiting_bid'})
-    console.log(data.byCompany, data.byShipper, 'data');
-  }
+  return { ...paginatedData, data: tripsWithResponsibleUsers }
+}
 
-  return data
+export async function getAvailableJobNumbers() {
+  const totalItems = await TripModel.countDocuments({ status: 'awaiting-bid' })
+  const byCompany = await TripModel.countDocuments({
+    tripOwnerUserType: 'company',
+    status: 'awaiting-bid',
+  })
+  const byShipper = await TripModel.countDocuments({
+    tripOwnerUserType: 'shipper',
+    status: 'awaiting_bid',
+  })
+
+  return { totalItems, byCompany, byShipper }
+}
+
+export async function getTripNumbers(param: Partial<Trip>) {
+  const totalItems = await TripModel.countDocuments(param)
+  const pending = await TripModel.countDocuments({
+    ...param,
+    status: 'awaiting-bid',
+  })
+  const inProgress = await TripModel.countDocuments({
+    ...param,
+    status: 'in-progress',
+  })
+  const completed = await TripModel.countDocuments({
+    ...param,
+    status: 'completed',
+  })
+
+  return { totalItems, pending, inProgress, completed }
 }
 
 export async function findAndUpdateTripBy(
