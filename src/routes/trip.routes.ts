@@ -21,9 +21,17 @@ router.get(
   TripController.getJobs
 )
 router.get(
+  '/jobs/:tripId',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkIsServiceBasedUserType,
+  TripMiddlewares.tripExists,
+  TripController.getJob
+)
+router.get(
   '/:tripId',
   JwtMiddlewares.jwtIsValid,
   TripMiddlewares.checkIfUserIsAssociatedToTrip,
+  TripMiddlewares.tripExists,
   TripController.getTrip
 )
 router.patch(

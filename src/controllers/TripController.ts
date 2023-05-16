@@ -97,6 +97,19 @@ class TripController {
       next(err)
     }
   }
+  async getJob(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tripId } = req.params
+
+      const trip = await findTripBy({_id: tripId});
+      const tripDetail = await getCompleteTripDetail(trip!)
+
+      return Respond.success(res, 'Trip fetched', tripDetail)
+
+    } catch (err) {
+      next(err)
+    }
+  }
 
   async updateTrip(req: Request, res: Response, next: NextFunction) {
     try {
