@@ -20,6 +20,12 @@ router.get(
   JwtMiddlewares.checkIsServiceBasedUserType,
   TripController.getJobs
 )
+router.get(
+  '/:tripId',
+  JwtMiddlewares.jwtIsValid,
+  TripMiddlewares.checkIfUserIsAssociatedToTrip,
+  TripController.getTrip
+)
 router.patch(
   '/:tripId',
   JwtMiddlewares.jwtIsValid,

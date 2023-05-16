@@ -6,8 +6,10 @@ import { createPayment } from '@data/payment/paymentRepository'
 import {
   createTrip,
   findAndUpdateTripBy,
+  findTripBy,
   findTripsBy,
   getAvailableJobNumbers,
+  getCompleteTripDetail,
   getTripNumbers,
 } from '@data/trip/tripRepository'
 import { Helpers } from '@helpers/index'
@@ -77,6 +79,20 @@ class TripController {
         ...paginatedTripsData,
         ...tripNumbers,
       })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async getTrip(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tripId } = req.params
+
+      const trip = await findTripBy({_id: tripId});
+      const tripDetail = await getCompleteTripDetail(trip!)
+
+      return Respond.success(res, 'Trip fetched', tripDetail)
+
     } catch (err) {
       next(err)
     }
