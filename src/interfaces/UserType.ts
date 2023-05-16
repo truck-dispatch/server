@@ -1,3 +1,3 @@
-type UserType = 'transporter' | 'shipper' | 'transportCompany' | 'company';
+type UserType = 'transporter' | 'shipper' | 'transportCompany' | 'company'
 
-export default UserType;
+export default UserType

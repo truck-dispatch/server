@@ -1,5 +1,3 @@
-
-
 export const shippingLines = [
   'Maersk line',
   'Cosco',

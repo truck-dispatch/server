@@ -7,6 +7,10 @@ const schema = new Schema(
       required: true,
       type: String,
     },
+    tripOwnerUserType: {
+      required: true,
+      type: String,
+    },
     transporterId: {
       type: String,
     },
