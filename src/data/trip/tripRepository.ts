@@ -78,7 +78,7 @@ export async function findAndUpdateTripBy(
   return getCompleteTripDetail(updatedTrip) as unknown as Trip
 }
 
-async function getCompleteTripDetail(trip: Trip) {
+export async function getCompleteTripDetail(trip: Trip) {
   const transporter = await findUserBy({ _id: trip.transporterId })
   const tripOwner = await findUserBy({ _id: trip.tripOwner })
 
