@@ -3,12 +3,11 @@ import {
   findVerificationsBy,
   findVerificationBy,
   findAndUpdateVerificationBy,
-} from '../../data/verification/verificationRepository'
+} from '@data/verification/verificationRepository'
 import {
   findAndUpdateUserBy,
-  findUsersBy,
-} from '../../data/user/userRepository'
-import Respond from '../../helpers/Respond'
+} from '@data/user/userRepository'
+import Respond from '@helpers/Respond'
 
 class VerificationControllers {
   async getAllVerifications(_: Request, res: Response, next: NextFunction) {
