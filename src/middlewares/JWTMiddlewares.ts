@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
+import { decodeToken, getUserCredentialsFromReq } from '../services/JWT'
+import User from '../interfaces/User'
+import Admin from '../interfaces/Admin'
 import { clientUserTypes, serviceBasedUserTypes } from '@common/constants'
 import { findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
-import { decodeToken, getUserCredentialsFromReq } from '@services/JWT'
-import User from 'interfaces/User'
 import { findAdminBy } from '@data/Admin/adminRepository'
 
 class JWTMiddlewares {
