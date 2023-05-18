@@ -22,7 +22,7 @@ const schema = new Schema(
       required: true,
     },
     vehicle: {
-      type: String,
+      type: Object,
       required: true,
     },
     tripId: {
