@@ -19,7 +19,6 @@ class BidController {
         extraNotes,
         price,
         presentLocation,
-        driverName,
         vehicle,
         tripId,
       } = req.body

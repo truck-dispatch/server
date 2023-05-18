@@ -144,6 +144,10 @@ class TripController {
         limit as string
       )
       const jobNumbers = await getAvailableJobNumbers()
+      console.log({
+        ...paginatedJobsData,
+        ...jobNumbers,
+      })
 
       return Respond.success(res, 'Trips fetched successfully.', {
         ...paginatedJobsData,

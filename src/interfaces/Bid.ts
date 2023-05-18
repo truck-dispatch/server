@@ -9,5 +9,5 @@ export default interface Bid {
   transporterId: string
   tripId: string
   status: 'pending' | 'accepted' | 'rejected'
-  vehicle: string
+  vehicle: Vehicle
 }
