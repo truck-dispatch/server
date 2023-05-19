@@ -72,8 +72,13 @@ class TripController {
         paramToFetchWith.transporterId = user._id
       }
       const tripNumbers = await getTripNumbers(paramToFetchWith)
-      if (tripStatus.includes(status as string)) paramToFetchWith.status = status as string;
-      const paginatedTripsData = await findTripsBy(paramToFetchWith, page as string, limit as string)
+      if (tripStatus.includes(status as string))
+        paramToFetchWith.status = status as string
+      const paginatedTripsData = await findTripsBy(
+        paramToFetchWith,
+        page as string,
+        limit as string
+      )
 
       return Respond.success(res, 'Trips fetched successfully', {
         ...paginatedTripsData,
@@ -88,11 +93,10 @@ class TripController {
     try {
       const { tripId } = req.params
 
-      const trip = await findTripBy({_id: tripId});
+      const trip = await findTripBy({ _id: tripId })
       const tripDetail = await getCompleteTripDetail(trip!)
 
       return Respond.success(res, 'Trip fetched', tripDetail)
-
     } catch (err) {
       next(err)
     }
@@ -101,11 +105,10 @@ class TripController {
     try {
       const { tripId } = req.params
 
-      const trip = await findTripBy({_id: tripId});
+      const trip = await findTripBy({ _id: tripId })
       const tripDetail = await getCompleteTripDetail(trip!)
 
       return Respond.success(res, 'Trip fetched', tripDetail)
-
     } catch (err) {
       next(err)
     }

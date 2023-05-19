@@ -10,8 +10,7 @@ class BidMiddlewares {
     next: NextFunction
   ) {
     try {
-      const { price, presentLocation, vehicle, tripId } =
-        req.body
+      const { price, presentLocation, vehicle, tripId } = req.body
       const { _id } = getUserCredentialsFromReq(req)
       const bid = await findBidBy({ tripId, transporterId: _id })
       if (bid) {
@@ -20,12 +19,7 @@ class BidMiddlewares {
           'Transporter has already sent a bid for this job. Kindly update your bid incase of any changes'
         )
       }
-      if (
-        !price ||
-        !presentLocation ||
-        !tripId ||
-        !vehicle
-      ) {
+      if (!price || !presentLocation || !tripId || !vehicle) {
         return Respond.error(
           res,
           'price, truck present location, vehicle, and trip id are required fields.'

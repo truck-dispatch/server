@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import {
   createBid,
+  findActiveBidsBy,
   findAndUpdateBidBy,
   findBidBy,
   findBidsBy,
@@ -15,13 +16,7 @@ import { FRONTEND_URL } from '@common/privateKeys'
 class BidController {
   async createBid(req: Request, res: Response, next: NextFunction) {
     try {
-      const {
-        extraNotes,
-        price,
-        presentLocation,
-        vehicle,
-        tripId,
-      } = req.body
+      const { extraNotes, price, presentLocation, vehicle, tripId } = req.body
       const user = getUserCredentialsFromReq(req)
       const bidResponse = await createBid({
         extraNotes,
@@ -85,19 +80,13 @@ class BidController {
     }
   }
 
-  async getTransporterBidToTrip(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async getBids(req: Request, res: Response, next: NextFunction) {
     try {
       const { _id } = getUserCredentialsFromReq(req)
-      const { tripId } = req.params
-      const bidResponse = await findBidBy({
-        tripId: tripId,
-        transporterId: _id,
-      })
-      return Respond.success(res, 'Bid found successfully', bidResponse)
+
+      const bids = await findActiveBidsBy({ transporterId: _id })
+
+      return Respond.success(res, 'Active bids fetched', bids)
     } catch (err) {
       next(err)
     }
