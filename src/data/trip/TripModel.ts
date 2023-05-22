@@ -1,18 +1,24 @@
-import { model, Schema } from 'mongoose'
+import Mongoose, { model, Schema } from 'mongoose'
 import Trip from 'interfaces/Trip'
 
 const schema = new Schema(
   {
     tripOwner: {
       required: true,
-      type: String,
+      type: Mongoose.Types.ObjectId,
+      ref: 'User'
     },
     tripOwnerUserType: {
       required: true,
       type: String,
     },
+    transporter: {
+      type: Mongoose.Types.ObjectId,
+      ref: 'User'
+    },
     transporterId: {
-      type: String,
+      type: Mongoose.Types.ObjectId,
+      ref: 'User'
     },
     pickUpAddress: {
       type: String,

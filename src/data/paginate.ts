@@ -1,5 +1,7 @@
+import { Mongoose } from "mongoose"
+
 export default async function paginate<T>(
-  model: any,
+  model: Mongoose['Model'],
   query: Record<string, unknown>,
   pageParam?: string,
   limitParam?: string
@@ -13,6 +15,8 @@ export default async function paginate<T>(
 
     const data: T[] = await model
       .find(query)
+      .populate('transporter')
+      .populate('tripOwner')
       .lean()
       .skip((page - 1) * limit)
       .limit(limit)

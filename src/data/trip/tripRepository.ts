@@ -26,11 +26,7 @@ export async function findTripsBy(
 ) {
   const paginatedData = await paginate<Trip>(TripModel, query, page, limit)
 
-  const tripsWithResponsibleUsers = await Promise.all(
-    paginatedData.data.map(async (trip) => await getCompleteTripDetail(trip))
-  )
-
-  return { ...paginatedData, data: tripsWithResponsibleUsers }
+  return { ...paginatedData, data: paginatedData }
 }
 
 export async function getAvailableJobNumbers() {
@@ -80,14 +76,12 @@ export async function findAndUpdateTripBy(
 
 export async function getCompleteTripDetail(trip: Trip) {
   const transporter = await findUserBy({ _id: trip.transporterId })
-  const tripOwner = await findUserBy({ _id: trip.tripOwner })
+  // const tripOwner = await findUserBy({ _id: trip.tripOwner })
 
-  const data: Record<string, unknown> = { ...trip, tripOwner }
 
-  if (transporter) data.transporter = transporter
   return {
     ...trip,
     transporter,
-    tripOwner,
+    // tripOwner,
   }
 }
