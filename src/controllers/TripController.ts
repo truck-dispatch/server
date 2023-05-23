@@ -253,7 +253,7 @@ async function setTripToCompleted(tripId: string) {
   const user = await findUserBy({ _id: updatedTrip?.transporter?._id })
   const completedTrips = user?.completedTrips! + 1
   await findAndUpdateUserBy({ _id: user?._id! }, { completedTrips })
-  const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner._id})
+  const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner._id })
   Mail.tripHasBeenSetToCompleted(
     tripOwner?.email!,
     `${FRONTEND_URL}/my-trips/${tripId}/status`,

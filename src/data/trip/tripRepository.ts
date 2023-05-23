@@ -10,8 +10,12 @@ export async function createTrip(trip: NewTrip) {
   return data
 }
 
-export async function findTripBy(param: Partial<Trip>): Promise<PopulatedTrip | null> {
-  const trip = await TripModel.findOne(param).populate('transporter', '-password').populate('tripOwner', '-password')
+export async function findTripBy(
+  param: Partial<Trip>
+): Promise<PopulatedTrip | null> {
+  const trip = await TripModel.findOne(param)
+    .populate('transporter', '-password')
+    .populate('tripOwner', '-password')
   if (!trip) {
     return null
   }
@@ -24,14 +28,21 @@ export async function findTripsBy(
   pageParam = '1',
   limitParam = '10'
 ) {
-  const page = pageParam ? parseInt(pageParam) : 1;
-  const limit = limitParam ? parseInt(limitParam) : 10;
+  const page = pageParam ? parseInt(pageParam) : 1
+  const limit = limitParam ? parseInt(limitParam) : 10
 
-  const data = await TripModel.find(query).populate('transporter', '-password').populate('tripOwner', '-password')
-  .skip((page - 1) * limit)
-  .limit(limit);
+  const data = await TripModel.find(query)
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .populate('transporter', '-password')
+    .populate('tripOwner', '-password')
   // @ts-ignore
-  const countedData = await countDocuments<PopulatedTrip>(TripModel, query, pageParam, limitParam)
+  const countedData = await countDocuments<PopulatedTrip>(
+    TripModel,
+    query,
+    pageParam,
+    limitParam
+  )
 
   return { ...countedData, data }
 }
@@ -74,7 +85,9 @@ export async function findAndUpdateTripBy(
 ): Promise<PopulatedTrip | null> {
   const updatedTrip = await TripModel.findOneAndUpdate(searchParam, data, {
     new: true,
-  }).populate('transporter').populate('tripOwner', '-password')
+  })
+    .populate('transporter')
+    .populate('tripOwner', '-password')
 
   if (!updatedTrip) return null
 

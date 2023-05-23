@@ -37,6 +37,6 @@ router.get(
   TripMiddlewares.tripExists,
   TripMiddlewares.isTripCreator,
   BidController.getTripBids
-);
+)
 
 export default router

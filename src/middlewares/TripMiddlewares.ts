@@ -83,7 +83,10 @@ class TripMiddlewares {
       const user = getUserCredentialsFromReq(req)
 
       const trip = await findTripBy({ _id: tripId })
-      if (trip?.tripOwner._id !== user._id && trip?.transporter?._id !== user._id) {
+      if (
+        trip?.tripOwner._id !== user._id &&
+        trip?.transporter?._id !== user._id
+      ) {
         return Respond.error(res, 'User is not associated to this trip.', 401)
       }
       next()

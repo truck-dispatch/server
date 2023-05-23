@@ -7,7 +7,7 @@ const schema = new Schema(
     tripOwner: {
       required: true,
       type: Mongoose.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
     },
     tripOwnerUserType: {
       required: true,
@@ -15,7 +15,7 @@ const schema = new Schema(
     },
     transporter: {
       type: Mongoose.Types.ObjectId,
-      ref: 'User'
+      ref: 'User',
     },
     pickUpAddress: {
       type: String,
