@@ -1,4 +1,3 @@
-import Mongoose, { Document } from 'mongoose'
 import {
   jobTypes,
   shippingLines,
@@ -24,7 +23,6 @@ export default interface Trip {
   transporter?: string
   tripOwnerUserType: string
   TDO?: string
-  paymentId?: string
   reference: string
   startTime?: string
   completionTime?: string

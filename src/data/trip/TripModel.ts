@@ -56,9 +56,6 @@ const schema = new Schema(
     TDO: {
       type: String,
     },
-    paymentId: {
-      type: String,
-    },
     reference: {
       type: String,
     },
