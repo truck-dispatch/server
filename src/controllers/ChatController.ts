@@ -63,13 +63,13 @@ class ChatController {
 
   async createChat(req: Request, res: Response, next: NextFunction) {
     try {
-      const { message, senderId, receiverId, chatId } = req.body
+      const { message, senderId, receiverId, chatLog } = req.body
 
       const messageToSave = await createMessage({
         message,
         sender: senderId,
         receiver: receiverId,
-        chatLog: chatId,
+        chatLog: chatLog,
       })
 
       const receiverSocket = getConnectedUserSocketByUserId(
@@ -101,11 +101,11 @@ class ChatController {
     }
   }
 
-  async setChatIsReadByChatId(req: Request, res: Response, next: NextFunction) {
+  async setChatIsReadBychatLog(req: Request, res: Response, next: NextFunction) {
     try {
-      const { chatId } = req.params
+      const { chatLog } = req.params
 
-      const chat = await updateMessageById(chatId, { readAt: Date.now() })
+      const chat = await updateMessageById(chatLog, { readAt: Date.now() })
 
       return Respond.success(res, 'Chat read successfully.', chat)
     } catch (err) {

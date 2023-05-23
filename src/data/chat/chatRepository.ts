@@ -13,13 +13,13 @@ export async function findMessagesById(userId: string) {
   return [...chatsSentByMe, ...chatsSentToMe]
 }
 
-export async function findLastMessage(chatId: ObjectId) {
-  const lastMessage = await ChatModel.findOne({ chatId }).sort({
+export async function findLastMessage(chatLog: ObjectId) {
+  const lastMessage = await ChatModel.findOne({ chatLog }).sort({
     createdAt: -1,
   })
   if (!lastMessage) return null
   return lastMessage
 }
-export async function updateMessageById(chatId: string, data: Partial<Chat>) {
-  return ChatModel.findOneAndUpdate({ _id: chatId }, data)
+export async function updateMessageById(chatLog: string, data: Partial<Chat>) {
+  return ChatModel.findOneAndUpdate({ _id: chatLog }, data)
 }
