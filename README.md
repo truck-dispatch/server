@@ -208,14 +208,14 @@ POST {BASE_URL}/chat/log
 
 POST {BASE_URL}/chat
 
-For this, we need to first create a chat log to be able to attain our chatId.
+For this, we need to first create a chat log to be able to attain our chatLog.
 
 ```
 { 
   message: string,
   senderId: string,
   receiverId: string,
-  chatId: string
+  chatLog: string
 }
 ```
 

@@ -23,7 +23,7 @@ router.patch(
   '/read/:messageId',
   JWTMiddlewares.jwtIsValid,
   ChatMiddlewares.messageIdExistsInParam,
-  ChatController.setChatIsReadByChatId
+  ChatController.setChatIsReadBychatLog
 )
 
 export default router
