@@ -59,7 +59,7 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
       if (!trip) return Respond.error(res, 'Trip was not found.')
-      if (trip?.tripOwner !== user._id)
+      if (trip?.tripOwner._id !== user._id)
         return Respond.error(
           res,
           'Only the trip owner has the right to update this trip'
@@ -83,7 +83,7 @@ class TripMiddlewares {
       const user = getUserCredentialsFromReq(req)
 
       const trip = await findTripBy({ _id: tripId })
-      if (trip?.tripOwner !== user._id && trip?.transporterId !== user._id) {
+      if (trip?.tripOwner._id !== user._id && trip?.transporter?._id !== user._id) {
         return Respond.error(res, 'User is not associated to this trip.', 401)
       }
       next()
@@ -127,7 +127,7 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
       if (!trip) return Respond.error(res, 'Trip was not found.')
-      if (trip?.transporterId !== user._id)
+      if (trip?.transporter?._id !== user._id)
         return Respond.error(
           res,
           'Only the transporter assigned to the trip can perform this operation'

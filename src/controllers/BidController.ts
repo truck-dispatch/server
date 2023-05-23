@@ -28,7 +28,7 @@ class BidController {
         status: 'pending',
       })
       const trip = await findTripBy({ _id: tripId })
-      const tripOwner = await findUserBy({ _id: trip?.tripOwner })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: user?._id! })
 
       Mail.transporterHasSentBid(
@@ -55,7 +55,7 @@ class BidController {
         req.body
       )
       const trip = await findTripBy({ _id: tripId })
-      const tripOwner = await findUserBy({ _id: trip?.tripOwner })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id })
 
       Mail.transporterHasUpdatedBid(

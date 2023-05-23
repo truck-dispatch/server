@@ -1,5 +1,6 @@
 import Mongoose, { model, Schema } from 'mongoose'
 import Trip from 'interfaces/Trip'
+import PopulatedTrip from '@interfaces/PopulatedTrip'
 
 const schema = new Schema(
   {
@@ -13,10 +14,6 @@ const schema = new Schema(
       type: String,
     },
     transporter: {
-      type: Mongoose.Types.ObjectId,
-      ref: 'User'
-    },
-    transporterId: {
       type: Mongoose.Types.ObjectId,
       ref: 'User'
     },
@@ -79,4 +76,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const TripModel = model<Trip>('Trip', schema)
+export const TripModel = model<PopulatedTrip>('Trip', schema)

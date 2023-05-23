@@ -1,7 +1,7 @@
-import paginate from '@data/paginate'
+import countDocuments from '@data/paginate'
+import PopulatedTrip from '@interfaces/PopulatedTrip'
 import NewTrip from 'interfaces/NewTrip'
 import Trip from 'interfaces/Trip'
-import { findUserBy } from '../user/userRepository'
 import { TripModel } from './TripModel'
 
 export async function createTrip(trip: NewTrip) {
@@ -10,8 +10,8 @@ export async function createTrip(trip: NewTrip) {
   return data
 }
 
-export async function findTripBy(param: Partial<Trip>): Promise<Trip | null> {
-  const trip = await TripModel.findOne(param)
+export async function findTripBy(param: Partial<Trip>): Promise<PopulatedTrip | null> {
+  const trip = await TripModel.findOne(param).populate('transporter').populate('tripOwner')
   if (!trip) {
     return null
   }
@@ -21,12 +21,19 @@ export async function findTripBy(param: Partial<Trip>): Promise<Trip | null> {
 
 export async function findTripsBy(
   query: Partial<Trip>,
-  page?: string,
-  limit?: string
+  pageParam = '1',
+  limitParam = '10'
 ) {
-  const paginatedData = await paginate<Trip>(TripModel, query, page, limit)
+  const page = pageParam ? parseInt(pageParam) : 1;
+  const limit = limitParam ? parseInt(limitParam) : 10;
 
-  return { ...paginatedData, data: paginatedData }
+  const data = await TripModel.find(query).populate('transporter').populate('tripOwner')
+  .skip((page - 1) * limit)
+  .limit(limit);
+  // @ts-ignore
+  const countedData = await countDocuments<PopulatedTrip>(TripModel, query, pageParam, limitParam)
+
+  return { ...countedData, data }
 }
 
 export async function getAvailableJobNumbers() {
@@ -64,24 +71,12 @@ export async function getTripNumbers(param: Partial<Trip>) {
 export async function findAndUpdateTripBy(
   searchParam: Partial<Trip>,
   data: Partial<Trip>
-) {
+): Promise<PopulatedTrip | null> {
   const updatedTrip = await TripModel.findOneAndUpdate(searchParam, data, {
     new: true,
-  }).lean()
+  }).populate('transporter').populate('tripOwner')
 
-  if (!updatedTrip) return updatedTrip
+  if (!updatedTrip) return null
 
-  return getCompleteTripDetail(updatedTrip) as unknown as Trip
-}
-
-export async function getCompleteTripDetail(trip: Trip) {
-  const transporter = await findUserBy({ _id: trip.transporterId })
-  // const tripOwner = await findUserBy({ _id: trip.tripOwner })
-
-
-  return {
-    ...trip,
-    transporter,
-    // tripOwner,
-  }
+  return updatedTrip as unknown as PopulatedTrip
 }
