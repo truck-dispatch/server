@@ -1,23 +1,26 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import Chat from 'interfaces/Chat'
 
 const schema = new Schema(
   {
-    chatId: {
-      type: String,
+    chatLog: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'ChatLog'
     },
     message: {
-      type: String,
+      type: Types.ObjectId,
       required: true,
     },
-    senderId: {
-      type: String,
+    sender: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
-    receiverId: {
-      type: String,
+    receiver: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
     readAt: {
       type: Number,

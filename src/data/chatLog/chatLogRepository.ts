@@ -11,24 +11,11 @@ export async function createChatLog(data: ChatLogQuery) {
 }
 
 export function findChatLogBy(searchParam: ChatLogQuery) {
-  return ChatLogModel.findOne(searchParam).lean()
+  return ChatLogModel.findOne(searchParam).populate('client', '-password').populate('transporter', '-password')
 }
 
 export async function findChatLogsBy(searchParam: Partial<ChatLogQuery>) {
-  const chatLogs = await ChatLogModel.find(searchParam).lean()
+  const chatLogs = await ChatLogModel.find(searchParam).populate('client', '-password').populate('transporter', '-password')
 
-  return Promise.all(
-    chatLogs.map(async (log) => {
-      const client = await findUserBy({ _id: log.clientId })
-      const transporter = await findUserBy({ _id: log.transporterId })
-      const lastMessage = await findLastMessage(log._id)
-
-      return {
-        ...log,
-        client,
-        transporter,
-        lastMessage,
-      }
-    })
-  )
+  return chatLogs
 }

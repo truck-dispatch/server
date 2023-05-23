@@ -19,7 +19,7 @@ class VerificationController {
       const user = getUserCredentialsFromReq(req)
       const verificationResponse = await createVerification({
         ...data,
-        userId: user._id,
+        user: user._id,
       })
       await findAndUpdateUserBy(
         { _id: user._id },
@@ -41,7 +41,7 @@ class VerificationController {
       const user = getUserCredentialsFromReq(req)
 
       const verificationResponse = await findVerificationBy({
-        userId: user._id,
+        user: user._id,
       })
       if (!verificationResponse)
         return Respond.error(res, 'Verification was not found')
@@ -60,7 +60,7 @@ class VerificationController {
     try {
       let verificationData = await extractedVerificationData(req)
       const user = getUserCredentialsFromReq(req)
-      const prevVerification = await findVerificationBy({ userId: user?._id })
+      const prevVerification = await findVerificationBy({ user: user?._id })
       if (verificationData.guarantor) {
         verificationData.guarantor = {
           ...prevVerification?.guarantor,
@@ -68,7 +68,7 @@ class VerificationController {
         }
       }
       const verificationResponse = await findAndUpdateVerificationBy(
-        { userId: user?._id },
+        { user: user?._id },
         verificationData
       )
       await findAndUpdateUserBy(
@@ -101,7 +101,7 @@ class VerificationController {
           companyDetails,
         }
       )
-      await createCompanyVerification({ ...companyDetails, userId: _id })
+      await createCompanyVerification({ ...companyDetails, user: _id })
 
       return Respond.success(
         res,

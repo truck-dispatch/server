@@ -21,7 +21,7 @@ class VerificationMiddlewares {
         )
       }
 
-      const verification = await findVerificationBy({ userId: user?._id })
+      const verification = await findVerificationBy({ user: user?._id })
 
       if (verification)
         return Respond.error(
@@ -68,7 +68,7 @@ class VerificationMiddlewares {
       if (user?.status === 'verified')
         return Respond.error(res, 'User has already been verified', 400)
 
-      const verification = await findVerificationBy({ userId: user?._id })
+      const verification = await findVerificationBy({ user: user?._id })
 
       if (!verification)
         return Respond.error(res, 'User has not submitted a verification yet. ')

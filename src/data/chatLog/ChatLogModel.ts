@@ -1,15 +1,17 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import ChatLogQuery from 'interfaces/ChatLogQuery'
 
 const schema = new Schema(
   {
-    clientId: {
-      type: String,
+    client: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
-    transporterId: {
-      type: String,
+    transporter: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
   },
   { timestamps: true }

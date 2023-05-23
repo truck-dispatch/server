@@ -22,8 +22,8 @@ class BidController {
         extraNotes,
         price,
         presentLocation,
-        transporterId: user._id,
-        tripId,
+        transporter: user._id,
+        trip: tripId,
         vehicle,
         status: 'pending',
       })
@@ -51,7 +51,7 @@ class BidController {
       const { _id } = getUserCredentialsFromReq(req)
       const { tripId } = req.body
       const bidResponse = await findAndUpdateBidBy(
-        { transporterId: _id, tripId: req.body.tripId },
+        { transporter: _id, trip: req.body.tripId },
         req.body
       )
       const trip = await findTripBy({ _id: tripId })
@@ -73,7 +73,7 @@ class BidController {
   async getTripBids(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const bidsResponse = await findBidsBy({ tripId })
+      const bidsResponse = await findBidsBy({ trip: tripId })
       return Respond.success(res, 'Bids found successfully', bidsResponse)
     } catch (err) {
       next(err)
@@ -84,7 +84,7 @@ class BidController {
     try {
       const { _id } = getUserCredentialsFromReq(req)
 
-      const bids = await findActiveBidsBy({ transporterId: _id })
+      const bids = await findActiveBidsBy({ transporter: _id })
 
       return Respond.success(res, 'Active bids fetched', bids)
     } catch (err) {

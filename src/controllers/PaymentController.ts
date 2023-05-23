@@ -29,8 +29,8 @@ class PaymentController {
       })
 
       const bid = await findBidBy({
-        transporterId: transporterCredentials._id,
-        tripId,
+        transporter: transporterCredentials._id,
+        trip: tripId,
       })
       const trip = await findTripBy({ _id: tripId })
 
@@ -40,7 +40,7 @@ class PaymentController {
       const paymentRequestResponse = await createPaymentRequest({
         vehicle: bid.vehicle,
         status: 'pending',
-        transporterId: transporterCredentials._id,
+        transporter: transporterCredentials._id,
         tripId,
         proofVideo,
         tripReference: trip?.reference,
@@ -102,7 +102,7 @@ class PaymentController {
       const user = getUserCredentialsFromReq(req)
 
       const paymentRequests = await findPaymentRequestsBy({
-        transporterId: user._id,
+        transporter: user._id,
       })
 
       return Respond.success(
@@ -149,7 +149,7 @@ class PaymentController {
         _id: paymentRequestId,
       })
       const user = await findUserBy({
-        _id: paymentRequest?.transporterId,
+        _id: paymentRequest?.transporter,
       })
 
       const transferData = {

@@ -15,7 +15,7 @@ class RatingController {
         comment,
         userRating,
         userRated,
-        tripId,
+        trip: tripId,
         starRating: Number(starRating),
       })
       const user = await findUserBy({ _id: userRated })
@@ -35,7 +35,7 @@ class RatingController {
     try {
       const { tripId } = req.params
 
-      const rating = await findRatingBy({ tripId })
+      const rating = await findRatingBy({ trip: tripId })
 
       return Respond.success(
         res,

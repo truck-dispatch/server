@@ -1,6 +1,6 @@
 export default interface Rating {
   _id: string
-  tripId: string
+  trip: string
   comment: string
   /**The id of the user presently rating */
   userRating: string

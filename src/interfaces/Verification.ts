@@ -6,7 +6,7 @@ export default interface Verification {
   homeUtilityBill: string
   garageAddress: string
   officeAddress: string
-  userId: string
+  user: string
   guarantor: {
     name: string
     email: string

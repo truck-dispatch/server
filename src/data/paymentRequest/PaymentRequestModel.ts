@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import PaymentRequest from 'interfaces/PaymentRequest'
 
 const schema = new Schema(
@@ -16,13 +16,15 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    transporterId: {
-      type: String,
+    transporter: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
-    tripId: {
-      type: String,
+    trip: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'Trip'
     },
     tripReference: {
       type: String,

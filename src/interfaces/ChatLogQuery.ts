@@ -1,4 +1,4 @@
 export default interface ChatLogQuery {
-  clientId: string
-  transporterId: string
+  client: string
+  transporter: string
 }

@@ -30,7 +30,7 @@ export async function findBidsBy(searchParam: Partial<Bid>) {
   const bids = await BidModel.find(searchParam).lean()
   const bidsWithTransporters = await Promise.all(
     bids.map(async (bid) => {
-      const transporter = await findUserBy({ _id: bid.transporterId })
+      const transporter = await findUserBy({ _id: bid.transporter })
       return {
         ...bid,
         transporter,
@@ -43,7 +43,7 @@ export async function findActiveBidsBy(searchParam: Partial<Bid>) {
   const bids = await BidModel.find(searchParam).lean()
   const activeBids = await Promise.all(
     bids.filter(async (bid) => {
-      const trip = await findTripBy({ _id: bid.tripId })
+      const trip = await findTripBy({ _id: bid.trip })
       return !!trip && trip.status !== 'awaiting-bid'
     })
   )

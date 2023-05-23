@@ -195,8 +195,8 @@ class TripController {
         createPayment({
           from: tripOwner?._id!,
           to: transporter?._id!,
-          tripId,
-          bidId,
+          trip: tripId,
+          bid: bidId,
           amountInBid,
           totalAmountPaid,
           paymentReference,

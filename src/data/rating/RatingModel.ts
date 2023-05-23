@@ -1,24 +1,27 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import Rating from 'interfaces/Rating'
 
 const schema = new Schema(
   {
-    tripId: {
-      type: String,
+    trip: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'Trip'
     },
     comment: {
       type: String,
     },
     /**The id of the user presently rating */
     userRating: {
-      type: String,
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
     /**The id of the user presently being rated */
     userRated: {
-      type: String,
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
     starRating: {
       type: String,

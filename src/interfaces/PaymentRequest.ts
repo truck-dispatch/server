@@ -5,7 +5,7 @@ export default interface PaymentRequest {
   vehicle: Vehicle
   proofVideo: string
   status: 'pending' | 'rejected' | 'completed'
-  transporterId: string
+  transporter: string
   tripId: string
   tripReference: string
   paymentReference?: string

@@ -1,11 +1,12 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import Vehicle from '@interfaces/Vehicle'
 
 const schema = new Schema(
   {
-    ownerId: {
-      type: String,
+    owner: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
     plateNumber: {
       type: String,

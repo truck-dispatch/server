@@ -12,7 +12,7 @@ class BidMiddlewares {
     try {
       const { price, presentLocation, vehicle, tripId } = req.body
       const { _id } = getUserCredentialsFromReq(req)
-      const bid = await findBidBy({ tripId, transporterId: _id })
+      const bid = await findBidBy({ trip: tripId, transporter: _id })
       if (bid) {
         return Respond.error(
           res,
@@ -40,7 +40,7 @@ class BidMiddlewares {
       const { _id } = getUserCredentialsFromReq(req)
       const { tripId } = req.params
       if (!tripId) return Respond.error(res, 'Trip Id was not provided')
-      const bid = await findBidBy({ transporterId: _id, tripId })
+      const bid = await findBidBy({ transporter: _id, trip: tripId })
 
       if (!bid)
         return Respond.error(

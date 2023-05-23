@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import Bid from 'interfaces/Bid'
 
 const schema = new Schema(
@@ -17,17 +17,19 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    transporterId: {
-      type: String,
+    transporter: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
     vehicle: {
       type: Object,
       required: true,
     },
-    tripId: {
-      type: String,
+    trip: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'Trip'
     },
     status: {
       type: String,
