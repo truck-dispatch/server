@@ -11,7 +11,7 @@ export async function createTrip(trip: NewTrip) {
 }
 
 export async function findTripBy(param: Partial<Trip>): Promise<PopulatedTrip | null> {
-  const trip = await TripModel.findOne(param).populate('transporter').populate('tripOwner')
+  const trip = await TripModel.findOne(param).populate('transporter', '-password').populate('tripOwner', '-password')
   if (!trip) {
     return null
   }
@@ -27,7 +27,7 @@ export async function findTripsBy(
   const page = pageParam ? parseInt(pageParam) : 1;
   const limit = limitParam ? parseInt(limitParam) : 10;
 
-  const data = await TripModel.find(query).populate('transporter').populate('tripOwner')
+  const data = await TripModel.find(query).populate('transporter', '-password').populate('tripOwner', '-password')
   .skip((page - 1) * limit)
   .limit(limit);
   // @ts-ignore
@@ -74,7 +74,7 @@ export async function findAndUpdateTripBy(
 ): Promise<PopulatedTrip | null> {
   const updatedTrip = await TripModel.findOneAndUpdate(searchParam, data, {
     new: true,
-  }).populate('transporter').populate('tripOwner')
+  }).populate('transporter').populate('tripOwner', '-password')
 
   if (!updatedTrip) return null
 
