@@ -1,5 +1,5 @@
 export default interface Company {
-  userId?: string
+  user?: string
   name: string
   location: string
   cacDocument: string

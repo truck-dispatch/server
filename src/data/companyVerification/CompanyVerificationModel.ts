@@ -1,11 +1,12 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import Company from '@interfaces/Company'
 
 const schema = new Schema(
   {
-    userId: {
-      type: String,
+    user: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
     name: {
       type: String,

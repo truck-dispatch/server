@@ -5,6 +5,7 @@ import {
   tripStatus,
   typeOfGoods,
 } from '../common/constants'
+import User from './User'
 
 export default interface Trip {
   _id: string
@@ -19,10 +20,9 @@ export default interface Trip {
   weight: number
   instructions?: string
   tripOwner: string
+  transporter?: string
   tripOwnerUserType: string
-  transporterId?: string
   TDO?: string
-  paymentId?: string
   reference: string
   startTime?: string
   completionTime?: string

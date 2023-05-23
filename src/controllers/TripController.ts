@@ -9,7 +9,6 @@ import {
   findTripBy,
   findTripsBy,
   getAvailableJobNumbers,
-  getCompleteTripDetail,
   getTripNumbers,
 } from '@data/trip/tripRepository'
 import { Helpers } from '@helpers/index'
@@ -19,6 +18,7 @@ import { getUserCredentialsFromReq } from '@services/JWT'
 import Trip from 'interfaces/Trip'
 import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
+import PopulatedTrip from '@interfaces/PopulatedTrip'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
@@ -69,11 +69,16 @@ class TripController {
       if (clientUserTypes.includes(user.userType)) {
         paramToFetchWith.tripOwner = user._id
       } else {
-        paramToFetchWith.transporterId = user._id
+        paramToFetchWith.transporter = user._id
       }
       const tripNumbers = await getTripNumbers(paramToFetchWith)
-      if (tripStatus.includes(status as string)) paramToFetchWith.status = status as string;
-      const paginatedTripsData = await findTripsBy(paramToFetchWith, page as string, limit as string)
+      if (tripStatus.includes(status as string))
+        paramToFetchWith.status = status as string
+      const paginatedTripsData = await findTripsBy(
+        paramToFetchWith,
+        page as string,
+        limit as string
+      )
 
       return Respond.success(res, 'Trips fetched successfully', {
         ...paginatedTripsData,
@@ -88,24 +93,21 @@ class TripController {
     try {
       const { tripId } = req.params
 
-      const trip = await findTripBy({_id: tripId});
-      const tripDetail = await getCompleteTripDetail(trip!)
+      const trip = await findTripBy({ _id: tripId })
 
-      return Respond.success(res, 'Trip fetched', tripDetail)
-
+      return Respond.success(res, 'Trip fetched', trip)
     } catch (err) {
       next(err)
     }
   }
+
   async getJob(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
 
-      const trip = await findTripBy({_id: tripId});
-      const tripDetail = await getCompleteTripDetail(trip!)
+      const trip = await findTripBy({ _id: tripId })
 
-      return Respond.success(res, 'Trip fetched', tripDetail)
-
+      return Respond.success(res, 'Trip fetched', trip)
     } catch (err) {
       next(err)
     }
@@ -144,7 +146,6 @@ class TripController {
         limit as string
       )
       const jobNumbers = await getAvailableJobNumbers()
-
       return Respond.success(res, 'Trips fetched successfully.', {
         ...paginatedJobsData,
         ...jobNumbers,
@@ -157,7 +158,7 @@ class TripController {
   async changeTripStatus(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId, status } = req.params
-      let updatedTrip: Trip | null
+      let updatedTrip: PopulatedTrip | null
       if (status === 'completed') {
         updatedTrip = await setTripToCompleted(tripId)
       } else if (status === 'in-progress') {
@@ -194,8 +195,8 @@ class TripController {
         createPayment({
           from: tripOwner?._id!,
           to: transporter?._id!,
-          tripId,
-          bidId,
+          trip: tripId,
+          bid: bidId,
           amountInBid,
           totalAmountPaid,
           paymentReference,
@@ -208,7 +209,7 @@ class TripController {
 
       const trip = await findAndUpdateTripBy(
         { _id: tripId },
-        { transporterId: to, status: 'payment-complete' }
+        { transporter: to, status: 'payment-complete' }
       )
       Mail.bidHasBeenAccepted(
         transporter?.email!,
@@ -249,10 +250,10 @@ async function setTripToCompleted(tripId: string) {
     { _id: tripId },
     { status: 'completed', completionTime: new Date().toISOString() }
   )
-  const user = await findUserBy({ _id: updatedTrip?.transporterId })
+  const user = await findUserBy({ _id: updatedTrip?.transporter?._id })
   const completedTrips = user?.completedTrips! + 1
   await findAndUpdateUserBy({ _id: user?._id! }, { completedTrips })
-  const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner })
+  const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner._id })
   Mail.tripHasBeenSetToCompleted(
     tripOwner?.email!,
     `${FRONTEND_URL}/my-trips/${tripId}/status`,
@@ -267,8 +268,8 @@ async function setTripToInProgress(tripId: string) {
     { _id: tripId },
     { status: 'in-progress', startTime: new Date().toISOString() }
   )
-  const user = await findUserBy({ _id: updatedTrip?.transporterId })
-  const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner })
+  const user = await findUserBy({ _id: updatedTrip?.transporter?._id })
+  const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner._id })
   Mail.tripHasBeenSetToInProgress(
     tripOwner?.email!,
     `${FRONTEND_URL}/my-trips/${tripId}/status`,

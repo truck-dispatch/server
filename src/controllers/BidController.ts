@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import {
   createBid,
+  findActiveBidsBy,
   findAndUpdateBidBy,
   findBidBy,
   findBidsBy,
@@ -15,26 +16,19 @@ import { FRONTEND_URL } from '@common/privateKeys'
 class BidController {
   async createBid(req: Request, res: Response, next: NextFunction) {
     try {
-      const {
-        extraNotes,
-        price,
-        presentLocation,
-        driverName,
-        vehicle,
-        tripId,
-      } = req.body
+      const { extraNotes, price, presentLocation, vehicle, tripId } = req.body
       const user = getUserCredentialsFromReq(req)
       const bidResponse = await createBid({
         extraNotes,
         price,
         presentLocation,
-        transporterId: user._id,
-        tripId,
+        transporter: user._id,
+        trip: tripId,
         vehicle,
         status: 'pending',
       })
       const trip = await findTripBy({ _id: tripId })
-      const tripOwner = await findUserBy({ _id: trip?.tripOwner })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: user?._id! })
 
       Mail.transporterHasSentBid(
@@ -57,11 +51,11 @@ class BidController {
       const { _id } = getUserCredentialsFromReq(req)
       const { tripId } = req.body
       const bidResponse = await findAndUpdateBidBy(
-        { transporterId: _id, tripId: req.body.tripId },
+        { transporter: _id, trip: req.body.tripId },
         req.body
       )
       const trip = await findTripBy({ _id: tripId })
-      const tripOwner = await findUserBy({ _id: trip?.tripOwner })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id })
 
       Mail.transporterHasUpdatedBid(
@@ -79,26 +73,20 @@ class BidController {
   async getTripBids(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const bidsResponse = await findBidsBy({ tripId })
+      const bidsResponse = await findBidsBy({ trip: tripId })
       return Respond.success(res, 'Bids found successfully', bidsResponse)
     } catch (err) {
       next(err)
     }
   }
 
-  async getTransporterBidToTrip(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
+  async getBids(req: Request, res: Response, next: NextFunction) {
     try {
       const { _id } = getUserCredentialsFromReq(req)
-      const { tripId } = req.params
-      const bidResponse = await findBidBy({
-        tripId: tripId,
-        transporterId: _id,
-      })
-      return Respond.success(res, 'Bid found successfully', bidResponse)
+
+      const bids = await findActiveBidsBy({ transporter: _id })
+
+      return Respond.success(res, 'Active bids fetched', bids)
     } catch (err) {
       next(err)
     }

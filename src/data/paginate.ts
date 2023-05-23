@@ -1,5 +1,7 @@
-export default async function paginate<T>(
-  model: any,
+import { Model, Document } from 'mongoose'
+
+export default async function countDocuments<T>(
+  model: Model<T>,
   query: Record<string, unknown>,
   pageParam?: string,
   limitParam?: string
@@ -11,14 +13,7 @@ export default async function paginate<T>(
     const totalItems = await model.countDocuments(query)
     const totalPages = Math.ceil(totalItems / limit)
 
-    const data: T[] = await model
-      .find(query)
-      .lean()
-      .skip((page - 1) * limit)
-      .limit(limit)
-
     return {
-      data,
       currentPage: page,
       totalPages,
       totalItems,

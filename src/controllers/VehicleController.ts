@@ -16,7 +16,7 @@ class VehicleController {
     try {
       const data = await extractData(req)
       const { _id } = getUserCredentialsFromReq(req)
-      const vehicle = await createVehicle({ ...data, ownerId: _id })
+      const vehicle = await createVehicle({ ...data, owner: _id })
 
       return Respond.success(res, 'vehicle created successfully', vehicle)
     } catch (err) {
@@ -28,7 +28,7 @@ class VehicleController {
     try {
       const { _id } = getUserCredentialsFromReq(req)
 
-      const vehicles = await findVehiclesBy({ ownerId: _id })
+      const vehicles = await findVehiclesBy({ owner: _id })
 
       return Respond.success(res, 'Vehicles fetched successfully', vehicles)
     } catch (err) {

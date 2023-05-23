@@ -2,7 +2,7 @@ export default interface Vehicle {
   _id?: string
   plateNumber: string
   vehicleType: string
-  ownerId: string
+  owner: string
   images: {
     frontView: string
     backView: string

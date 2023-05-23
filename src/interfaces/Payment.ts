@@ -1,8 +1,8 @@
 export default interface Payment {
   from: string
   to: string
-  tripId: string
-  bidId: string
+  trip: string
+  bid: string
   paymentReference: string
   amountInBid: number
   totalAmountPaid: number

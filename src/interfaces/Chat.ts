@@ -1,8 +1,8 @@
 import { Document } from 'mongoose'
 export default interface Chat extends Document {
-  chatId: string
+  chatLog: string
   message: string
-  senderId: string
-  receiverId: string
+  sender: string
+  receiver: string
   readAt?: number
 }

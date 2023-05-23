@@ -6,8 +6,8 @@ export default interface Bid {
   extraNotes?: string
   price: number
   presentLocation?: string
-  transporterId: string
-  tripId: string
+  transporter: string
+  trip: string
   status: 'pending' | 'accepted' | 'rejected'
-  vehicle: string
+  vehicle: Vehicle
 }

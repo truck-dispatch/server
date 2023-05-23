@@ -21,37 +21,23 @@ class ChatController {
   async createChatLog(req: Request, res: Response, next: NextFunction) {
     try {
       const { clientId, transporterId } = req.body
-      const client = await findUserBy({ _id: clientId })
-      const transporter = await findUserBy({ _id: transporterId })
-      const existingChatLog = await findChatLogBy({ clientId, transporterId })
+      const existingChatLog = await findChatLogBy({ client: clientId, transporter: transporterId })
 
       if (existingChatLog) {
-        return Respond.success(res, 'A chatlog exists', {
-          ...existingChatLog,
-          client,
-          transporter,
-        })
+        return Respond.success(res, 'A chatlog exists', existingChatLog)
       }
 
-      const newChatLog = await createChatLog({ clientId, transporterId })
+      const newChatLog = await createChatLog({ client: clientId, transporter: transporterId })
 
       const { _id } = getUserCredentialsFromReq(req)
       const receiverId = _id === clientId ? transporterId : clientId
       const receiverSocket = getConnectedUserSocketByUserId(receiverId)
       if (receiverSocket) {
         // @ts-ignore
-        emitChatLog(global.io, receiverSocket, {
-          ...newChatLog,
-          client,
-          transporter,
-        })
+        emitChatLog(global.io, receiverSocket, newChatLog)
       }
 
-      return Respond.success(res, 'New chat log created.', {
-        ...newChatLog,
-        client,
-        transporter,
-      })
+      return Respond.success(res, 'New chat log created.', newChatLog);
     } catch (err) {
       next(err)
     }
@@ -62,9 +48,9 @@ class ChatController {
       const user = getUserCredentialsFromReq(req)
       const queryParam: Partial<ChatLogQuery> = {}
       if (serviceBasedUserTypes.includes(user.userType)) {
-        queryParam.transporterId = user._id
+        queryParam.transporter = user._id
       } else if (clientUserTypes.includes(user.userType)) {
-        queryParam.clientId = user._id
+        queryParam.client = user._id
       }
 
       const chatLogs = await findChatLogsBy(queryParam)
@@ -81,13 +67,13 @@ class ChatController {
 
       const messageToSave = await createMessage({
         message,
-        senderId,
-        receiverId,
-        chatId,
+        sender: senderId,
+        receiver: receiverId,
+        chatLog: chatId,
       })
 
       const receiverSocket = getConnectedUserSocketByUserId(
-        messageToSave.receiverId
+        messageToSave.receiver
       )
 
       if (receiverSocket) {

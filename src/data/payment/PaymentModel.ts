@@ -1,23 +1,27 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import Payment from 'interfaces/Payment'
 
 const schema = new Schema(
   {
     from: {
-      type: String,
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
     to: {
-      type: String,
+      type: Types.ObjectId,
       required: true,
+      ref: 'User'
     },
-    tripId: {
-      type: String,
+    trip: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'Trip'
     },
-    bidId: {
-      type: String,
+    bid: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'Bid'
     },
     paymentReference: {
       type: String,

@@ -1,3 +1,4 @@
+import { findTripBy, findTripsBy } from '@data/trip/tripRepository'
 import Bid from 'interfaces/Bid'
 import { findUserBy } from '../user/userRepository'
 import { BidModel } from './BidModel'
@@ -29,7 +30,7 @@ export async function findBidsBy(searchParam: Partial<Bid>) {
   const bids = await BidModel.find(searchParam).lean()
   const bidsWithTransporters = await Promise.all(
     bids.map(async (bid) => {
-      const transporter = await findUserBy({ _id: bid.transporterId })
+      const transporter = await findUserBy({ _id: bid.transporter })
       return {
         ...bid,
         transporter,
@@ -37,4 +38,14 @@ export async function findBidsBy(searchParam: Partial<Bid>) {
     })
   )
   return bidsWithTransporters
+}
+export async function findActiveBidsBy(searchParam: Partial<Bid>) {
+  const bids = await BidModel.find(searchParam).lean()
+  const activeBids = await Promise.all(
+    bids.filter(async (bid) => {
+      const trip = await findTripBy({ _id: bid.trip })
+      return !!trip && trip.status !== 'awaiting-bid'
+    })
+  )
+  return activeBids
 }
