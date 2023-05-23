@@ -18,7 +18,6 @@ import { getUserCredentialsFromReq } from '@services/JWT'
 import Trip from 'interfaces/Trip'
 import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
-import User from '@interfaces/User'
 import PopulatedTrip from '@interfaces/PopulatedTrip'
 
 class TripController {
@@ -101,6 +100,7 @@ class TripController {
       next(err)
     }
   }
+
   async getJob(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
