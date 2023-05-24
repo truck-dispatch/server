@@ -1,5 +1,6 @@
 import { model, Schema, Types } from 'mongoose'
 import Bid from 'interfaces/Bid'
+import PopulatedBid from '@interfaces/PopulatedBid'
 
 const schema = new Schema(
   {
@@ -39,4 +40,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const BidModel = model<Bid>('Bid', schema)
+export const BidModel = model<PopulatedBid>('Bid', schema)

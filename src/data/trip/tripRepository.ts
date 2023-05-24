@@ -86,7 +86,7 @@ export async function findAndUpdateTripBy(
   const updatedTrip = await TripModel.findOneAndUpdate(searchParam, data, {
     new: true,
   })
-    .populate('transporter')
+    .populate('transporter', '-password')
     .populate('tripOwner', '-password')
 
   if (!updatedTrip) return null

@@ -1,4 +1,5 @@
 import { findTripBy, findTripsBy } from '@data/trip/tripRepository'
+import PopulatedBid from '@interfaces/PopulatedBid'
 import Bid from 'interfaces/Bid'
 import { findUserBy } from '../user/userRepository'
 import { BidModel } from './BidModel'
@@ -20,7 +21,7 @@ export function findAndUpdateBidBy(
 
 export async function findBidBy(
   searchParam: Partial<Bid>
-): Promise<Bid | null> {
+): Promise<PopulatedBid | null> {
   const data = await BidModel.findOne(searchParam).lean()
   if (!data) return null
   return data
@@ -39,13 +40,11 @@ export async function findBidsBy(searchParam: Partial<Bid>) {
   )
   return bidsWithTransporters
 }
+
 export async function findActiveBidsBy(searchParam: Partial<Bid>) {
-  const bids = await BidModel.find(searchParam).lean()
-  const activeBids = await Promise.all(
-    bids.filter(async (bid) => {
-      const trip = await findTripBy({ _id: bid.trip })
-      return !!trip && trip.status !== 'awaiting-bid'
-    })
-  )
+  const bids = await BidModel.find(searchParam).populate('trip');
+  const activeBids = bids.filter((bid) => {
+    return  bid?.trip?.status === 'awaiting-bid';
+  });
   return activeBids
 }
