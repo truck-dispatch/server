@@ -6,12 +6,12 @@ const schema = new Schema(
     client: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     transporter: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
   },
   { timestamps: true }

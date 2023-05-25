@@ -36,7 +36,7 @@ export async function findTripsBy(
     .limit(limit)
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
-    const countedData = await countDocuments<PopulatedTrip>(
+  const countedData = await countDocuments<PopulatedTrip>(
     // @ts-ignore
     TripModel,
     query,

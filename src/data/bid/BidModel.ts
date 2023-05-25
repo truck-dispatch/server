@@ -21,7 +21,7 @@ const schema = new Schema(
     transporter: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     vehicle: {
       type: Object,
@@ -30,7 +30,7 @@ const schema = new Schema(
     trip: {
       type: Types.ObjectId,
       required: true,
-      ref: 'Trip'
+      ref: 'Trip',
     },
     status: {
       type: String,
