@@ -16,7 +16,13 @@ export function findAndUpdateBidBy(
   searchParam: Partial<Bid>,
   data: Partial<Bid>
 ) {
-  return BidModel.findOneAndUpdate(searchParam, data, { new: true }).populate('trip');
+  return BidModel.findOneAndUpdate(searchParam, data, { new: true }).populate({
+    path: 'trip',
+    populate: {
+      path: 'tripOwner',
+      model: 'User',
+    },
+  })
 }
 
 export async function findBidBy(
@@ -48,23 +54,22 @@ export async function findActiveBidsBy(searchParam: Partial<Bid>) {
       path: 'tripOwner',
       model: 'User',
     },
-  });
+  })
   const activeBids = bids.filter((bid) => {
-    return  bid?.trip?.status === 'awaiting-bid';
-  });
+    return bid?.trip?.status === 'awaiting-bid'
+  })
   return activeBids
 }
 
 // TODO: find a way to deep query the model to check trip status without needing to use .map;
 async function getActiveBidsCopy(searchParam: Partial<Bid>) {
-
   const activeBids = await BidModel.aggregate([
     {
       $match: searchParam,
     },
     {
       $lookup: {
-        from: 'trips',
+        from: 'Trip',
         localField: 'trip',
         foreignField: '_id',
         as: 'trip',
@@ -75,7 +80,7 @@ async function getActiveBidsCopy(searchParam: Partial<Bid>) {
     },
     {
       $lookup: {
-        from: 'users',
+        from: 'User',
         localField: 'trip.tripOwner',
         foreignField: '_id',
         as: 'trip.tripOwner',
@@ -89,7 +94,7 @@ async function getActiveBidsCopy(searchParam: Partial<Bid>) {
         'trip.status': 'awaiting-bid',
       },
     },
-  ]);
+  ])
 
-  return activeBids;
+  return activeBids
 }
