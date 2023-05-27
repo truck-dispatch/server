@@ -1,7 +1,8 @@
+import { Types } from 'mongoose'
 import { tripStatus } from '../common/constants'
 
 export default interface NewTrip {
-  tripOwner: string
+  tripOwner: string | Types.ObjectId
   pickUpAddress: string
   deliveryAddress: string
   pickUpDate: string

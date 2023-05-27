@@ -1,8 +1,8 @@
-import { Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
 export default interface Chat extends Document {
-  chatLog: string
+  chatLog: string | Types.ObjectId
   message: string
-  sender: string
-  receiver: string
+  sender: string | Types.ObjectId
+  receiver: string | Types.ObjectId
   readAt?: number
 }

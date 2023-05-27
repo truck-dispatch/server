@@ -1,12 +1,13 @@
+import { Types } from 'mongoose'
 import Vehicle from './Vehicle'
 
 export default interface PaymentRequest {
-  _id?: string
+  _id?: string | Types.ObjectId
   vehicle: Vehicle
   proofVideo: string
   status: 'pending' | 'rejected' | 'completed'
-  transporter: string
-  tripId: string
+  transporter: string | Types.ObjectId
+  tripId: string | Types.ObjectId
   tripReference: string
   paymentReference?: string
   reference: string

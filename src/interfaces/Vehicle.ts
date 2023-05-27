@@ -1,8 +1,10 @@
+import { Types } from 'mongoose'
+
 export default interface Vehicle {
   _id?: string
   plateNumber: string
   vehicleType: string
-  owner: string
+  owner: string | Types.ObjectId
   images: {
     frontView: string
     backView: string

@@ -4,6 +4,7 @@ import { findTripBy } from '@data/trip/tripRepository'
 import { findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
+import { Types } from 'mongoose'
 
 class TripMiddlewares {
   canCreateTrip(req: Request, res: Response, next: NextFunction) {
@@ -84,8 +85,8 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
       if (
-        trip?.tripOwner._id !== user._id &&
-        trip?.transporter?._id !== user._id
+        !(trip?.tripOwner._id! as Types.ObjectId).equals(user._id) &&
+        !(trip?.tripOwner._id! as Types.ObjectId).equals(user._id)
       ) {
         return Respond.error(res, 'User is not associated to this trip.', 401)
       }

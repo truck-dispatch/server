@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import { userTypes } from '../common/constants'
 import Company from './Company'
 import TransferRecipient from './TransferRecipient'
@@ -9,7 +10,7 @@ type Status =
   | 'rejected'
   | 'fraudulent'
 export default interface User {
-  _id: string
+  _id: string | Types.ObjectId
   firstName: string
   lastName: string
   email: string
