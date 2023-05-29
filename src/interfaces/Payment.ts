@@ -1,6 +1,8 @@
+import { Types } from 'mongoose'
+
 export default interface Payment {
-  from: string
-  to: string
+  from: string | Types.ObjectId
+  to: string | Types.ObjectId
   trip: string
   bid: string
   paymentReference: string

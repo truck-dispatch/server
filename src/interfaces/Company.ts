@@ -1,5 +1,7 @@
+import { Types } from 'mongoose'
+
 export default interface Company {
-  user?: string
+  user?: string | Types.ObjectId
   name: string
   location: string
   cacDocument: string

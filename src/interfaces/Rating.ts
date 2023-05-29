@@ -1,10 +1,12 @@
+import { Types } from 'mongoose'
+
 export default interface Rating {
-  _id: string
-  trip: string
+  _id: string | Types.ObjectId
+  trip: string | Types.ObjectId
   comment: string
   /**The id of the user presently rating */
-  userRating: string
+  userRating: string | Types.ObjectId
   /**The id of the user presently being rated */
-  userRated: string
+  userRated: string | Types.ObjectId
   starRating: number
 }
