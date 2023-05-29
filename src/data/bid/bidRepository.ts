@@ -1,28 +1,22 @@
-import { findTripBy, findTripsBy } from '@data/trip/tripRepository'
 import PopulatedBid from '@interfaces/PopulatedBid'
 import Bid from 'interfaces/Bid'
-import { findUserBy } from '../user/userRepository'
 import { BidModel } from './BidModel'
 
 interface CreateBidBody extends Omit<Bid, '_id'> {
   _id?: string
 }
-export function createBid(bid: CreateBidBody) {
+export async function createBid(bid: CreateBidBody) {
   const data = new BidModel(bid)
-  return data.save()
+  await data.save();
+
+  return data.populate('trip')
 }
 
 export function findAndUpdateBidBy(
   searchParam: Partial<Bid>,
   data: Partial<Bid>
 ) {
-  return BidModel.findOneAndUpdate(searchParam, data, { new: true }).populate({
-    path: 'trip',
-    populate: {
-      path: 'tripOwner',
-      model: 'User',
-    },
-  })
+  return BidModel.findOneAndUpdate(searchParam, data, { new: true }).populate('trip');
 }
 
 export async function findBidBy(
@@ -34,7 +28,7 @@ export async function findBidBy(
 }
 
 export async function findBidsBy(searchParam: Partial<Bid>) {
-  return BidModel.find(searchParam).populate('transporter').lean()
+  return BidModel.find(searchParam).populate('transporter').sort({ createdAt: -1 }).lean()
 }
 
 export async function findActiveBidsBy(searchParam: Partial<Bid>) {
