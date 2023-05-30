@@ -6,3 +6,7 @@ export function createPayment(paymentData: Payment) {
 
   return data.save()
 }
+
+export function findPaymentBy(param: Partial<Payment>) {
+  return PaymentModel.findOne(param)
+}

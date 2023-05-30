@@ -97,19 +97,7 @@ async function extractData(req: Request): Promise<Vehicle> {
     'driver.driverLicense'
   )
   const rawAvatar = Helpers.extractFileFromReq(req, 'driver.avatar')
-
-  // console.log({
-  //   rawAvatar,
-  //   rawBackInnerView,
-  //   rawBackView,
-  //   rawDriverLicense,
-  //   rawDriversCockPit,
-  //   rawFrontView,
-  //   rawLeftSideView,
-  //   rawRightSideView
-  // })
-  // console.log(fileIsAvailableForUpload(rawFrontView))
-
+  
   if (fileIsAvailableForUpload(rawFrontView))
     data.images.frontView = await Cloudinary.upload({ file: rawFrontView })
   if (fileIsAvailableForUpload(rawBackView))
