@@ -1,6 +1,7 @@
 import Paystack from '@services/Paystack'
 import BankDetails from 'interfaces/BankDetails'
 import User from 'interfaces/User'
+import { Types } from 'mongoose'
 import { UserModel } from './UserModel'
 
 export function createUser(user: Partial<User>) {
@@ -62,4 +63,48 @@ export async function findUsersBy(param: Partial<User>) {
 export function deleteAllUsers() {
   console.log('all users are about to be deleted')
   UserModel.deleteMany({})
+}
+
+export async function creditUser(
+  userId: string | Types.ObjectId,
+  amount: number
+) {
+  return UserModel.findOneAndUpdate(
+    { _id: userId },
+    { $inc: { balance: amount } },
+    { new: true }
+  )
+}
+
+export async function debitUser(
+  userId: string | Types.ObjectId,
+  amount: number
+) {
+  return UserModel.findOneAndUpdate(
+    { _id: userId },
+    { $inc: { ledgerBalance: -amount } },
+    { new: true }
+  )
+}
+
+export async function creditUserLedgerBalance(
+  userId: string | Types.ObjectId,
+  amount: number
+) {
+  return UserModel.findOneAndUpdate(
+    { _id: userId },
+    { $inc: { ledgerBalance: amount } },
+    { new: true }
+  )
+}
+
+export async function debitUserLedgerBalance(
+  userId: string | Types.ObjectId,
+  amount: number
+) {
+  return UserModel.findOneAndUpdate(
+    { _id: userId },
+    { $inc: { ledgerBalance: -amount } },
+    { new: true }
+  )
 }

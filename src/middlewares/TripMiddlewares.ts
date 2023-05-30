@@ -5,6 +5,7 @@ import { findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import { Types } from 'mongoose'
+import { findPaymentRequestBy } from '@data/paymentRequest/paymentRequestRepository'
 
 class TripMiddlewares {
   canCreateTrip(req: Request, res: Response, next: NextFunction) {
@@ -86,7 +87,7 @@ class TripMiddlewares {
       const trip = await findTripBy({ _id: tripId })
       if (
         !(trip?.tripOwner._id! as Types.ObjectId).equals(user._id) &&
-        !(trip?.tripOwner._id! as Types.ObjectId).equals(user._id)
+        !(trip?.transporter?._id! as Types.ObjectId).equals(user._id)
       ) {
         return Respond.error(res, 'User is not associated to this trip.', 401)
       }
@@ -131,10 +132,11 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
       if (!trip) return Respond.error(res, 'Trip was not found.')
-      if (trip?.transporter?._id !== user._id)
+      if (!(trip?.transporter?._id as Types.ObjectId).equals(user._id))
         return Respond.error(
           res,
-          'Only the transporter assigned to the trip can perform this operation'
+          'Only the transporter assigned to the trip can perform this operation',
+          401
         )
 
       next()
@@ -199,6 +201,71 @@ class TripMiddlewares {
         return Respond.error(
           res,
           'from, to, tripId, bidId, paymentReference, amountInBid, totalAmountPaid, transaction are compulsory fields.'
+        )
+      }
+
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message)
+    }
+  }
+
+  async checkIfTripCanBeCancelled(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { tripId } = req.params
+
+      const trip = await findTripBy({ _id: tripId })
+
+      if (
+        trip?.status !== 'awaiting-bid' &&
+        trip?.status !== 'payment-complete'
+      ) {
+        return Respond.error(
+          res,
+          'A trip in progress or completed cannot be cancelled.'
+        )
+      }
+
+      const paymentRequest = await findPaymentRequestBy({ trip: tripId })
+      if (paymentRequest?.status === 'completed') {
+        return Respond.error(
+          res,
+          'A trip with completed payment cannot be cancelled'
+        )
+      }
+
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message)
+    }
+  }
+
+  async checkIfTripCanBeUnassigned(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { tripId } = req.params
+
+      const trip = await findTripBy({ _id: tripId })
+
+      if (trip?.status !== 'payment-complete' || !trip.transporter) {
+        return Respond.error(
+          res,
+          'A trip  that has not been assigned to a transporter or is in progress or completed cannot be unassigned'
+        )
+      }
+
+      const paymentRequest = await findPaymentRequestBy({ trip: tripId })
+      if (paymentRequest?.status === 'completed') {
+        return Respond.error(
+          res,
+          'A trip with completed payment cannot be unassigned'
         )
       }
 

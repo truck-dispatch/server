@@ -74,7 +74,6 @@ class BidController {
     try {
       const { tripId } = req.params
       const tripBids = await findBidsBy({ trip: tripId })
-      console.log(tripBids)
       return Respond.success(res, 'Bids found successfully', tripBids)
     } catch (err) {
       next(err)

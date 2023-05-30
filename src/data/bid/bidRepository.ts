@@ -7,7 +7,7 @@ interface CreateBidBody extends Omit<Bid, '_id'> {
 }
 export async function createBid(bid: CreateBidBody) {
   const data = new BidModel(bid)
-  await data.save();
+  await data.save()
 
   return data.populate('trip')
 }
@@ -16,7 +16,9 @@ export function findAndUpdateBidBy(
   searchParam: Partial<Bid>,
   data: Partial<Bid>
 ) {
-  return BidModel.findOneAndUpdate(searchParam, data, { new: true }).populate('trip');
+  return BidModel.findOneAndUpdate(searchParam, data, { new: true }).populate(
+    'trip'
+  )
 }
 
 export async function findBidBy(
@@ -28,7 +30,10 @@ export async function findBidBy(
 }
 
 export async function findBidsBy(searchParam: Partial<Bid>) {
-  return BidModel.find(searchParam).populate('transporter').sort({ createdAt: -1 }).lean()
+  return BidModel.find(searchParam)
+    .populate('transporter')
+    .sort({ createdAt: -1 })
+    .lean()
 }
 
 export async function findActiveBidsBy(searchParam: Partial<Bid>) {
