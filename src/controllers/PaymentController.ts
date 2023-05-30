@@ -41,7 +41,7 @@ class PaymentController {
         vehicle: bid.vehicle,
         status: 'pending',
         transporter: transporterCredentials._id,
-        tripId,
+        trip: tripId,
         proofVideo,
         tripReference: trip?.reference,
         reference: Helpers.generateReference(),
@@ -76,7 +76,7 @@ class PaymentController {
       const { tripId } = req.params
       if (!tripId) return Respond.error(res, 'trip id was not passed.', 400)
 
-      const paymentRequest = await findPaymentRequestBy({ tripId })
+      const paymentRequest = await findPaymentRequestBy({ trip: tripId })
       if (!paymentRequest)
         return Respond.error(
           res,
@@ -124,7 +124,7 @@ class PaymentController {
         { _id: paymentRequestId },
         { reasonForReject, status: 'rejected' }
       )
-      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentRequestHasBeenRejected(
@@ -168,7 +168,7 @@ class PaymentController {
         { _id: paymentRequestId },
         { status: 'completed' }
       )
-      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentRequestHasBeenApproved(
@@ -209,7 +209,7 @@ class PaymentController {
         { proofVideo, status: 'pending', reasonForReject: '' }
       )
 
-      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentHasBeenUpdatedByTransporter(

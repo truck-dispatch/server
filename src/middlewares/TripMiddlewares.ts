@@ -5,6 +5,7 @@ import { findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import { Types } from 'mongoose'
+import { findPaymentRequestBy } from '@data/paymentRequest/paymentRequestRepository'
 
 class TripMiddlewares {
   canCreateTrip(req: Request, res: Response, next: NextFunction) {
@@ -228,6 +229,15 @@ class TripMiddlewares {
           'A trip in progress or completed cannot be cancelled.'
         )
       }
+
+      const paymentRequest = await findPaymentRequestBy({ trip: tripId })
+      if (paymentRequest?.status === 'completed') {
+        return Respond.error(
+          res,
+          'A trip with completed payment cannot be cancelled'
+        )
+      }
+
       next()
     } catch (err) {
       return Respond.error(res, (err as Error).message)
@@ -248,6 +258,14 @@ class TripMiddlewares {
         return Respond.error(
           res,
           'A trip  that has not been assigned to a transporter or is in progress or completed cannot be unassigned'
+        )
+      }
+
+      const paymentRequest = await findPaymentRequestBy({ trip: tripId })
+      if (paymentRequest?.status === 'completed') {
+        return Respond.error(
+          res,
+          'A trip with completed payment cannot be unassigned'
         )
       }
 
