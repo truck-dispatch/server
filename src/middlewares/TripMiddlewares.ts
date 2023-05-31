@@ -1,9 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
-import { tripStatus } from '@common/constants'
+import {
+  clientUserTypes,
+  serviceBasedUserTypes,
+  tripStatus,
+} from '@common/constants'
 import { findTripBy } from '@data/trip/tripRepository'
 import { findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
+import PaymentRequest from '@interfaces/PaymentRequest'
 import { Types } from 'mongoose'
 import { findPaymentRequestBy } from '@data/paymentRequest/paymentRequestRepository'
 
@@ -217,6 +222,7 @@ class TripMiddlewares {
   ) {
     try {
       const { tripId } = req.params
+      const user = getUserCredentialsFromReq(req)
 
       const trip = await findTripBy({ _id: tripId })
 
@@ -229,9 +235,16 @@ class TripMiddlewares {
           'A trip in progress or completed cannot be cancelled.'
         )
       }
+      const paymentRequestQuery: Partial<PaymentRequest> = {
+        trip: tripId,
+        status: 'completed',
+      }
 
-      const paymentRequest = await findPaymentRequestBy({ trip: tripId })
-      if (paymentRequest?.status === 'completed') {
+      if (serviceBasedUserTypes.includes(user.userType)) {
+        paymentRequestQuery.transporter = user?._id
+      }
+      const paymentRequest = await findPaymentRequestBy(paymentRequestQuery)
+      if (paymentRequest) {
         return Respond.error(
           res,
           'A trip with completed payment cannot be cancelled'

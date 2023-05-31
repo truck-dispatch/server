@@ -102,9 +102,19 @@ export async function debitUserLedgerBalance(
   userId: string | Types.ObjectId,
   amount: number
 ) {
+  const user = await UserModel.findById(userId);
+
+  if (!user) {
+    throw new Error('User not found'); // Throw an error if the user is not found
+  }
+
+  if (user.ledgerBalance! < amount) {
+    throw new Error('Insufficient balance'); // Throw an error if the ledger balance is not sufficient
+  }
+
   return UserModel.findOneAndUpdate(
     { _id: userId },
     { $inc: { ledgerBalance: -amount } },
     { new: true }
-  )
+  );
 }

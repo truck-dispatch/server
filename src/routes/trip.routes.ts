@@ -74,6 +74,24 @@ router.post(
   TripController.unassignTrip
 )
 
+router.delete(
+  '/:tripId/cancel-trip-by-trip-owner',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkisClientBasedUserType,
+  TripMiddlewares.isTripCreator,
+  TripMiddlewares.checkIfTripCanBeCancelled,
+  TripController.cancelTripByTripOwner
+)
+
+router.patch(
+  '/:tripId/cancel-trip-by-transporter',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkIsServiceBasedUserType,
+  TripMiddlewares.isTripTransporter,
+  TripMiddlewares.checkIfTripCanBeCancelled,
+  TripController.cancelTripByTransporter
+)
+
 router.post(
   '/:tripId/upload-tdo',
   JwtMiddlewares.jwtIsValid,

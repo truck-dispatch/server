@@ -16,6 +16,8 @@ export default interface User {
   email: string
   phone: string
   avatar?: string
+  balance?: number
+  ledgerBalance?: number
   completedTrips?: number
   userType: (typeof userTypes)[number]
   status?: Status
