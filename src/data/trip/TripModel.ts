@@ -1,5 +1,4 @@
 import Mongoose, { model, Schema } from 'mongoose'
-import Trip from 'interfaces/Trip'
 import PopulatedTrip from '@interfaces/PopulatedTrip'
 
 const schema = new Schema(
@@ -16,6 +15,10 @@ const schema = new Schema(
     transporter: {
       type: Mongoose.Types.ObjectId,
       ref: 'User',
+    },
+    paymentRequest: {
+      type: Mongoose.Types.ObjectId,
+      ref: 'PaymentRequest',
     },
     pickUpAddress: {
       type: String,

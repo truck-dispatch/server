@@ -21,6 +21,7 @@ export default interface Trip {
   instructions?: string
   tripOwner: Types.ObjectId | string
   transporter?: Types.ObjectId | string | null
+  paymentRequest?: Types.ObjectId | string | null
   tripOwnerUserType: string
   TDO?: string
   reference: string

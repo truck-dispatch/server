@@ -26,6 +26,8 @@ import Trip from 'interfaces/Trip'
 import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
 import PopulatedTrip from '@interfaces/PopulatedTrip'
+import { findAndDeletePaymentRequestsBy } from '@data/paymentRequest/paymentRequestRepository'
+import { Types } from 'mongoose'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
@@ -263,12 +265,13 @@ class TripController {
       )
       // revert balance back to tripOwner;
       const bid = await findBidBy({ trip: tripId })
-      const [_, user] = await Promise.all([
-        debitUserLedgerBalance(_id, bid?.price!),
-        creditUser(_id, bid?.price!),
-      ])
+      const [_, user] = await refundTripOwnerMoneyForCancelledTrip(
+        updatedTrip?.tripOwner._id!,
+        updatedTrip?._id!,
+        bid?.price!
+      )
 
-      // Notify transporter that trip has been unassigned
+      // TODO: Notify transporter that trip has been unassigned
 
       return Respond.success(res, 'Trip has been unassigned..', {
         trip: updatedTrip,
@@ -279,23 +282,50 @@ class TripController {
     }
   }
 
-  async cancelTrip(req: Request, res: Response, next: NextFunction) {
+  async cancelTripByTripOwner(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const { _id } = getUserCredentialsFromReq(req)
+      const user = getUserCredentialsFromReq(req)
 
       const trip = await findTripBy({ _id: tripId })
       if (trip?.transporter) {
         // revert balance back to tripOwner;
-        const bid = await findBidBy({ trip: tripId })
-        await Promise.all([
-          debitUserLedgerBalance(_id, bid?.price!),
-          creditUser(_id, bid?.price!),
-        ])
+        const bid = await findBidBy({
+          trip: tripId,
+          transporter: trip.transporter._id,
+        })
+        await refundTripOwnerMoneyForCancelledTrip(
+          user._id,
+          trip?._id!,
+          bid?.price!
+        )
       }
 
       await deleteTrip(tripId)
 
+      // TODO: Notify transporter that trip has been cancelled
+      return Respond.success(res, 'Trip has been cancelled.')
+    } catch (err) {
+      next(err)
+    }
+  }
+  async cancelTripByTransporter(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const user = getUserCredentialsFromReq(req)
+      const { tripId } = req.params
+
+      const trip = await findTripBy({ _id: tripId })
+      const bid = await findBidBy({ trip: tripId, transporter: user._id })
+      await findAndUpdateTripBy({ _id: trip?._id }, { transporter: null, status: 'awaiting-bid' })
+      await refundTripOwnerMoneyForCancelledTrip(
+        trip?.tripOwner._id!,
+        trip?._id!,
+        bid?.price!
+      )
       // Notify transporter that trip has been cancelled
       return Respond.success(res, 'Trip has been cancelled.')
     } catch (err) {
@@ -337,4 +367,18 @@ async function setTripToInProgress(tripId: string) {
   )
 
   return updatedTrip
+}
+
+async function refundTripOwnerMoneyForCancelledTrip(
+  tripOwner: string | Types.ObjectId,
+  tripId: string | Types.ObjectId,
+  priceInBid: number
+) {
+  // For a transporter to exist, a price must have been paid prior to now.
+  return Promise.all([
+    debitUserLedgerBalance(tripOwner, priceInBid),
+    creditUser(tripOwner, priceInBid),
+    // If we happen to accept multiple payments under the same trip, this may need to be refactored.
+    findAndDeletePaymentRequestsBy({ trip: tripId }),
+  ])
 }
