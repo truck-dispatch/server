@@ -1,5 +1,4 @@
 import { Types } from 'mongoose'
-import Trip from './Trip'
 import Vehicle from './Vehicle'
 
 export default interface Bid {

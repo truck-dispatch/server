@@ -6,7 +6,7 @@ import {
   findPaymentRequestBy,
   findPaymentRequestsBy,
 } from '@data/paymentRequest/paymentRequestRepository'
-import { findTripBy } from '@data/trip/tripRepository'
+import { findAndUpdateTripBy, findTripBy } from '@data/trip/tripRepository'
 import { findUserBy } from '@data/user/userRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
@@ -48,6 +48,10 @@ class PaymentController {
         paymentReference: Helpers.generateUuid(),
         amount: bid.price,
       })
+      const updatedTrip = await findAndUpdateTripBy(
+        { _id: tripId },
+        { paymentRequest: paymentRequestResponse._id }
+      )
 
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: transporterCredentials._id })
@@ -57,11 +61,7 @@ class PaymentController {
         `${transporter?.firstName} ${transporter?.lastName}`
       )
 
-      return Respond.success(
-        res,
-        'Payment request created.',
-        paymentRequestResponse
-      )
+      return Respond.success(res, 'Payment request created.', updatedTrip)
     } catch (err) {
       next(err)
     }

@@ -26,6 +26,7 @@ import Trip from 'interfaces/Trip'
 import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
 import PopulatedTrip from '@interfaces/PopulatedTrip'
+import { findAndDeletePaymentRequestsBy } from '@data/paymentRequest/paymentRequestRepository'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
@@ -266,6 +267,8 @@ class TripController {
       const [_, user] = await Promise.all([
         debitUserLedgerBalance(_id, bid?.price!),
         creditUser(_id, bid?.price!),
+        // If we happen to accept multiple payments under the same trip, this may need to be refactored.
+        findAndDeletePaymentRequestsBy({ trip: tripId }),
       ])
 
       // Notify transporter that trip has been unassigned
@@ -291,6 +294,8 @@ class TripController {
         await Promise.all([
           debitUserLedgerBalance(_id, bid?.price!),
           creditUser(_id, bid?.price!),
+          // If we happen to accept multiple payments under the same trip, this may need to be refactored.
+          findAndDeletePaymentRequestsBy({ trip: tripId }),
         ])
       }
 

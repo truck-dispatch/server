@@ -16,6 +16,8 @@ export async function findTripBy(
   const trip = await TripModel.findOne(param)
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
+    .populate('paymentRequest')
+
   if (!trip) {
     return null
   }
@@ -37,6 +39,8 @@ export async function findTripsBy(
     .limit(limit)
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
+    .populate('paymentRequest')
+
   const countedData = await countDocuments<PopulatedTrip>(
     // @ts-ignore
     TripModel,
@@ -89,6 +93,7 @@ export async function findAndUpdateTripBy(
   })
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
+    .populate('paymentRequest')
 
   if (!updatedTrip) return null
 
