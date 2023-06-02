@@ -18,7 +18,7 @@ class AuthMiddlewares {
     try {
       const { email, phone, userType, firstName, lastName, roleInCompany } =
         req.body
-      const isValidEmail = Helpers.isValidEmail(email)
+      const isValidEmail = Helpers.isValidEmail(email.toLowerCase())
       if (!isValidEmail) {
         return Respond.error(res, 'Provide a valid email address', 400)
       }
@@ -40,7 +40,7 @@ class AuthMiddlewares {
         )
       }
 
-      const userWithEmailExists = await findUserBy({ email })
+      const userWithEmailExists = await findUserBy({ email: email.toLowerCase() })
       const userWithPhoneExists = await findUserBy({
         phone: Helpers.convertPhone(phone),
       })
@@ -69,12 +69,12 @@ class AuthMiddlewares {
   async loginCredentialChecks(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body
-      const isValidEmail = Helpers.isValidEmail(email)
+      const isValidEmail = Helpers.isValidEmail(email.toLowerCase())
 
       if (!isValidEmail)
         return Respond.error(res, 'Provide a valid email address')
 
-      const user = await findUserBy({ email }, false)
+      const user = await findUserBy({ email: email.toLowerCase() }, false)
       if (!user) {
         return Respond.error(
           res,
