@@ -209,7 +209,7 @@ class TripController {
 
       const trip = await findAndUpdateTripBy(
         { _id: tripId },
-        { transporter: to, status: 'payment-complete' }
+        { transporter: to, status: 'assigned' }
       )
       Mail.bidHasBeenAccepted(
         transporter?.email!,
