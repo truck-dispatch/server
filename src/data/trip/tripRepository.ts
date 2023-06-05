@@ -16,6 +16,8 @@ export async function findTripBy(
   const trip = await TripModel.findOne(param)
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
+    .populate('paymentRequest')
+
   if (!trip) {
     return null
   }
@@ -31,11 +33,14 @@ export async function findTripsBy(
   const page = pageParam ? parseInt(pageParam) : 1
   const limit = limitParam ? parseInt(limitParam) : 10
 
-  const data = await TripModel.find(query).sort({ createdAt: -1 })
+  const data = await TripModel.find(query)
+    .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
     .limit(limit)
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
+    .populate('paymentRequest')
+
   const countedData = await countDocuments<PopulatedTrip>(
     // @ts-ignore
     TripModel,
@@ -88,8 +93,13 @@ export async function findAndUpdateTripBy(
   })
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
+    .populate('paymentRequest')
 
   if (!updatedTrip) return null
 
   return updatedTrip as unknown as PopulatedTrip
+}
+
+export async function deleteTrip(tripId: string) {
+  return TripModel.deleteOne({ _id: tripId })
 }

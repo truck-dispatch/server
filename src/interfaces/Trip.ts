@@ -20,7 +20,8 @@ export default interface Trip {
   weight: number
   instructions?: string
   tripOwner: Types.ObjectId | string
-  transporter?: Types.ObjectId | string
+  transporter?: Types.ObjectId | string | null
+  paymentRequest?: Types.ObjectId | string | null
   tripOwnerUserType: string
   TDO?: string
   reference: string

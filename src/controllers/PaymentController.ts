@@ -6,7 +6,7 @@ import {
   findPaymentRequestBy,
   findPaymentRequestsBy,
 } from '@data/paymentRequest/paymentRequestRepository'
-import { findTripBy } from '@data/trip/tripRepository'
+import { findAndUpdateTripBy, findTripBy } from '@data/trip/tripRepository'
 import { findUserBy } from '@data/user/userRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
@@ -41,13 +41,17 @@ class PaymentController {
         vehicle: bid.vehicle,
         status: 'pending',
         transporter: transporterCredentials._id,
-        tripId,
+        trip: tripId,
         proofVideo,
         tripReference: trip?.reference,
         reference: Helpers.generateReference(),
         paymentReference: Helpers.generateUuid(),
         amount: bid.price,
       })
+      const updatedTrip = await findAndUpdateTripBy(
+        { _id: tripId },
+        { paymentRequest: paymentRequestResponse._id }
+      )
 
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: transporterCredentials._id })
@@ -57,11 +61,7 @@ class PaymentController {
         `${transporter?.firstName} ${transporter?.lastName}`
       )
 
-      return Respond.success(
-        res,
-        'Payment request created.',
-        paymentRequestResponse
-      )
+      return Respond.success(res, 'Payment request created.', updatedTrip)
     } catch (err) {
       next(err)
     }
@@ -76,7 +76,7 @@ class PaymentController {
       const { tripId } = req.params
       if (!tripId) return Respond.error(res, 'trip id was not passed.', 400)
 
-      const paymentRequest = await findPaymentRequestBy({ tripId })
+      const paymentRequest = await findPaymentRequestBy({ trip: tripId })
       if (!paymentRequest)
         return Respond.error(
           res,
@@ -124,7 +124,7 @@ class PaymentController {
         { _id: paymentRequestId },
         { reasonForReject, status: 'rejected' }
       )
-      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentRequestHasBeenRejected(
@@ -168,7 +168,7 @@ class PaymentController {
         { _id: paymentRequestId },
         { status: 'completed' }
       )
-      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentRequestHasBeenApproved(
@@ -209,7 +209,7 @@ class PaymentController {
         { proofVideo, status: 'pending', reasonForReject: '' }
       )
 
-      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentHasBeenUpdatedByTransporter(

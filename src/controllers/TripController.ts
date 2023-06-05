@@ -1,10 +1,17 @@
-import { findUserBy, findAndUpdateUserBy } from '@data/user/userRepository'
+import {
+  findUserBy,
+  findAndUpdateUserBy,
+  debitUserLedgerBalance,
+  creditUser,
+  creditUserLedgerBalance,
+} from '@data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes, tripStatus } from '@common/constants'
-import { findAndUpdateBidBy } from '@data/bid/bidRepository'
-import { createPayment } from '@data/payment/paymentRepository'
+import { findAndUpdateBidBy, findBidBy } from '@data/bid/bidRepository'
+import { createPayment, findPaymentBy } from '@data/payment/paymentRepository'
 import {
   createTrip,
+  deleteTrip,
   findAndUpdateTripBy,
   findTripBy,
   findTripsBy,
@@ -19,6 +26,8 @@ import Trip from 'interfaces/Trip'
 import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
 import PopulatedTrip from '@interfaces/PopulatedTrip'
+import { findAndDeletePaymentRequestsBy } from '@data/paymentRequest/paymentRequestRepository'
+import { Types } from 'mongoose'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
@@ -184,45 +193,47 @@ class TripController {
         tripId,
         bidId,
         paymentReference,
-        amountInBid,
         totalAmountPaid,
         transaction,
       } = req.body
-
-      const tripOwner = await findUserBy({ _id: from })
       const transporter = await findUserBy({ _id: to })
-      await Promise.all([
+      const bid = await findAndUpdateBidBy(
+        { _id: bidId },
+        { status: 'accepted' }
+      )
+
+      const [_, updatedUser, trip] = await Promise.all([
         createPayment({
-          from: tripOwner?._id!,
+          from,
           to: transporter?._id!,
           trip: tripId,
           bid: bidId,
-          amountInBid,
-          totalAmountPaid,
+          type: 'payment',
+          amount: bid?.price!,
+          totalAmount: totalAmountPaid,
           paymentReference,
           transaction,
           tripReference: Helpers.generateReference(),
           status: 'success',
         }),
-        findAndUpdateBidBy({ _id: bidId }, { status: 'accepted' }),
+        creditUserLedgerBalance(from, bid?.price!),
+        findAndUpdateTripBy(
+          { _id: tripId },
+          { transporter: to, status: 'payment-complete' }
+        ),
       ])
 
-      const trip = await findAndUpdateTripBy(
-        { _id: tripId },
-        { transporter: to, status: 'assigned' }
-      )
       Mail.bidHasBeenAccepted(
         transporter?.email!,
         trip?.pickUpAddress!,
         trip?.deliveryAddress!,
-        `${tripOwner?.firstName} ${tripOwner?.lastName}`,
+        `${updatedUser?.firstName} ${updatedUser?.lastName}`,
         `${FRONTEND_URL}/my-trips/${tripId}`
       )
-      return Respond.success(
-        res,
-        'Trip assigned to transporter successfully',
-        trip
-      )
+      return Respond.success(res, 'Trip assigned to transporter successfully', {
+        trip,
+        user: updatedUser,
+      })
     } catch (err) {
       next(err)
     }
@@ -238,6 +249,85 @@ class TripController {
       const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { TDO })
 
       return Respond.success(res, 'TDO has been uploaded', updatedTrip)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async unassignTrip(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tripId } = req.params
+      const { _id } = getUserCredentialsFromReq(req)
+
+      const updatedTrip = await findAndUpdateTripBy(
+        { _id: tripId },
+        { transporter: null, status: 'awaiting-bid' }
+      )
+      // revert balance back to tripOwner;
+      const bid = await findBidBy({ trip: tripId })
+      const [_, user] = await refundTripOwnerMoneyForCancelledTrip(
+        updatedTrip?.tripOwner._id!,
+        updatedTrip?._id!,
+        bid?.price!
+      )
+
+      // TODO: Notify transporter that trip has been unassigned
+
+      return Respond.success(res, 'Trip has been unassigned..', {
+        trip: updatedTrip,
+        user,
+      })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async cancelTripByTripOwner(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { tripId } = req.params
+      const user = getUserCredentialsFromReq(req)
+
+      const trip = await findTripBy({ _id: tripId })
+      if (trip?.transporter) {
+        // revert balance back to tripOwner;
+        const bid = await findBidBy({
+          trip: tripId,
+          transporter: trip.transporter._id,
+        })
+        await refundTripOwnerMoneyForCancelledTrip(
+          user._id,
+          trip?._id!,
+          bid?.price!
+        )
+      }
+
+      await deleteTrip(tripId)
+
+      // TODO: Notify transporter that trip has been cancelled
+      return Respond.success(res, 'Trip has been cancelled.')
+    } catch (err) {
+      next(err)
+    }
+  }
+  async cancelTripByTransporter(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const user = getUserCredentialsFromReq(req)
+      const { tripId } = req.params
+
+      const trip = await findTripBy({ _id: tripId })
+      const bid = await findBidBy({ trip: tripId, transporter: user._id })
+      await findAndUpdateTripBy({ _id: trip?._id }, { transporter: null, status: 'awaiting-bid' })
+      await refundTripOwnerMoneyForCancelledTrip(
+        trip?.tripOwner._id!,
+        trip?._id!,
+        bid?.price!
+      )
+      // Notify transporter that trip has been cancelled
+      return Respond.success(res, 'Trip has been cancelled.')
     } catch (err) {
       next(err)
     }
@@ -277,4 +367,18 @@ async function setTripToInProgress(tripId: string) {
   )
 
   return updatedTrip
+}
+
+async function refundTripOwnerMoneyForCancelledTrip(
+  tripOwner: string | Types.ObjectId,
+  tripId: string | Types.ObjectId,
+  priceInBid: number
+) {
+  // For a transporter to exist, a price must have been paid prior to now.
+  return Promise.all([
+    debitUserLedgerBalance(tripOwner, priceInBid),
+    creditUser(tripOwner, priceInBid),
+    // If we happen to accept multiple payments under the same trip, this may need to be refactored.
+    findAndDeletePaymentRequestsBy({ trip: tripId }),
+  ])
 }

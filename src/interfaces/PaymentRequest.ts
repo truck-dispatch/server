@@ -7,7 +7,7 @@ export default interface PaymentRequest {
   proofVideo: string
   status: 'pending' | 'rejected' | 'completed'
   transporter: string | Types.ObjectId
-  tripId: string | Types.ObjectId
+  trip: string | Types.ObjectId
   tripReference: string
   paymentReference?: string
   reference: string

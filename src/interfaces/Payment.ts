@@ -3,12 +3,13 @@ import { Types } from 'mongoose'
 export default interface Payment {
   from: string | Types.ObjectId
   to: string | Types.ObjectId
-  trip: string
-  bid: string
+  trip?: string
+  type: 'topUp' | 'payment'
+  bid?: string
   paymentReference: string
-  amountInBid: number
-  totalAmountPaid: number
+  amount: number
+  totalAmount: number
   status: 'success' | 'rejected'
   transaction: string
-  tripReference: string
+  tripReference?: string
 }
