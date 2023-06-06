@@ -54,6 +54,22 @@ class BidMiddlewares {
       return Respond.error(res, (err as Error).message, 500)
     }
   }
+
+  async checkIfBidIsActive(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { bidId } = req.params
+      const bid = await findBidBy({ _id: bidId })
+      if (bid?.status === 'accepted')
+        return Respond.error(
+          res,
+          'You cannot delete a bid that has been accepted',
+          400
+        )
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message, 500)
+    }
+  }
 }
 
 export default new BidMiddlewares()
