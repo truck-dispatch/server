@@ -38,5 +38,13 @@ router.get(
   TripMiddlewares.isTripCreator,
   BidController.getTripBids
 )
+router.delete(
+  '/:tripId/:bidId',
+  JWTMiddlewares.jwtIsValid,
+  TripMiddlewares.tripExists,
+  BidMiddlewares.checkIfBidIsActive,
+  JWTMiddlewares.checkIsServiceBasedUserType,
+  BidController.deleteBid
+)
 
 export default router

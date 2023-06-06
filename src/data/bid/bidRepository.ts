@@ -11,6 +11,10 @@ export function createBid(bid: CreateBidBody) {
   return data.save()
 }
 
+export function deleteBid(searchParam: Partial<Bid> ) {
+  return BidModel.deleteOne(searchParam)
+}
+
 export function findAndUpdateBidBy(
   searchParam: Partial<Bid>,
   data: Partial<Bid>
