@@ -42,8 +42,8 @@ router.delete(
   '/:tripId/:bidId',
   JWTMiddlewares.jwtIsValid,
   TripMiddlewares.tripExists,
-  BidMiddlewares.checkIfBidIsActive,
   JWTMiddlewares.checkIsServiceBasedUserType,
+  BidMiddlewares.checkIfBidIsActive,
   BidController.deleteBid
 )
 
