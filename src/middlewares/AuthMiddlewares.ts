@@ -40,7 +40,9 @@ class AuthMiddlewares {
         )
       }
 
-      const userWithEmailExists = await findUserBy({ email: email.toLowerCase() })
+      const userWithEmailExists = await findUserBy({
+        email: email.toLowerCase(),
+      })
       const userWithPhoneExists = await findUserBy({
         phone: Helpers.convertPhone(phone),
       })

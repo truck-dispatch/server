@@ -8,7 +8,7 @@ import {
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes, tripStatus } from '@common/constants'
 import { findAndUpdateBidBy, findBidBy } from '@data/bid/bidRepository'
-import { createPayment, findPaymentBy } from '@data/payment/paymentRepository'
+import { createPayment } from '@data/payment/paymentRepository'
 import {
   createTrip,
   deleteTrip,
@@ -219,7 +219,7 @@ class TripController {
         creditUserLedgerBalance(from, bid?.price!),
         findAndUpdateTripBy(
           { _id: tripId },
-          { transporter: to, status: 'payment-complete' }
+          { transporter: to, status: 'payment-complete', acceptedBid: bidId }
         ),
       ])
 
@@ -261,7 +261,7 @@ class TripController {
 
       const updatedTrip = await findAndUpdateTripBy(
         { _id: tripId },
-        { transporter: null, status: 'awaiting-bid' }
+        { transporter: null, status: 'awaiting-bid', acceptedBid: null }
       )
       // revert balance back to tripOwner;
       const bid = await findBidBy({ trip: tripId })
@@ -320,7 +320,10 @@ class TripController {
 
       const trip = await findTripBy({ _id: tripId })
       const bid = await findBidBy({ trip: tripId, transporter: user._id })
-      await findAndUpdateTripBy({ _id: trip?._id }, { transporter: null, status: 'awaiting-bid' })
+      await findAndUpdateTripBy(
+        { _id: trip?._id },
+        { transporter: null, status: 'awaiting-bid' }
+      )
       await refundTripOwnerMoneyForCancelledTrip(
         trip?.tripOwner._id!,
         trip?._id!,

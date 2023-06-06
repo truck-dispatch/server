@@ -3,7 +3,6 @@ import {
   createBid,
   findActiveBidsBy,
   findAndUpdateBidBy,
-  findBidBy,
   findBidsBy,
 } from '@data/bid/bidRepository'
 import Respond from '@helpers/Respond'
