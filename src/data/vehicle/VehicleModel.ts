@@ -6,7 +6,7 @@ const schema = new Schema(
     owner: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     plateNumber: {
       type: String,

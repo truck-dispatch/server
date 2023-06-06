@@ -21,13 +21,19 @@ class ChatController {
   async createChatLog(req: Request, res: Response, next: NextFunction) {
     try {
       const { clientId, transporterId } = req.body
-      const existingChatLog = await findChatLogBy({ client: clientId, transporter: transporterId })
+      const existingChatLog = await findChatLogBy({
+        client: clientId,
+        transporter: transporterId,
+      })
 
       if (existingChatLog) {
         return Respond.success(res, 'A chatlog exists', existingChatLog)
       }
 
-      const newChatLog = await createChatLog({ client: clientId, transporter: transporterId })
+      const newChatLog = await createChatLog({
+        client: clientId,
+        transporter: transporterId,
+      })
 
       const { _id } = getUserCredentialsFromReq(req)
       const receiverId = _id === clientId ? transporterId : clientId
@@ -37,7 +43,7 @@ class ChatController {
         emitChatLog(global.io, receiverSocket, newChatLog)
       }
 
-      return Respond.success(res, 'New chat log created.', newChatLog);
+      return Respond.success(res, 'New chat log created.', newChatLog)
     } catch (err) {
       next(err)
     }
@@ -101,7 +107,11 @@ class ChatController {
     }
   }
 
-  async setChatIsReadBychatLog(req: Request, res: Response, next: NextFunction) {
+  async setChatIsReadBychatLog(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { chatLog } = req.params
 

@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import {
   jobTypes,
   shippingLines,
@@ -5,10 +6,9 @@ import {
   tripStatus,
   typeOfGoods,
 } from '../common/constants'
-import User from './User'
 
 export default interface Trip {
-  _id: string
+  _id: Types.ObjectId | string
   pickUpAddress: string
   deliveryAddress: string
   pickUpDate: string
@@ -19,8 +19,9 @@ export default interface Trip {
   jobType?: (typeof jobTypes)[number]
   weight: number
   instructions?: string
-  tripOwner: string
-  transporter?: string
+  tripOwner: Types.ObjectId | string
+  transporter?: Types.ObjectId | string | null
+  paymentRequest?: Types.ObjectId | string | null
   tripOwnerUserType: string
   TDO?: string
   reference: string

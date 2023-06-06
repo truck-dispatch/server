@@ -27,3 +27,9 @@ export async function findAndUpdatePaymentRequestBy(
     new: true,
   }).lean()
 }
+
+export async function findAndDeletePaymentRequestsBy(
+  searchParam: Partial<PaymentRequest>
+) {
+  return PaymentRequestModel.deleteMany(searchParam)
+}

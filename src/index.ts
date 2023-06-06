@@ -85,7 +85,7 @@ app.use('/api/v0.1', routes)
 app.use((_, res) =>
   res.status(404).json({
     error: true,
-    msg: 'you seem to be lost',
+    message: 'you seem to be lost',
   })
 )
 

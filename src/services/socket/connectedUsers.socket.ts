@@ -1,7 +1,11 @@
+import { Types } from 'mongoose'
+
 export const connectedUsers: Record<string, string> = {}
 
-export function getConnectedUserSocketByUserId(userId: string) {
-  return connectedUsers[userId]
+export function getConnectedUserSocketByUserId(
+  userId: string | Types.ObjectId
+) {
+  return connectedUsers[userId as string]
 }
 
 export function addConnectedUser(userId: string, userSocketId: string) {

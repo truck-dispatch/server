@@ -20,7 +20,7 @@ class RatingController {
       })
       const user = await findUserBy({ _id: userRated })
 
-      const rating = await getUsersNewRating(user?._id!)
+      const rating = await getUsersNewRating(user?._id! as string)
       await findAndUpdateUserBy({ _id: userRated }, { rating })
       return Respond.success(
         res,

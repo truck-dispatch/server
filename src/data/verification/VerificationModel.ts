@@ -30,7 +30,7 @@ const schema = new Schema(
     user: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     response: {
       type: String,

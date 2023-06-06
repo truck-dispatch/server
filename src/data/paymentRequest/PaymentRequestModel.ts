@@ -19,12 +19,12 @@ const schema = new Schema(
     transporter: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     trip: {
       type: Types.ObjectId,
       required: true,
-      ref: 'Trip'
+      ref: 'Trip',
     },
     tripReference: {
       type: String,

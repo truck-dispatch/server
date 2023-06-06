@@ -6,7 +6,7 @@ const schema = new Schema(
     trip: {
       type: Types.ObjectId,
       required: true,
-      ref: 'Trip'
+      ref: 'Trip',
     },
     comment: {
       type: String,
@@ -15,13 +15,13 @@ const schema = new Schema(
     userRating: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     /**The id of the user presently being rated */
     userRated: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     starRating: {
       type: String,

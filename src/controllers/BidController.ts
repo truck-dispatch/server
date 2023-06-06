@@ -74,8 +74,8 @@ class BidController {
   async getTripBids(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const bidsResponse = await findBidsBy({ trip: tripId })
-      return Respond.success(res, 'Bids found successfully', bidsResponse)
+      const tripBids = await findBidsBy({ trip: tripId })
+      return Respond.success(res, 'Bids found successfully', tripBids)
     } catch (err) {
       next(err)
     }
@@ -85,8 +85,7 @@ class BidController {
     try {
       const { _id } = getUserCredentialsFromReq(req)
 
-      const bids = await findActiveBidsBy({ transporter: _id })
-
+      const bids = await findActiveBidsBy({ transporter: _id! })
       return Respond.success(res, 'Active bids fetched', bids)
     } catch (err) {
       next(err)

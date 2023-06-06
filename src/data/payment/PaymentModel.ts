@@ -6,22 +6,20 @@ const schema = new Schema(
     from: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     to: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     trip: {
       type: Types.ObjectId,
-      required: true,
-      ref: 'Trip'
+      ref: 'Trip',
     },
     bid: {
       type: Types.ObjectId,
-      required: true,
-      ref: 'Bid'
+      ref: 'Bid',
     },
     paymentReference: {
       type: String,
@@ -31,13 +29,12 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    amountInBid: {
+    amount: {
       type: Number,
       required: true,
     },
-    totalAmountPaid: {
+    totalAmount: {
       type: Number,
-      required: true,
     },
     tripReference: {
       type: String,

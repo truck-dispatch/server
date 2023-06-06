@@ -6,7 +6,7 @@ const schema = new Schema(
     chatLog: {
       type: Types.ObjectId,
       required: true,
-      ref: 'ChatLog'
+      ref: 'ChatLog',
     },
     message: {
       type: Types.ObjectId,
@@ -15,12 +15,12 @@ const schema = new Schema(
     sender: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     receiver: {
       type: Types.ObjectId,
       required: true,
-      ref: 'User'
+      ref: 'User',
     },
     readAt: {
       type: Number,

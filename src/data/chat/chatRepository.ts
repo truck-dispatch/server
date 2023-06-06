@@ -1,13 +1,14 @@
 import { ObjectId } from 'mongodb'
 import Chat from 'interfaces/Chat'
 import { ChatModel } from './ChatModel'
+import { Types } from 'mongoose'
 
 export async function createMessage(message: Partial<Chat>) {
   const data = new ChatModel(message)
   return data.save()
 }
 
-export async function findMessagesById(userId: string) {
+export async function findMessagesById(userId: string | Types.ObjectId) {
   const chatsSentByMe = await ChatModel.find({ senderId: userId })
   const chatsSentToMe = await ChatModel.find({ receiverId: userId })
   return [...chatsSentByMe, ...chatsSentToMe]

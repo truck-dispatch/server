@@ -38,7 +38,15 @@ const schema = new Schema(
     },
     rating: {
       type: Number,
-      default: 0,
+      default: 5,
+    },
+    balance: {
+      type: Number,
+      default: 5,
+    },
+    ledgerBalance: {
+      type: Number,
+      default: 5,
     },
     completedTrips: {
       type: Number,
