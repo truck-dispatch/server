@@ -1,3 +1,4 @@
+import { findAndUpdateUserBy } from '@data/user/userRepository'
 import {
   createVehicle,
   findAndUpdateVehicleBy,
@@ -6,6 +7,7 @@ import {
 } from '@data/vehicle/vehicleRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
+import User from '@interfaces/User'
 import Vehicle from '@interfaces/Vehicle'
 import Cloudinary from '@services/Cloudinary'
 import { getUserCredentialsFromReq } from '@services/JWT'
@@ -17,6 +19,7 @@ class VehicleController {
       const data = await extractData(req)
       const { _id } = getUserCredentialsFromReq(req)
       const vehicle = await createVehicle({ ...data, owner: _id })
+      await findAndUpdateUserBy({_id}, {$inc: { noOfVehicles: 1 }} as Partial<User>)
 
       return Respond.success(res, 'vehicle created successfully', vehicle)
     } catch (err) {
