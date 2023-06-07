@@ -12,6 +12,10 @@ export async function createBid(bid: CreateBidBody) {
   return data.populate('trip')
 }
 
+export function deleteBidBy(searchParam: Partial<Bid>) {
+  return BidModel.deleteOne(searchParam)
+}
+
 export function findAndUpdateBidBy(
   searchParam: Partial<Bid>,
   data: Partial<Bid>

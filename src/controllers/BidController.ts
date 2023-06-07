@@ -4,6 +4,7 @@ import {
   findActiveBidsBy,
   findAndUpdateBidBy,
   findBidsBy,
+  deleteBidBy,
 } from '@data/bid/bidRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
@@ -85,6 +86,18 @@ class BidController {
 
       const bids = await findActiveBidsBy({ transporter: _id! })
       return Respond.success(res, 'Active bids fetched', bids)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async deleteBid(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { bidId } = req.params
+
+      await deleteBidBy({ _id: bidId })
+
+      return Respond.success(res, 'Bid successfully deleted')
     } catch (err) {
       next(err)
     }
