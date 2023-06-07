@@ -219,7 +219,7 @@ class TripController {
         creditUserLedgerBalance(from, bid?.price!),
         findAndUpdateTripBy(
           { _id: tripId },
-          { transporter: to, status: 'payment-complete', acceptedBid: bidId }
+          { transporter: to, status: 'assigned', acceptedBid: bidId }
         ),
       ])
 

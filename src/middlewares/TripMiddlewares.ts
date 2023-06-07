@@ -228,7 +228,7 @@ class TripMiddlewares {
 
       if (
         trip?.status !== 'awaiting-bid' &&
-        trip?.status !== 'payment-complete'
+        trip?.status !== 'assigned'
       ) {
         return Respond.error(
           res,
@@ -267,7 +267,7 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
 
-      if (trip?.status !== 'payment-complete' || !trip.transporter) {
+      if (trip?.status !== 'assigned' || !trip.transporter) {
         return Respond.error(
           res,
           'A trip  that has not been assigned to a transporter or is in progress or completed cannot be unassigned'
