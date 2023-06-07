@@ -264,7 +264,7 @@ class TripController {
         { transporter: null, status: 'awaiting-bid', acceptedBid: null }
       )
       // revert balance back to tripOwner;
-      const bid = await findBidBy({ trip: tripId })
+      const bid = await findAndUpdateBidBy({ trip: tripId, status: 'accepted' }, { status: 'pending'});
       const [_, user] = await refundTripOwnerMoneyForCancelledTrip(
         updatedTrip?.tripOwner._id!,
         updatedTrip?._id!,
