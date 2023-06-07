@@ -20,6 +20,10 @@ const schema = new Schema(
       type: Mongoose.Types.ObjectId,
       ref: 'PaymentRequest',
     },
+    acceptedBid: {
+      type: Mongoose.Types.ObjectId,
+      ref: 'Bid',
+    },
     pickUpAddress: {
       type: String,
       required: true,

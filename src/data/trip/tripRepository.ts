@@ -17,6 +17,7 @@ export async function findTripBy(
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
     .populate('paymentRequest')
+    .populate('acceptedBid')
 
   if (!trip) {
     return null
@@ -40,6 +41,7 @@ export async function findTripsBy(
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
     .populate('paymentRequest')
+    .populate('acceptedBid')
 
   const countedData = await countDocuments<PopulatedTrip>(
     // @ts-ignore
@@ -91,9 +93,11 @@ export async function findAndUpdateTripBy(
   const updatedTrip = await TripModel.findOneAndUpdate(searchParam, data, {
     new: true,
   })
+    .populate('acceptedBid')
     .populate('transporter', '-password')
     .populate('tripOwner', '-password')
     .populate('paymentRequest')
+    .populate('acceptedBid')
 
   if (!updatedTrip) return null
 

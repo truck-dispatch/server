@@ -28,4 +28,5 @@ export default interface Trip {
   startTime?: string
   completionTime?: string
   status: (typeof tripStatus)[number]
+  acceptedBid?: Types.ObjectId | string | null
 }

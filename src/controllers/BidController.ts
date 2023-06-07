@@ -3,7 +3,6 @@ import {
   createBid,
   findActiveBidsBy,
   findAndUpdateBidBy,
-  findBidBy,
   findBidsBy,
   deleteBidBy,
 } from '@data/bid/bidRepository'
