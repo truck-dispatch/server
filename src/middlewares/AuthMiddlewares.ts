@@ -108,15 +108,15 @@ class AuthMiddlewares {
         return Respond.error(res, 'Email and Password do not match', 400)
       }
 
-      if (!user.isPhoneVerified) {
-        const verificationData = await Sms.sendOTP({ to: user.phone })
-        return Respond.error(
-          res,
-          'Phone has not been verified',
-          401,
-          verificationData
-        )
-      }
+      // if (!user.isPhoneVerified) {
+      //   const verificationData = await Sms.sendOTP({ to: user.phone })
+      //   return Respond.error(
+      //     res,
+      //     'Phone has not been verified',
+      //     401,
+      //     verificationData
+      //   )
+      // }
 
       next()
     } catch (err) {
