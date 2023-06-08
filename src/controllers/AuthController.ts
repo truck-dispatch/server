@@ -36,16 +36,17 @@ class AuthController {
 
       if (userType !== 'shipper') data.status = 'unverified'
       const user = await createUser(data)
-      const smsData = await Sms.sendOTP({
-        to: formattedPhone,
-      })
+      // const smsData = await Sms.sendOTP({
+      //   to: formattedPhone,
+      // })
 
       const token = generateJWT({
         _id: user?._id,
         userType: user?.userType,
-      })
+      });
+
       return Respond.success(res, 'User created successfully...', {
-        smsData,
+        smsData: {},
         token,
       })
     } catch (err) {
