@@ -6,7 +6,7 @@ export default interface Payment {
   trip?: string
   type: 'topUp' | 'payment'
   bid?: string
-  paymentReference: string
+  processorReference: string
   amount: number
   totalAmount: number
   status: 'success' | 'rejected'

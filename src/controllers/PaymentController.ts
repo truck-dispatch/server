@@ -45,6 +45,7 @@ class PaymentController {
         proofVideo,
         tripReference: trip?.reference,
         reference: Helpers.generateReference(),
+        // This is used to initiate the transfer to the user's bank account when the payment is approved.
         paymentReference: Helpers.generateUuid(),
         amount: bid.price,
       })
@@ -80,8 +81,7 @@ class PaymentController {
       if (!paymentRequest)
         return Respond.error(
           res,
-          'Payment request has not been uploaded yet.',
-          404
+          'Payment request has not been uploaded yet.'
         )
 
       return Respond.success(

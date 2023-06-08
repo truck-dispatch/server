@@ -42,11 +42,11 @@ const schema = new Schema(
     },
     balance: {
       type: Number,
-      default: 5,
+      default: 0,
     },
     ledgerBalance: {
       type: Number,
-      default: 5,
+      default: 0,
     },
     completedTrips: {
       type: Number,
