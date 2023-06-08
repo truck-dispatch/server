@@ -28,3 +28,5 @@ export const clientUserTypes = ['shipper', 'company']
 export const serviceBasedUserTypes = ['transporter', 'transportCompany']
 export const userTypes = [...clientUserTypes, ...serviceBasedUserTypes]
 export const rolesInACompany = ['CEO', 'manager', 'secretary', 'accountant']
+
+export const paymentSources = ['balance', 'paystack']

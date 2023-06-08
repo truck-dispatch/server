@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import {
   clientUserTypes,
+  paymentSources,
   serviceBasedUserTypes,
   tripStatus,
 } from '@common/constants'
@@ -178,7 +179,8 @@ class TripMiddlewares {
         to,
         tripId,
         bidId,
-        paymentReference,
+        processorReference,
+        paymentSource,
         amountInBid,
         totalAmountPaid,
         transaction,
@@ -198,16 +200,36 @@ class TripMiddlewares {
         !to ||
         !tripId ||
         !bidId ||
-        !paymentReference ||
+        !paymentSource ||
         !amountInBid ||
         !totalAmountPaid ||
         !transaction
       ) {
         return Respond.error(
           res,
-          'from, to, tripId, bidId, paymentReference, amountInBid, totalAmountPaid, transaction are compulsory fields.'
+          'from, to, tripId, bidId, amountInBid, totalAmountPaid, paymentSource, transaction are compulsory fields.'
         )
       }
+      if (!paymentSources.includes(paymentSource))
+        return Respond.error(
+          res,
+          'the only payment sources currently available are paystack and balance.'
+        )
+
+      if (paymentSource === 'balance') {
+        const { _id } = getUserCredentialsFromReq(req)
+
+        const user = await findUserBy({ _id })
+        if (user?.balance! < amountInBid) {
+          return Respond.error(res, 'Insufficient balance for this bid', 400)
+        }
+      }
+
+      if (paymentSource === 'paystack' && !processorReference)
+        return Respond.error(
+          res,
+          'Payment processor is unavailable. Kindly reach out to support if you have been debited.'
+        )
 
       next()
     } catch (err) {
@@ -226,10 +248,7 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
 
-      if (
-        trip?.status !== 'awaiting-bid' &&
-        trip?.status !== 'assigned'
-      ) {
+      if (trip?.status !== 'awaiting-bid' && trip?.status !== 'assigned') {
         return Respond.error(
           res,
           'A trip in progress or completed cannot be cancelled.'

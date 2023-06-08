@@ -21,7 +21,7 @@ const schema = new Schema(
       type: Types.ObjectId,
       ref: 'Bid',
     },
-    paymentReference: {
+    processorReference: {
       type: String,
       required: true,
     },
@@ -44,4 +44,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const PaymentModel = model<Payment>('Payment', schema)
+export const PaymentLogModel = model<Payment>('Payment', schema)

@@ -364,7 +364,7 @@ POST {BASE_URL}/trips/:tripId/assign-trip
   to: [string, 'transporterId'],
   tripId: string,
   bidId: string,
-  paymentReference: [string, from_paystack],
+  processorReference: [string, from_paystack],
   amountInBid: string,
   totalAmountPaid: number,
   transaction: [string, from_paystack],

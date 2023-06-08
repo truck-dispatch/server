@@ -45,6 +45,7 @@ class PaymentController {
         proofVideo,
         tripReference: trip?.reference,
         reference: Helpers.generateReference(),
+        // This is used to initiate the transfer to the user's bank account when the payment is approved.
         paymentReference: Helpers.generateUuid(),
         amount: bid.price,
       })

@@ -1,4 +1,4 @@
-import { createPayment } from '@data/payment/paymentRepository'
+import { createPaymentLog } from '@data/paymentLog/paymentLogRepository'
 import { creditUser, creditUserLedgerBalance } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
@@ -13,18 +13,18 @@ class WalletController {
    */
   async topUpWallet(req: Request, res: Response, next: NextFunction) {
     try {
-      const { amount, totalAmount, paymentReference, transaction } = req.body
+      const { amount, totalAmount, processorReference, transaction } = req.body
       const user = getUserCredentialsFromReq(req)
 
       const [_createdPayment, _creditedUser, updatedUser] = await Promise.all([
-        createPayment({
+        createPaymentLog({
           from: user._id,
           to: user._id,
           trip: '',
           type: 'topUp',
           amount,
           totalAmount,
-          paymentReference,
+          processorReference,
           transaction,
           status: 'success',
         }),

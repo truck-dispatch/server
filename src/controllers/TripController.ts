@@ -4,11 +4,12 @@ import {
   debitUserLedgerBalance,
   creditUser,
   creditUserLedgerBalance,
+  debitUser,
 } from '@data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes, tripStatus } from '@common/constants'
 import { findAndUpdateBidBy, findBidBy } from '@data/bid/bidRepository'
-import { createPayment } from '@data/payment/paymentRepository'
+import { createPaymentLog } from '@data/paymentLog/paymentLogRepository'
 import {
   createTrip,
   deleteTrip,
@@ -192,7 +193,8 @@ class TripController {
         to,
         tripId,
         bidId,
-        paymentReference,
+        processorReference,
+        paymentSource,
         totalAmountPaid,
         transaction,
       } = req.body
@@ -202,8 +204,8 @@ class TripController {
         { status: 'accepted' }
       )
 
-      const [_, updatedUser, trip] = await Promise.all([
-        createPayment({
+      if (paymentSource === 'paystack') {
+        await createPaymentLog({
           from,
           to: transporter?._id!,
           trip: tripId,
@@ -211,11 +213,16 @@ class TripController {
           type: 'payment',
           amount: bid?.price!,
           totalAmount: totalAmountPaid,
-          paymentReference,
+          processorReference,
           transaction,
           tripReference: Helpers.generateReference(),
           status: 'success',
-        }),
+        })
+      }
+      if (paymentSource === 'balance') {
+        await debitUser(from, bid?.price!);
+      }
+      const [_, updatedUser, trip] = await Promise.all([,
         creditUserLedgerBalance(from, bid?.price!),
         findAndUpdateTripBy(
           { _id: tripId },
@@ -264,7 +271,10 @@ class TripController {
         { transporter: null, status: 'awaiting-bid', acceptedBid: null }
       )
       // revert balance back to tripOwner;
-      const bid = await findAndUpdateBidBy({ trip: tripId, status: 'accepted' }, { status: 'pending'});
+      const bid = await findAndUpdateBidBy(
+        { trip: tripId, status: 'accepted' },
+        { status: 'pending' }
+      )
       const [_, user] = await refundTripOwnerMoneyForCancelledTrip(
         updatedTrip?.tripOwner._id!,
         updatedTrip?._id!,

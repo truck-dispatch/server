@@ -19,7 +19,9 @@ class VehicleController {
       const data = await extractData(req)
       const { _id } = getUserCredentialsFromReq(req)
       const vehicle = await createVehicle({ ...data, owner: _id })
-      await findAndUpdateUserBy({_id}, {$inc: { noOfVehicles: 1 }} as Partial<User>)
+      await findAndUpdateUserBy({ _id }, {
+        $inc: { noOfVehicles: 1 },
+      } as Partial<User>)
 
       return Respond.success(res, 'vehicle created successfully', vehicle)
     } catch (err) {
