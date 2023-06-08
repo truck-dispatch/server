@@ -202,8 +202,7 @@ class TripMiddlewares {
         !bidId ||
         !paymentSource ||
         !amountInBid ||
-        !totalAmountPaid ||
-        !transaction
+        !totalAmountPaid
       ) {
         return Respond.error(
           res,
@@ -225,7 +224,7 @@ class TripMiddlewares {
         }
       }
 
-      if (paymentSource === 'paystack' && !processorReference)
+      if (paymentSource === 'paystack' && (!processorReference || !transaction))
         return Respond.error(
           res,
           'Payment processor is unavailable. Kindly reach out to support if you have been debited.'

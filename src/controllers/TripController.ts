@@ -220,9 +220,9 @@ class TripController {
         })
       }
       if (paymentSource === 'balance') {
-        await debitUser(from, bid?.price!);
+        await debitUser(from, bid?.price!)
       }
-      const [_, updatedUser, trip] = await Promise.all([,
+      const [updatedUser, trip] = await Promise.all([
         creditUserLedgerBalance(from, bid?.price!),
         findAndUpdateTripBy(
           { _id: tripId },

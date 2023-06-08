@@ -81,8 +81,7 @@ class PaymentController {
       if (!paymentRequest)
         return Respond.error(
           res,
-          'Payment request has not been uploaded yet.',
-          404
+          'Payment request has not been uploaded yet.'
         )
 
       return Respond.success(
