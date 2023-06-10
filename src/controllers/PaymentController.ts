@@ -67,32 +67,7 @@ class PaymentController {
       next(err)
     }
   }
-
-  async getPaymentRequestByTripId(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const { tripId } = req.params
-      if (!tripId) return Respond.error(res, 'trip id was not passed.', 400)
-
-      const paymentRequest = await findPaymentRequestBy({ trip: tripId })
-      if (!paymentRequest)
-        return Respond.error(
-          res,
-          'Payment request has not been uploaded yet.'
-        )
-
-      return Respond.success(
-        res,
-        'Payment request fetched successfully...',
-        paymentRequest
-      )
-    } catch (err) {
-      next(err)
-    }
-  }
+  
   async getPaymentRequestsOfTransporter(
     req: Request,
     res: Response,
@@ -135,7 +110,7 @@ class PaymentController {
       return Respond.success(
         res,
         'Payment request rejected',
-        updatedPaymentRequest
+        trip
       )
     } catch (err) {
       next(err)
@@ -180,7 +155,7 @@ class PaymentController {
       return Respond.success(
         res,
         'Payment request approved',
-        updatedPaymentRequest
+        trip
       )
     } catch (err) {
       next(err)
@@ -220,7 +195,7 @@ class PaymentController {
       return Respond.success(
         res,
         'Payment request successfully updated',
-        updatedPaymentRequest
+        trip
       )
     } catch (err) {
       next(err)
