@@ -73,7 +73,6 @@ class VehicleMiddlewares {
       if (!vehicle) return Respond.error(res, 'Vehicle does not exist')
 
       const user = getUserCredentialsFromReq(req);
-      console.log(vehicle.owner, user._id);
       if (vehicle.owner.toString() !== user._id) return Respond.error(res, 'Only the owner of a vehicle can perform this operation')
 
       next()
