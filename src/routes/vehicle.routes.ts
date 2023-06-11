@@ -35,12 +35,19 @@ router.patch(
   '/:vehicleId',
   JWTMiddlewares.jwtIsValid,
   JWTMiddlewares.checkIsServiceBasedUserType,
-  VehicleMiddlewares.checkIfVehicleExists,
+  VehicleMiddlewares.checkIfVehicleBelongsToUser,
   multerInstance.fields([
     { name: 'driver.avatar', maxCount: 1 },
     { name: 'driver.driverLicense', maxCount: 1 },
   ]),
   VehicleController.updateVehicle
+)
+router.delete(
+  '/:vehicleId',
+  JWTMiddlewares.jwtIsValid,
+  JWTMiddlewares.checkIsServiceBasedUserType,
+  VehicleMiddlewares.checkIfVehicleBelongsToUser,
+  VehicleController.deleteVehicle
 )
 
 export default router

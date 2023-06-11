@@ -1,6 +1,7 @@
 import { findAndUpdateUserBy } from '@data/user/userRepository'
 import {
   createVehicle,
+  deleteVehicleBy,
   findAndUpdateVehicleBy,
   findVehicleBy,
   findVehiclesBy,
@@ -43,10 +44,10 @@ class VehicleController {
 
   async updateVehicle(req: Request, res: Response, next: NextFunction) {
     try {
-      const updatedData = await extractData(req)
-      const { vehicleId } = req.params
+      const updatedData = await extractData(req);
+      const { vehicleId } = req.params;
 
-      const unupdatedVehicleData = await findVehicleBy({ _id: vehicleId })
+      const unupdatedVehicleData = await findVehicleBy({ _id: vehicleId });
 
       const vehicleUpdateResponse = await findAndUpdateVehicleBy(
         { _id: vehicleId },
@@ -62,6 +63,19 @@ class VehicleController {
       )
 
       return Respond.success(res, 'Vehicle Updated', vehicleUpdateResponse)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async deleteVehicle(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { vehicleId } = req.params;
+      const user = getUserCredentialsFromReq(req);
+
+      await deleteVehicleBy({_id: vehicleId, owner: user._id});
+
+      return Respond.success(res, 'Vehicle has been deleted.');
     } catch (err) {
       next(err)
     }

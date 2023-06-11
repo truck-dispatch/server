@@ -1,6 +1,7 @@
 import { findVehicleBy } from '@data/vehicle/vehicleRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
+import { getUserCredentialsFromReq } from '@services/JWT'
 import { NextFunction, Request, Response } from 'express'
 
 class VehicleMiddlewares {
@@ -61,7 +62,7 @@ class VehicleMiddlewares {
       return Respond.error(res, (err as Error).message, 500)
     }
   }
-  async checkIfVehicleExists(req: Request, res: Response, next: NextFunction) {
+  async checkIfVehicleBelongsToUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { vehicleId } = req.params
 
@@ -70,6 +71,9 @@ class VehicleMiddlewares {
       const vehicle = await findVehicleBy({ _id: vehicleId })
 
       if (!vehicle) return Respond.error(res, 'Vehicle does not exist')
+
+      const user = getUserCredentialsFromReq(req);
+      if (vehicle.owner.toString() !== user._id) return Respond.error(res, 'Only the owner of a vehicle can perform this operation')
 
       next()
     } catch (err) {
