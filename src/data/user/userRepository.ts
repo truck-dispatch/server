@@ -92,7 +92,7 @@ export async function debitUser(
 
   return UserModel.findOneAndUpdate(
     { _id: userId },
-    { $inc: { balance: -amount }},
+    { $inc: { balance: -amount } },
     { new: true }
   )
 }

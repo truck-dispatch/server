@@ -67,7 +67,7 @@ class PaymentController {
       next(err)
     }
   }
-  
+
   async getPaymentRequestsOfTransporter(
     req: Request,
     res: Response,
@@ -107,11 +107,7 @@ class PaymentController {
         `${FRONTEND_URL}/my-trips/${trip?._id}/request-payment-for-trip`,
         `${tripOwner?.firstName} ${tripOwner?.lastName}`
       )
-      return Respond.success(
-        res,
-        'Payment request rejected',
-        trip
-      )
+      return Respond.success(res, 'Payment request rejected', trip)
     } catch (err) {
       next(err)
     }
@@ -152,11 +148,7 @@ class PaymentController {
         `${tripOwner?.firstName} ${tripOwner?.lastName}`
       )
 
-      return Respond.success(
-        res,
-        'Payment request approved',
-        trip
-      )
+      return Respond.success(res, 'Payment request approved', trip)
     } catch (err) {
       next(err)
     }
@@ -192,11 +184,7 @@ class PaymentController {
         `${FRONTEND_URL}/my-trips/${trip?._id}/view-payment-request`,
         `${transporter?.firstName} ${transporter?.lastName}`
       )
-      return Respond.success(
-        res,
-        'Payment request successfully updated',
-        trip
-      )
+      return Respond.success(res, 'Payment request successfully updated', trip)
     } catch (err) {
       next(err)
     }

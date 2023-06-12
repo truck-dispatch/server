@@ -43,7 +43,7 @@ class AuthController {
       const token = generateJWT({
         _id: user?._id,
         userType: user?.userType,
-      });
+      })
 
       return Respond.success(res, 'User created successfully...', {
         smsData: {},

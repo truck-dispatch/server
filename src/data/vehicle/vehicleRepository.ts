@@ -21,5 +21,5 @@ export function findAndUpdateVehicleBy(
 }
 
 export function deleteVehicleBy(searchParam: Partial<Vehicle>) {
-  return VehicleModel.deleteOne(searchParam);
+  return VehicleModel.deleteOne(searchParam)
 }
