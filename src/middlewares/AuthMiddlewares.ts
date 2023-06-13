@@ -108,15 +108,15 @@ class AuthMiddlewares {
         return Respond.error(res, 'Email and Password do not match', 400)
       }
 
-      // if (!user.isPhoneVerified) {
-      //   const verificationData = await Sms.sendOTP({ to: user.phone })
-      //   return Respond.error(
-      //     res,
-      //     'Phone has not been verified',
-      //     401,
-      //     verificationData
-      //   )
-      // }
+      if (!user.isPhoneVerified) {
+        const verificationData = await Sms.sendOTP({ to: user.phone })
+        return Respond.error(
+          res,
+          'Phone has not been verified',
+          401,
+          verificationData
+        )
+      }
 
       next()
     } catch (err) {
@@ -127,10 +127,10 @@ class AuthMiddlewares {
 
   async verifyPhoneChecks(req: Request, res: Response, next: NextFunction) {
     try {
-      const { phone, pin_id, pin } = req.body
+      const { phone, pin } = req.body
 
       if (!pin) return Respond.error(res, 'Pin is a required field')
-      if (!phone || !pin_id) {
+      if (!phone) {
         return Respond.error(
           res,
           'Something went wrong. Kindly request a new verification pin.'

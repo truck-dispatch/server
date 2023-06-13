@@ -36,9 +36,10 @@ class AuthController {
 
       if (userType !== 'shipper') data.status = 'unverified'
       const user = await createUser(data)
-      // const smsData = await Sms.sendOTP({
-      //   to: formattedPhone,
-      // })
+
+      await Sms.sendOTP({
+        to: formattedPhone,
+      })
 
       const token = generateJWT({
         _id: user?._id,
@@ -46,8 +47,10 @@ class AuthController {
       });
 
       return Respond.success(res, 'User created successfully...', {
-        smsData: {},
-        token,
+        smsData: {
+          to: formattedPhone
+        },
+        token
       })
     } catch (err) {
       next(err)
@@ -108,8 +111,9 @@ class AuthController {
   ) {
     try {
       const { phone } = req.body
-      const smsData = await Sms.sendOTP({ to: phone })
-      return Respond.success(res, 'SMS sent successfully...', smsData)
+      const formattedPhone = Helpers.convertPhone(phone);
+      await Sms.sendOTP({ to: formattedPhone });
+      return Respond.success(res, 'SMS sent successfully...', { to: formattedPhone })
     } catch (err) {
       next(err)
     }
@@ -117,31 +121,19 @@ class AuthController {
 
   async verifyPhoneNumber(req: Request, res: Response, next: NextFunction) {
     try {
-      const { phone, pin, pin_id } = req.body
-      return Sms.verifyOTP(pin_id, pin)
-        .then(async () => {
+      const { phone, pin } = req.body
+      const formattedPhone = Helpers.convertPhone(phone);
+      return Sms.verifyOTP(formattedPhone, pin)
+        .then(async (response) => {
+          if (response.status === 'pending') return Respond.error(res, 'Invalid or Expired Code');
+
           await findAndUpdateUserBy(
-            { phone: Helpers.convertPhone(phone) },
+            { phone: formattedPhone },
             { isPhoneVerified: true }
           )
+
+          console.log(response);
           return Respond.success(res, 'Phone number verification complete')
-        })
-        .catch((err) => {
-          if (err.response.data.verified === 'Expired')
-            return Respond.error(
-              res,
-              'Token has expired. Kindly request another.'
-            )
-          if (!err.response.data.verified) {
-            return Respond.error(
-              res,
-              `Invalid code. ${err.response.data.attemptsRemaining} attempts left`
-            )
-          }
-          return Respond.error(
-            res,
-            'An error occured. It could be an invalid or expired code. If the issue persists, contact support'
-          )
         })
     } catch (err) {
       next(err)
