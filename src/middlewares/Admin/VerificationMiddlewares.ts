@@ -13,8 +13,7 @@ class VerificationMiddleware {
       const { adminMessage, _id } = req.body
 
       if (!adminMessage) return Respond.error(res, 'Admin message was not sent')
-      if (!_id)
-        return Respond.error(res, 'Admin message was not sent')
+      if (!_id) return Respond.error(res, 'Admin message was not sent')
       const verification = await findVerificationBy({ _id })
 
       if (!verification)
@@ -33,9 +32,10 @@ class VerificationMiddleware {
     try {
       const { userId } = req.params
 
-      const user = await findUserBy({ _id: userId});
-      if (user?.status === 'verified') return Respond.error(res, 'User has already been verified')
-      console.log(user);
+      const user = await findUserBy({ _id: userId })
+      if (user?.status === 'verified')
+        return Respond.error(res, 'User has already been verified')
+      console.log(user)
 
       next()
     } catch (err) {

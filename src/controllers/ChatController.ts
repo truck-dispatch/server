@@ -77,7 +77,10 @@ class ChatController {
         receiver: receiver,
         chatLog: chatLog,
       })
-      await findAndUpdateChatLogBy({_id: chatLog}, { lastMessage: savedMessage._id})
+      await findAndUpdateChatLogBy(
+        { _id: chatLog },
+        { lastMessage: savedMessage._id }
+      )
 
       const receiverSocket = getConnectedUserSocketByUserId(
         savedMessage.receiver
@@ -86,11 +89,7 @@ class ChatController {
         // @ts-ignore
         emitMessage(global.io, receiverSocket, savedMessage)
       }
-      return Respond.success(
-        res,
-        'Message created successfully.',
-        savedMessage
-      )
+      return Respond.success(res, 'Message created successfully.', savedMessage)
     } catch (err) {
       return next(err)
     }
