@@ -13,13 +13,32 @@ router.post(
   TripMiddlewares.canCreateTrip,
   TripController.createTrip
 )
+
 router.get('/', JwtMiddlewares.jwtIsValid, TripController.getTrips)
+
 router.get(
   '/jobs',
   JwtMiddlewares.jwtIsValid,
   JwtMiddlewares.checkIsServiceBasedUserType,
   TripController.getJobs
 )
+
+router.get(
+  '/jobs/:tripId',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkIsServiceBasedUserType,
+  TripMiddlewares.tripExists,
+  TripController.getJob
+)
+
+router.get(
+  '/:tripId',
+  JwtMiddlewares.jwtIsValid,
+  TripMiddlewares.checkIfUserIsAssociatedToTrip,
+  TripMiddlewares.tripExists,
+  TripController.getTrip
+)
+
 router.patch(
   '/:tripId',
   JwtMiddlewares.jwtIsValid,
@@ -45,6 +64,34 @@ router.post(
   TripMiddlewares.checkDataForTripAssignmentIsComplete,
   TripController.assignTrip
 )
+
+router.post(
+  '/:tripId/unassign-trip',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkisClientBasedUserType,
+  TripMiddlewares.isTripCreator,
+  TripMiddlewares.checkIfTripCanBeUnassigned,
+  TripController.unassignTrip
+)
+
+router.delete(
+  '/:tripId/cancel-trip-by-trip-owner',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkisClientBasedUserType,
+  TripMiddlewares.isTripCreator,
+  TripMiddlewares.checkIfTripCanBeCancelled,
+  TripController.cancelTripByTripOwner
+)
+
+router.patch(
+  '/:tripId/cancel-trip-by-transporter',
+  JwtMiddlewares.jwtIsValid,
+  JwtMiddlewares.checkIsServiceBasedUserType,
+  TripMiddlewares.isTripTransporter,
+  TripMiddlewares.checkIfTripCanBeCancelled,
+  TripController.cancelTripByTransporter
+)
+
 router.post(
   '/:tripId/upload-tdo',
   JwtMiddlewares.jwtIsValid,

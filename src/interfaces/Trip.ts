@@ -1,3 +1,4 @@
+import { Types } from 'mongoose'
 import {
   jobTypes,
   shippingLines,
@@ -7,7 +8,7 @@ import {
 } from '../common/constants'
 
 export default interface Trip {
-  _id: string
+  _id: Types.ObjectId | string
   pickUpAddress: string
   deliveryAddress: string
   pickUpDate: string
@@ -18,12 +19,14 @@ export default interface Trip {
   jobType?: (typeof jobTypes)[number]
   weight: number
   instructions?: string
-  tripOwner: string
-  transporterId?: string
+  tripOwner: Types.ObjectId | string
+  transporter?: Types.ObjectId | string | null
+  paymentRequest?: Types.ObjectId | string | null
+  tripOwnerUserType: string
   TDO?: string
-  paymentId?: string
   reference: string
   startTime?: string
   completionTime?: string
   status: (typeof tripStatus)[number]
+  acceptedBid?: Types.ObjectId | string | null
 }

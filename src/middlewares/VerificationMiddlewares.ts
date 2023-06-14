@@ -14,14 +14,14 @@ class VerificationMiddlewares {
     try {
       const { _id } = getUserCredentialsFromReq(req)
       const user = await findUserBy({ _id })
-      if (user?.status === 'verified' || user?.userType === 'agent') {
+      if (user?.status === 'verified' || user?.userType === 'shipper') {
         return Respond.error(
           res,
           'User has either been verified, or is not allowed to partake in verification'
         )
       }
 
-      const verification = await findVerificationBy({ userId: user?._id })
+      const verification = await findVerificationBy({ user: user?._id })
 
       if (verification)
         return Respond.error(
@@ -68,7 +68,7 @@ class VerificationMiddlewares {
       if (user?.status === 'verified')
         return Respond.error(res, 'User has already been verified', 400)
 
-      const verification = await findVerificationBy({ userId: user?._id })
+      const verification = await findVerificationBy({ user: user?._id })
 
       if (!verification)
         return Respond.error(res, 'User has not submitted a verification yet. ')

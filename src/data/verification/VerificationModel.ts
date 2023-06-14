@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import Verification from 'interfaces/Verification'
 
 const schema = new Schema(
@@ -27,9 +27,10 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    userId: {
-      type: String,
+    user: {
+      type: Types.ObjectId,
       required: true,
+      ref: 'User',
     },
     guarantor: {
       name: {

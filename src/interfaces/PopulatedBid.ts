@@ -1,14 +1,14 @@
-import { Types } from 'mongoose'
+import Trip from './Trip'
 import Vehicle from './Vehicle'
 
-export default interface Bid {
-  _id: string | Types.ObjectId
+export default interface PopulatedBid {
+  _id: string
   paymentId?: string
   extraNotes?: string
   price: number
   presentLocation?: string
-  transporter: string | Types.ObjectId
-  trip: string | Types.ObjectId
+  transporter: string
+  trip: Trip
   status: 'pending' | 'accepted' | 'rejected'
   vehicle: Vehicle
 }

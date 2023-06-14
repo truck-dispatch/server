@@ -15,19 +15,13 @@ class RatingController {
         comment,
         userRating,
         userRated,
-        tripId,
+        trip: tripId,
         starRating: Number(starRating),
       })
       const user = await findUserBy({ _id: userRated })
 
-      const rating = await getUsersNewRating(user?._id!)
-      const noOfRatingsReceived = user?.noOfRatingsReceived
-        ? user?.noOfRatingsReceived + 1
-        : 1
-      await findAndUpdateUserBy(
-        { _id: userRated },
-        { rating, noOfRatingsReceived }
-      )
+      const rating = await getUsersNewRating(user?._id! as string)
+      await findAndUpdateUserBy({ _id: userRated }, { rating })
       return Respond.success(
         res,
         'Your rating has been saved. Your ratings helps ensure we keep a safe community'
@@ -41,7 +35,7 @@ class RatingController {
     try {
       const { tripId } = req.params
 
-      const rating = await findRatingBy({ tripId })
+      const rating = await findRatingBy({ trip: tripId })
 
       return Respond.success(
         res,

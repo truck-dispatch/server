@@ -1,12 +1,15 @@
+import { Types } from 'mongoose'
+
 export default interface Payment {
-  from: string
-  to: string
-  tripId: string
-  bidId: string
-  paymentReference: string
-  amountInBid: number
-  totalAmountPaid: number
+  from: string | Types.ObjectId
+  to: string | Types.ObjectId
+  trip?: string
+  type: 'topUp' | 'payment'
+  bid?: string
+  processorReference: string
+  amount: number
+  totalAmount: number
   status: 'success' | 'rejected'
   transaction: string
-  tripReference: string
+  tripReference?: string
 }

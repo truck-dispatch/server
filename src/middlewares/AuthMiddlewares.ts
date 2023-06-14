@@ -7,7 +7,7 @@ import { compareHashAndPassword } from '@services/encrypt'
 import Sms from '@services/Sms'
 import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
-import { userTypes } from '@common/constants'
+import { rolesInACompany, userTypes } from '@common/constants'
 
 class AuthMiddlewares {
   async registrationCredentialChecks(
@@ -16,21 +16,33 @@ class AuthMiddlewares {
     next: NextFunction
   ) {
     try {
-      const { email, password, phone, userType, firstName, lastName } = req.body
-      const isValidEmail = Helpers.isValidEmail(email)
+      const { email, phone, userType, firstName, lastName, roleInCompany } =
+        req.body
+      const isValidEmail = Helpers.isValidEmail(email.toLowerCase())
       if (!isValidEmail) {
         return Respond.error(res, 'Provide a valid email address', 400)
       }
       if (!userTypes.includes(userType))
         return Respond.error(res, 'This is not an accepted user type')
-      if (!phone || !password || !userType || !firstName || !lastName) {
+      if (!phone || !userType || !firstName || !lastName) {
         return Respond.error(
           res,
-          'phone, password, userType, firstName, lastName are compulsory fields.',
+          'phone, userType, firstName, lastName are compulsory fields.',
           400
         )
       }
-      const userWithEmailExists = await findUserBy({ email })
+
+      if (roleInCompany && !rolesInACompany.includes(roleInCompany)) {
+        return Respond.error(
+          res,
+          'The selected role is currently not supported.',
+          400
+        )
+      }
+
+      const userWithEmailExists = await findUserBy({
+        email: email.toLowerCase(),
+      })
       const userWithPhoneExists = await findUserBy({
         phone: Helpers.convertPhone(phone),
       })
@@ -52,8 +64,6 @@ class AuthMiddlewares {
 
       next()
     } catch (err) {
-      // Report error to our client..
-      console.log(err)
       Respond.error(res, 'Something went wrong...')
     }
   }
@@ -61,12 +71,12 @@ class AuthMiddlewares {
   async loginCredentialChecks(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body
-      const isValidEmail = Helpers.isValidEmail(email)
+      const isValidEmail = Helpers.isValidEmail(email.toLowerCase())
 
       if (!isValidEmail)
         return Respond.error(res, 'Provide a valid email address')
 
-      const user = await findUserBy({ email }, false)
+      const user = await findUserBy({ email: email.toLowerCase() }, false)
       if (!user) {
         return Respond.error(
           res,
@@ -117,10 +127,10 @@ class AuthMiddlewares {
 
   async verifyPhoneChecks(req: Request, res: Response, next: NextFunction) {
     try {
-      const { phone, pin_id, pin } = req.body
+      const { phone, pin } = req.body
 
       if (!pin) return Respond.error(res, 'Pin is a required field')
-      if (!phone || !pin_id) {
+      if (!phone) {
         return Respond.error(
           res,
           'Something went wrong. Kindly request a new verification pin.'
@@ -185,7 +195,6 @@ class AuthMiddlewares {
       next()
     } catch (err) {
       // Report error to our client..
-      console.log(err, 'consoled err')
       Respond.error(res, 'Something went wrong...', 500)
     }
   }

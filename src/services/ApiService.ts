@@ -10,10 +10,11 @@ class ApiService {
    * constructor function
    * @param {String} baseUrl API base URL
    */
-  constructor(private baseUrl: string) {
+  constructor(private baseUrl: string, headers?: Record<string, unknown>) {
     this.api = axios.create({
       baseURL: baseUrl,
       timeout: 40000,
+      headers
     })
   }
 

@@ -21,15 +21,15 @@
     "server",
     "truckdispatch"
   ],
-	"_moduleAliases": {
-		"@common": "dist/common",
-		"@controllers": "dist/controllers",
-		"@data": "dist/data",
-		"@helpers": "dist/helpers",
-		"@middlewares": "dist/middlewares",
-		"@services": "dist/services",
+  "_moduleAliases": {
+    "@common": "dist/common",
+    "@controllers": "dist/controllers",
+    "@data": "dist/data",
+    "@helpers": "dist/helpers",
+    "@middlewares": "dist/middlewares",
+    "@services": "dist/services",
     "@interfaces": "dist/interfaces"
-	},
+  },
   "author": "god-of-js",
   "license": "ISC",
   "bugs": {
@@ -46,14 +46,15 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-		"module-alias": "^2.2.2",
     "express-rate-limit": "^6.7.0",
     "jsonwebtoken": "^9.0.0",
+    "module-alias": "^2.2.2",
     "mongoose": "^7.0.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.1",
     "socket.io": "^4.6.1",
+    "twilio": "^4.11.2",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {

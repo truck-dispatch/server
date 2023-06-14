@@ -1,54 +1,24 @@
-import { SMS_API_KEY, SMS_API_URL } from '@common/privateKeys'
-import ApiService from './ApiService'
-
-type SMSType = 'NUMERIC' | 'ALPHANUMERIC'
+import twilio from "twilio";
+import { SMS_AUTH_TOKEN, SMS_ACCOUNT_SID, SMS_SERVICE_SID } from '@common/privateKeys';
+const client = twilio(SMS_ACCOUNT_SID, SMS_AUTH_TOKEN);
 
 interface SendOTPParams {
   to: string
-  message_text?: string
-  message_type?: SMSType
-  from?: string
-  pin_attempts?: number
-  pin_time_to_live?: number
-  pin_length?: number
-  channel?: 'dnd' | 'generic' | 'email' | 'WhatsApp'
-  pin_placeholder?: string
 }
-const Api = new ApiService(SMS_API_URL!)
+
 class Sms {
   sendOTP({
-    to,
-    message_text = 'Your TruckDispatch verification code is < 123456 >. This is a one time pin and it expires in five minutes.',
-    message_type = 'NUMERIC',
-    from = 'N-Alert',
-    pin_attempts = 10,
-    pin_length = 6,
-    pin_time_to_live = 5,
-    channel = 'dnd',
-    pin_placeholder = '< 123456 >',
+    to
   }: SendOTPParams) {
-    const data = {
-      api_key: SMS_API_KEY,
-      message_type,
-      to: to.replace(/^0/, '234'),
-      from,
-      message_text,
-      channel,
-      pin_attempts,
-      pin_length,
-      pin_time_to_live,
-      pin_placeholder,
-    }
-
-    return Api.post('/sms/otp/send', data)
+    return client.verify.v2.services(SMS_SERVICE_SID!)
+      .verifications
+      .create({ to, channel: 'sms' })
   }
 
-  verifyOTP(pin_id: string, pin: string) {
-    return Api.post('/sms/otp/verify', {
-      api_key: SMS_API_KEY,
-      pin_id,
-      pin,
-    })
+  verifyOTP(to: string, pin: string) {
+    return client.verify.v2.services(SMS_SERVICE_SID!)
+      .verificationChecks
+      .create({ to, code: pin })
   }
 }
 

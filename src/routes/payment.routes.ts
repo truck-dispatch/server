@@ -30,12 +30,6 @@ router.patch(
 )
 
 router.get(
-  '/payment-request/trip/:tripId',
-  JWTMiddlewares.jwtIsValid,
-  PaymentController.getPaymentRequestByTripId
-)
-
-router.get(
   '/payment-requests',
   JWTMiddlewares.jwtIsValid,
   JWTMiddlewares.checkIsServiceBasedUserType,

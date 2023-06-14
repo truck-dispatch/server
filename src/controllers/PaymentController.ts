@@ -6,7 +6,7 @@ import {
   findPaymentRequestBy,
   findPaymentRequestsBy,
 } from '@data/paymentRequest/paymentRequestRepository'
-import { findTripBy } from '@data/trip/tripRepository'
+import { findAndUpdateTripBy, findTripBy } from '@data/trip/tripRepository'
 import { findUserBy } from '@data/user/userRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
@@ -29,8 +29,8 @@ class PaymentController {
       })
 
       const bid = await findBidBy({
-        transporterId: transporterCredentials._id,
-        tripId,
+        transporter: transporterCredentials._id,
+        trip: tripId,
       })
       const trip = await findTripBy({ _id: tripId })
 
@@ -38,23 +38,23 @@ class PaymentController {
       if (!trip) return Respond.error(res, 'trip does not exist')
 
       const paymentRequestResponse = await createPaymentRequest({
-        vehicle: {
-          driver: {
-            name: bid?.driverName!,
-          },
-          plateNumber: bid?.truckPlateNumber!,
-        },
+        vehicle: bid.vehicle,
         status: 'pending',
-        transporterId: transporterCredentials._id,
-        tripId,
+        transporter: transporterCredentials._id,
+        trip: tripId,
         proofVideo,
         tripReference: trip?.reference,
         reference: Helpers.generateReference(),
+        // This is used to initiate the transfer to the user's bank account when the payment is approved.
         paymentReference: Helpers.generateUuid(),
         amount: bid.price,
       })
+      const updatedTrip = await findAndUpdateTripBy(
+        { _id: tripId },
+        { paymentRequest: paymentRequestResponse._id }
+      )
 
-      const tripOwner = await findUserBy({ _id: trip?.tripOwner })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: transporterCredentials._id })
       Mail.paymentHasBeenRequestedByTransporter(
         tripOwner?.email!,
@@ -62,42 +62,12 @@ class PaymentController {
         `${transporter?.firstName} ${transporter?.lastName}`
       )
 
-      return Respond.success(
-        res,
-        'Payment request created.',
-        paymentRequestResponse
-      )
+      return Respond.success(res, 'Payment request created.', updatedTrip)
     } catch (err) {
       next(err)
     }
   }
 
-  async getPaymentRequestByTripId(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const { tripId } = req.params
-      if (!tripId) return Respond.error(res, 'trip id was not passed.', 400)
-
-      const paymentRequest = await findPaymentRequestBy({ tripId })
-      if (!paymentRequest)
-        return Respond.error(
-          res,
-          'Payment request has not been uploaded yet.',
-          404
-        )
-
-      return Respond.success(
-        res,
-        'Payment request fetched successfully...',
-        paymentRequest
-      )
-    } catch (err) {
-      next(err)
-    }
-  }
   async getPaymentRequestsOfTransporter(
     req: Request,
     res: Response,
@@ -107,7 +77,7 @@ class PaymentController {
       const user = getUserCredentialsFromReq(req)
 
       const paymentRequests = await findPaymentRequestsBy({
-        transporterId: user._id,
+        transporter: user._id,
       })
 
       return Respond.success(
@@ -129,19 +99,15 @@ class PaymentController {
         { _id: paymentRequestId },
         { reasonForReject, status: 'rejected' }
       )
-      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
-      const tripOwner = await findUserBy({ _id: trip?.tripOwner! })
-      const transporter = await findUserBy({ _id: trip?.transporterId })
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
+      const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentRequestHasBeenRejected(
         transporter?.email!,
         `${FRONTEND_URL}/my-trips/${trip?._id}/request-payment-for-trip`,
         `${tripOwner?.firstName} ${tripOwner?.lastName}`
       )
-      return Respond.success(
-        res,
-        'Payment request rejected',
-        updatedPaymentRequest
-      )
+      return Respond.success(res, 'Payment request rejected', trip)
     } catch (err) {
       next(err)
     }
@@ -154,7 +120,7 @@ class PaymentController {
         _id: paymentRequestId,
       })
       const user = await findUserBy({
-        _id: paymentRequest?.transporterId,
+        _id: paymentRequest?.transporter,
       })
 
       const transferData = {
@@ -173,20 +139,16 @@ class PaymentController {
         { _id: paymentRequestId },
         { status: 'completed' }
       )
-      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
-      const tripOwner = await findUserBy({ _id: trip?.tripOwner! })
-      const transporter = await findUserBy({ _id: trip?.transporterId })
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
+      const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentRequestHasBeenApproved(
         transporter?.email!,
         `${FRONTEND_URL}/my-trips/${trip?._id}/status`,
         `${tripOwner?.firstName} ${tripOwner?.lastName}`
       )
 
-      return Respond.success(
-        res,
-        'Payment request approved',
-        updatedPaymentRequest
-      )
+      return Respond.success(res, 'Payment request approved', trip)
     } catch (err) {
       next(err)
     }
@@ -214,19 +176,15 @@ class PaymentController {
         { proofVideo, status: 'pending', reasonForReject: '' }
       )
 
-      const trip = await findTripBy({ _id: updatedPaymentRequest?.tripId! })
-      const tripOwner = await findUserBy({ _id: trip?.tripOwner! })
-      const transporter = await findUserBy({ _id: trip?.transporterId })
+      const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
+      const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
+      const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentHasBeenUpdatedByTransporter(
         tripOwner?.email!,
         `${FRONTEND_URL}/my-trips/${trip?._id}/view-payment-request`,
         `${transporter?.firstName} ${transporter?.lastName}`
       )
-      return Respond.success(
-        res,
-        'Payment request successfully updated',
-        updatedPaymentRequest
-      )
+      return Respond.success(res, 'Payment request successfully updated', trip)
     } catch (err) {
       next(err)
     }

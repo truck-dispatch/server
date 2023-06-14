@@ -1,22 +1,27 @@
+import { Types } from 'mongoose'
 import { userTypes } from '../common/constants'
+import Company from './Company'
 import TransferRecipient from './TransferRecipient'
 
+type Status =
+  | 'pending_verification'
+  | 'verified'
+  | 'unverified'
+  | 'rejected'
+  | 'fraudulent'
 export default interface User {
-  _id: string
+  _id: string | Types.ObjectId
   firstName: string
   lastName: string
   email: string
   phone: string
   avatar?: string
-  noOfRatingsReceived?: number
+  balance?: number
+  ledgerBalance?: number
   completedTrips?: number
   userType: (typeof userTypes)[number]
-  status?:
-    | 'pending_verification'
-    | 'verified'
-    | 'unverified'
-    | 'rejected'
-    | 'fraudulent'
+  status?: Status
+  companyVerificationStatus: Status
   rating: number
   bankDetails: TransferRecipient
   password: string
@@ -24,4 +29,6 @@ export default interface User {
   isPhoneVerified: boolean
   fromFirebase: boolean
   isSuspended: boolean
+  roleInCompany: string
+  companyDetails: Company
 }

@@ -1,14 +1,28 @@
-import { model, Schema } from 'mongoose'
-import Trip from 'interfaces/Trip'
+import Mongoose, { model, Schema } from 'mongoose'
+import PopulatedTrip from '@interfaces/PopulatedTrip'
 
 const schema = new Schema(
   {
     tripOwner: {
       required: true,
+      type: Mongoose.Types.ObjectId,
+      ref: 'User',
+    },
+    tripOwnerUserType: {
+      required: true,
       type: String,
     },
-    transporterId: {
-      type: String,
+    transporter: {
+      type: Mongoose.Types.ObjectId,
+      ref: 'User',
+    },
+    paymentRequest: {
+      type: Mongoose.Types.ObjectId,
+      ref: 'PaymentRequest',
+    },
+    acceptedBid: {
+      type: Mongoose.Types.ObjectId,
+      ref: 'Bid',
     },
     pickUpAddress: {
       type: String,
@@ -49,9 +63,6 @@ const schema = new Schema(
     TDO: {
       type: String,
     },
-    paymentId: {
-      type: String,
-    },
     reference: {
       type: String,
     },
@@ -69,4 +80,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const TripModel = model<Trip>('Trip', schema)
+export const TripModel = model<PopulatedTrip>('Trip', schema)

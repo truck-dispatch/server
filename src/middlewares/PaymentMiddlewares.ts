@@ -20,8 +20,8 @@ class PaymentMiddlewares {
         return Respond.error(res, 'proofVideo was not provided')
 
       const bid = await findBidBy({
-        transporterId: transporter._id,
-        tripId,
+        transporter: transporter._id,
+        trip: tripId,
       })
       if (!bid)
         return Respond.error(res, 'You do not have a bid for this trip.')

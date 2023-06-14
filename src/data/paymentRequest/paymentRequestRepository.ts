@@ -15,7 +15,15 @@ export async function findPaymentRequestBy(
 export async function findPaymentRequestsBy(
   searchParam: Partial<PaymentRequest>
 ) {
-  const data = await PaymentRequestModel.find(searchParam).lean()
+  const data = await PaymentRequestModel.find(searchParam)
+    .populate({
+      path: 'trip',
+      populate: {
+        path: 'tripOwner',
+        model: 'User',
+      },
+    })
+    .lean()
   return data
 }
 
@@ -26,4 +34,10 @@ export async function findAndUpdatePaymentRequestBy(
   return PaymentRequestModel.findOneAndUpdate(searchParam, data, {
     new: true,
   }).lean()
+}
+
+export async function findAndDeletePaymentRequestsBy(
+  searchParam: Partial<PaymentRequest>
+) {
+  return PaymentRequestModel.deleteMany(searchParam)
 }

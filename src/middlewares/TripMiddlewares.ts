@@ -1,9 +1,17 @@
 import { NextFunction, Request, Response } from 'express'
-import { tripStatus } from '@common/constants'
+import {
+  clientUserTypes,
+  paymentSources,
+  serviceBasedUserTypes,
+  tripStatus,
+} from '@common/constants'
 import { findTripBy } from '@data/trip/tripRepository'
 import { findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
+import PaymentRequest from '@interfaces/PaymentRequest'
+import { Types } from 'mongoose'
+import { findPaymentRequestBy } from '@data/paymentRequest/paymentRequestRepository'
 
 class TripMiddlewares {
   canCreateTrip(req: Request, res: Response, next: NextFunction) {
@@ -59,10 +67,10 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
       if (!trip) return Respond.error(res, 'Trip was not found.')
-      if (trip?.tripOwner !== user._id)
+      if (!(trip?.tripOwner._id as Types.ObjectId).equals(user?._id))
         return Respond.error(
           res,
-          'Only the trip owner has the right to update this trip'
+          'Only the trip owner has the right to access this route.'
         )
 
       next()
@@ -83,7 +91,10 @@ class TripMiddlewares {
       const user = getUserCredentialsFromReq(req)
 
       const trip = await findTripBy({ _id: tripId })
-      if (trip?.tripOwner !== user._id && trip?.transporterId !== user._id) {
+      if (
+        !(trip?.tripOwner._id! as Types.ObjectId).equals(user._id) &&
+        !(trip?.transporter?._id! as Types.ObjectId).equals(user._id)
+      ) {
         return Respond.error(res, 'User is not associated to this trip.', 401)
       }
       next()
@@ -127,10 +138,11 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
       if (!trip) return Respond.error(res, 'Trip was not found.')
-      if (trip?.transporterId !== user._id)
+      if (!(trip?.transporter?._id as Types.ObjectId).equals(user._id))
         return Respond.error(
           res,
-          'Only the transporter assigned to the trip can perform this operation'
+          'Only the transporter assigned to the trip can perform this operation',
+          401
         )
 
       next()
@@ -167,7 +179,8 @@ class TripMiddlewares {
         to,
         tripId,
         bidId,
-        paymentReference,
+        processorReference,
+        paymentSource,
         amountInBid,
         totalAmountPaid,
         transaction,
@@ -187,14 +200,103 @@ class TripMiddlewares {
         !to ||
         !tripId ||
         !bidId ||
-        !paymentReference ||
+        !paymentSource ||
         !amountInBid ||
-        !totalAmountPaid ||
-        !transaction
+        !totalAmountPaid
       ) {
         return Respond.error(
           res,
-          'from, to, tripId, bidId, paymentReference, amountInBid, totalAmountPaid, transaction are compulsory fields.'
+          'from, to, tripId, bidId, amountInBid, totalAmountPaid, paymentSource, transaction are compulsory fields.'
+        )
+      }
+      if (!paymentSources.includes(paymentSource))
+        return Respond.error(
+          res,
+          'the only payment sources currently available are paystack and balance.'
+        )
+
+      if (paymentSource === 'balance') {
+        const { _id } = getUserCredentialsFromReq(req)
+
+        const user = await findUserBy({ _id })
+        if (user?.balance! < amountInBid) {
+          return Respond.error(res, 'Insufficient balance for this bid', 400)
+        }
+      }
+
+      if (paymentSource === 'paystack' && (!processorReference || !transaction))
+        return Respond.error(
+          res,
+          'Payment processor is unavailable. Kindly reach out to support if you have been debited.'
+        )
+
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message)
+    }
+  }
+
+  async checkIfTripCanBeCancelled(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { tripId } = req.params
+      const user = getUserCredentialsFromReq(req)
+
+      const trip = await findTripBy({ _id: tripId })
+
+      if (trip?.status !== 'awaiting-bid' && trip?.status !== 'assigned') {
+        return Respond.error(
+          res,
+          'A trip in progress or completed cannot be cancelled.'
+        )
+      }
+      const paymentRequestQuery: Partial<PaymentRequest> = {
+        trip: tripId,
+        status: 'completed',
+      }
+
+      if (serviceBasedUserTypes.includes(user.userType)) {
+        paymentRequestQuery.transporter = user?._id
+      }
+      const paymentRequest = await findPaymentRequestBy(paymentRequestQuery)
+      if (paymentRequest) {
+        return Respond.error(
+          res,
+          'A trip with completed payment cannot be cancelled'
+        )
+      }
+
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message)
+    }
+  }
+
+  async checkIfTripCanBeUnassigned(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { tripId } = req.params
+
+      const trip = await findTripBy({ _id: tripId })
+
+      if (trip?.status !== 'assigned' || !trip.transporter) {
+        return Respond.error(
+          res,
+          'A trip  that has not been assigned to a transporter or is in progress or completed cannot be unassigned'
+        )
+      }
+
+      const paymentRequest = await findPaymentRequestBy({ trip: tripId })
+      if (paymentRequest?.status === 'completed') {
+        return Respond.error(
+          res,
+          'A trip with completed payment cannot be unassigned'
         )
       }
 

@@ -36,4 +36,10 @@ router.patch(
   VerificationController.updateVerification
 )
 
+router.post(
+  '/company',
+  JWTMiddlewares.jwtIsValid,
+  multerInstance.fields([{ name: 'cacDocument', maxCount: 1 }]),
+  VerificationController.companyVerification
+)
 export default router

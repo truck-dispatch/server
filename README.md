@@ -21,7 +21,7 @@ For the server to properly function, it requires these variables. To work with e
 PORT=5000
 MONGO_DB_URL=mongodb+srv://support:4rhoAUaYRBU7YMAZ@cluster0.uc9tzee.mongodb.net/?retryWrites=true&w=majority
 FRONTEND_URL=http://localhost:3000
-SMS_API_KEY=TL9voC259gtfxhYNEkGIXcF1FeKwaCWXajjMQUkW8IvNcjbxnVC7fGyM2RBVfO
+SMS_AUTH_TOKEN=TL9voC259gtfxhYNEkGIXcF1FeKwaCWXajjMQUkW8IvNcjbxnVC7fGyM2RBVfO
 SMS_API_URL=https://api.ng.termii.com/api
 JWT_SECRET=171d061b27577d9bcdd7152625d8b82ec3eae1126df1d2dba0c14b5ccce9732e
 CLOUDINARY_IMAGE_UPLOAD_URL=https://api.cloudinary.com/v1_1/dh8mksait/image/upload
@@ -70,7 +70,7 @@ Expected parameters
   email: [string, unique],
   phone: [string, unique],
   password: string,
-  userType: 'agent' | 'transporter' | 'company', | 'transportCompany'
+  userType: 'shipper' | 'transporter' | 'company', | 'transportCompany'
 }
 ```
 
@@ -208,14 +208,14 @@ POST {BASE_URL}/chat/log
 
 POST {BASE_URL}/chat
 
-For this, we need to first create a chat log to be able to attain our chatId.
+For this, we need to first create a chat log to be able to attain our chatLog.
 
 ```
 { 
   message: string,
   senderId: string,
   receiverId: string,
-  chatId: string
+  chatLog: string
 }
 ```
 
@@ -364,7 +364,7 @@ POST {BASE_URL}/trips/:tripId/assign-trip
   to: [string, 'transporterId'],
   tripId: string,
   bidId: string,
-  paymentReference: [string, from_paystack],
+  processorReference: [string, from_paystack],
   amountInBid: string,
   totalAmountPaid: number,
   transaction: [string, from_paystack],

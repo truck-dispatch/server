@@ -10,6 +10,7 @@ import Respond from '@helpers/Respond'
 import Cloudinary from '@services/Cloudinary'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import Verification from 'interfaces/Verification'
+import { createCompanyVerification } from '@data/companyVerification/companyVerificationRepository'
 
 class VerificationController {
   async submitVerification(req: Request, res: Response, next: NextFunction) {
@@ -18,7 +19,7 @@ class VerificationController {
       const user = getUserCredentialsFromReq(req)
       const verificationResponse = await createVerification({
         ...data,
-        userId: user._id,
+        user: user._id,
       })
       await findAndUpdateUserBy(
         { _id: user._id },
@@ -40,7 +41,7 @@ class VerificationController {
       const user = getUserCredentialsFromReq(req)
 
       const verificationResponse = await findVerificationBy({
-        userId: user._id,
+        user: user._id,
       })
       if (!verificationResponse)
         return Respond.error(res, 'Verification was not found')
@@ -59,7 +60,7 @@ class VerificationController {
     try {
       let verificationData = await extractedVerificationData(req)
       const user = getUserCredentialsFromReq(req)
-      const prevVerification = await findVerificationBy({ userId: user?._id })
+      const prevVerification = await findVerificationBy({ user: user?._id })
       if (verificationData.guarantor) {
         verificationData.guarantor = {
           ...prevVerification?.guarantor,
@@ -67,7 +68,7 @@ class VerificationController {
         }
       }
       const verificationResponse = await findAndUpdateVerificationBy(
-        { userId: user?._id },
+        { user: user?._id },
         verificationData
       )
       await findAndUpdateUserBy(
@@ -76,6 +77,37 @@ class VerificationController {
       )
 
       return Respond.success(res, 'Verification updated', verificationResponse)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async companyVerification(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { _id } = getUserCredentialsFromReq(req)
+      const { companyName, companyLocation, cacReference } = req.body
+      const cacDocFile = Helpers.extractFileFromReq(req, 'cacDocument')
+      const cacDocument = await Cloudinary.upload({ file: cacDocFile })
+      const companyDetails = {
+        name: companyName,
+        location: companyLocation,
+        cacReference,
+        cacDocument,
+      }
+      const updatedUser = await findAndUpdateUserBy(
+        { _id },
+        {
+          companyVerificationStatus: 'pending_verification',
+          companyDetails,
+        }
+      )
+      await createCompanyVerification({ ...companyDetails, user: _id })
+
+      return Respond.success(
+        res,
+        `Your upgrade to company request has been submitted.`,
+        updatedUser
+      )
     } catch (err) {
       next(err)
     }

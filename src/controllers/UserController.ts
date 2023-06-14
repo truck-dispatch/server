@@ -7,7 +7,7 @@ import {
 } from '@data/user/userRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
-import Cloudinary, { UploadParams } from '@services/Cloudinary'
+import Cloudinary from '@services/Cloudinary'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import Paystack from '@services/Paystack'
 import User from 'interfaces/User'

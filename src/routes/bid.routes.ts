@@ -7,12 +7,19 @@ import TripMiddlewares from '@middlewares/TripMiddlewares'
 const router = Router()
 
 router.post(
-  '/',
+  '/:tripId',
   JWTMiddlewares.jwtIsValid,
   JWTMiddlewares.checkIsServiceBasedUserType,
   JWTMiddlewares.checkUserStatusIsVerified,
+  TripMiddlewares.tripExists,
   BidMiddlewares.allRequiredDataToCreateBidIsAvailable,
   BidController.createBid
+)
+router.get(
+  '/',
+  JWTMiddlewares.jwtIsValid,
+  JWTMiddlewares.checkIsServiceBasedUserType,
+  BidController.getBids
 )
 router.patch(
   '/:tripId',
@@ -31,13 +38,13 @@ router.get(
   TripMiddlewares.isTripCreator,
   BidController.getTripBids
 )
-router.get(
-  '/transporter-bid/:tripId',
+router.delete(
+  '/:tripId/:bidId',
   JWTMiddlewares.jwtIsValid,
-  JWTMiddlewares.checkIsServiceBasedUserType,
   TripMiddlewares.tripExists,
-  BidMiddlewares.checkHasSubmittedABidToJob,
-  BidController.getTransporterBidToTrip
+  JWTMiddlewares.checkIsServiceBasedUserType,
+  BidMiddlewares.checkIfBidIsActive,
+  BidController.deleteBid
 )
 
 export default router

@@ -23,7 +23,6 @@ const schema = new Schema(
     },
     password: {
       type: String,
-      required: true,
     },
     isEmailVerified: {
       type: Boolean,
@@ -34,15 +33,26 @@ const schema = new Schema(
     status: {
       type: String,
     },
+    companyVerificationStatus: {
+      type: String,
+    },
     rating: {
+      type: Number,
+      default: 5,
+    },
+    balance: {
       type: Number,
       default: 0,
     },
-    noOfRatingsReceived: {
+    ledgerBalance: {
       type: Number,
       default: 0,
     },
     completedTrips: {
+      type: Number,
+      default: 0,
+    },
+    noOfVehicles: {
       type: Number,
       default: 0,
     },
@@ -61,6 +71,12 @@ const schema = new Schema(
     },
     isSuspended: {
       type: Boolean,
+    },
+    roleInCompany: {
+      type: String,
+    },
+    companyDetails: {
+      type: Object,
     },
   },
   { timestamps: true }

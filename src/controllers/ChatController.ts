@@ -1,5 +1,6 @@
 import {
   createChatLog,
+  findAndUpdateChatLogBy,
   findChatLogBy,
   findChatLogsBy,
 } from '@data/chatLog/chatLogRepository'
@@ -21,37 +22,29 @@ class ChatController {
   async createChatLog(req: Request, res: Response, next: NextFunction) {
     try {
       const { clientId, transporterId } = req.body
-      const client = await findUserBy({ _id: clientId })
-      const transporter = await findUserBy({ _id: transporterId })
-      const existingChatLog = await findChatLogBy({ clientId, transporterId })
+      const existingChatLog = await findChatLogBy({
+        client: clientId,
+        transporter: transporterId,
+      })
 
       if (existingChatLog) {
-        return Respond.success(res, 'A chatlog exists', {
-          ...existingChatLog,
-          client,
-          transporter,
-        })
+        return Respond.success(res, 'A chatlog exists', existingChatLog)
       }
 
-      const newChatLog = await createChatLog({ clientId, transporterId })
+      const newChatLog = await createChatLog({
+        client: clientId,
+        transporter: transporterId,
+      })
 
       const { _id } = getUserCredentialsFromReq(req)
       const receiverId = _id === clientId ? transporterId : clientId
       const receiverSocket = getConnectedUserSocketByUserId(receiverId)
       if (receiverSocket) {
         // @ts-ignore
-        emitChatLog(global.io, receiverSocket, {
-          ...newChatLog,
-          client,
-          transporter,
-        })
+        emitChatLog(global.io, receiverSocket, newChatLog)
       }
 
-      return Respond.success(res, 'New chat log created.', {
-        ...newChatLog,
-        client,
-        transporter,
-      })
+      return Respond.success(res, 'New chat log created.', newChatLog)
     } catch (err) {
       next(err)
     }
@@ -62,13 +55,12 @@ class ChatController {
       const user = getUserCredentialsFromReq(req)
       const queryParam: Partial<ChatLogQuery> = {}
       if (serviceBasedUserTypes.includes(user.userType)) {
-        queryParam.transporterId = user._id
+        queryParam.transporter = user._id
       } else if (clientUserTypes.includes(user.userType)) {
-        queryParam.clientId = user._id
+        queryParam.client = user._id
       }
 
       const chatLogs = await findChatLogsBy(queryParam)
-
       return Respond.success(res, 'Chat logs gotten', chatLogs)
     } catch (err) {
       next(err)
@@ -77,27 +69,27 @@ class ChatController {
 
   async createChat(req: Request, res: Response, next: NextFunction) {
     try {
-      const { message, senderId, receiverId, chatId } = req.body
+      const { message, sender, receiver, chatLog } = req.body
 
-      const messageToSave = await createMessage({
+      const savedMessage = await createMessage({
         message,
-        senderId,
-        receiverId,
-        chatId,
+        sender: sender,
+        receiver: receiver,
+        chatLog: chatLog,
       })
+      await findAndUpdateChatLogBy({_id: chatLog}, { lastMessage: savedMessage._id})
 
       const receiverSocket = getConnectedUserSocketByUserId(
-        messageToSave.receiverId
+        savedMessage.receiver
       )
-
       if (receiverSocket) {
         // @ts-ignore
-        emitMessage(global.io, receiverSocket, messageToSave)
+        emitMessage(global.io, receiverSocket, savedMessage)
       }
       return Respond.success(
         res,
         'Message created successfully.',
-        messageToSave
+        savedMessage
       )
     } catch (err) {
       return next(err)
@@ -109,17 +101,22 @@ class ChatController {
       const user = getUserCredentialsFromReq(req)
 
       const userChats = await findMessagesById(user._id)
+
       return Respond.success(res, 'Messages fetched successfully', userChats)
     } catch (err) {
       next(err)
     }
   }
 
-  async setChatIsReadByChatId(req: Request, res: Response, next: NextFunction) {
+  async setChatIsReadBychatLog(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
-      const { chatId } = req.params
+      const { chatLog } = req.params
 
-      const chat = await updateMessageById(chatId, { readAt: Date.now() })
+      const chat = await updateMessageById(chatLog, { readAt: Date.now() })
 
       return Respond.success(res, 'Chat read successfully.', chat)
     } catch (err) {

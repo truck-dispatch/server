@@ -1,5 +1,6 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import Bid from 'interfaces/Bid'
+import PopulatedBid from '@interfaces/PopulatedBid'
 
 const schema = new Schema(
   {
@@ -17,21 +18,19 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    transporterId: {
-      type: String,
+    transporter: {
+      type: Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
+    vehicle: {
+      type: Object,
       required: true,
     },
-    driverName: {
-      type: String,
+    trip: {
+      type: Types.ObjectId,
       required: true,
-    },
-    truckPlateNumber: {
-      type: String,
-      required: true,
-    },
-    tripId: {
-      type: String,
-      required: true,
+      ref: 'Trip',
     },
     status: {
       type: String,
@@ -41,4 +40,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const BidModel = model<Bid>('Bid', schema)
+export const BidModel = model<PopulatedBid>('Bid', schema)

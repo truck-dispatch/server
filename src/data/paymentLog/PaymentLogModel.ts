@@ -1,25 +1,27 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema, Types } from 'mongoose'
 import Payment from 'interfaces/Payment'
 
 const schema = new Schema(
   {
     from: {
-      type: String,
+      type: Types.ObjectId,
       required: true,
+      ref: 'User',
     },
     to: {
-      type: String,
+      type: Types.ObjectId,
       required: true,
+      ref: 'User',
     },
-    tripId: {
-      type: String,
-      required: true,
+    trip: {
+      type: Types.ObjectId,
+      ref: 'Trip',
     },
-    bidId: {
-      type: String,
-      required: true,
+    bid: {
+      type: Types.ObjectId,
+      ref: 'Bid',
     },
-    paymentReference: {
+    processorReference: {
       type: String,
       required: true,
     },
@@ -27,13 +29,12 @@ const schema = new Schema(
       type: String,
       required: true,
     },
-    amountInBid: {
+    amount: {
       type: Number,
       required: true,
     },
-    totalAmountPaid: {
+    totalAmount: {
       type: Number,
-      required: true,
     },
     tripReference: {
       type: String,
@@ -43,4 +44,4 @@ const schema = new Schema(
   { timestamps: true }
 )
 
-export const PaymentModel = model<Payment>('Payment', schema)
+export const PaymentLogModel = model<Payment>('Payment', schema)

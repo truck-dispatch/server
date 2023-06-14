@@ -1,4 +1,9 @@
+import { Types } from 'mongoose'
+
 export default interface ChatLogQuery {
-  clientId: string
-  transporterId: string
+  client: string | Types.ObjectId
+  transporter: string | Types.ObjectId
+  lastMessage?: string | Types.ObjectId
+  _id?: string | Types.ObjectId
+
 }
