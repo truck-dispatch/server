@@ -26,7 +26,7 @@ export async function findVerificationsBy(param: Partial<Verification>) {
   const verifications = await VerificationModel.find(param).lean()
   const data = await Promise.all(
     verifications.map(async (verification) => {
-      const user = await findUserBy({ _id: verification.userId })
+      const user = await findUserBy({ _id: verification.user })
       return {
         ...verification,
         user,
