@@ -132,7 +132,6 @@ class AuthController {
             { isPhoneVerified: true }
           )
 
-          console.log(response);
           return Respond.success(res, 'Phone number verification complete')
         })
     } catch (err) {

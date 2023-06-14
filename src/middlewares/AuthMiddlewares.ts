@@ -195,7 +195,6 @@ class AuthMiddlewares {
       next()
     } catch (err) {
       // Report error to our client..
-      console.log(err, 'consoled err')
       Respond.error(res, 'Something went wrong...', 500)
     }
   }

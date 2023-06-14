@@ -102,7 +102,6 @@ class ChatController {
 
       const userChats = await findMessagesById(user._id)
 
-      console.log(userChats);
       return Respond.success(res, 'Messages fetched successfully', userChats)
     } catch (err) {
       next(err)
