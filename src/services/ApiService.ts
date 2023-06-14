@@ -14,7 +14,7 @@ class ApiService {
     this.api = axios.create({
       baseURL: baseUrl,
       timeout: 40000,
-      headers
+      headers,
     })
   }
 

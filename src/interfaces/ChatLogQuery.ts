@@ -5,5 +5,4 @@ export default interface ChatLogQuery {
   transporter: string | Types.ObjectId
   lastMessage?: string | Types.ObjectId
   _id?: string | Types.ObjectId
-
 }

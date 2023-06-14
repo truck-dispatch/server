@@ -4,9 +4,7 @@ import {
   findVerificationBy,
   findAndUpdateVerificationBy,
 } from '@data/verification/verificationRepository'
-import {
-  findAndUpdateUserBy,
-} from '@data/user/userRepository'
+import { findAndUpdateUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 
 class VerificationControllers {

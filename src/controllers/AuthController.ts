@@ -48,9 +48,9 @@ class AuthController {
 
       return Respond.success(res, 'User created successfully...', {
         smsData: {
-          to: formattedPhone
+          to: formattedPhone,
         },
-        token
+        token,
       })
     } catch (err) {
       next(err)
@@ -111,9 +111,11 @@ class AuthController {
   ) {
     try {
       const { phone } = req.body
-      const formattedPhone = Helpers.convertPhone(phone);
-      await Sms.sendOTP({ to: formattedPhone });
-      return Respond.success(res, 'SMS sent successfully...', { to: formattedPhone })
+      const formattedPhone = Helpers.convertPhone(phone)
+      await Sms.sendOTP({ to: formattedPhone })
+      return Respond.success(res, 'SMS sent successfully...', {
+        to: formattedPhone,
+      })
     } catch (err) {
       next(err)
     }
@@ -122,18 +124,18 @@ class AuthController {
   async verifyPhoneNumber(req: Request, res: Response, next: NextFunction) {
     try {
       const { phone, pin } = req.body
-      const formattedPhone = Helpers.convertPhone(phone);
-      return Sms.verifyOTP(formattedPhone, pin)
-        .then(async (response) => {
-          if (response.status === 'pending') return Respond.error(res, 'Invalid or Expired Code');
+      const formattedPhone = Helpers.convertPhone(phone)
+      return Sms.verifyOTP(formattedPhone, pin).then(async (response) => {
+        if (response.status === 'pending')
+          return Respond.error(res, 'Invalid or Expired Code')
 
-          await findAndUpdateUserBy(
-            { phone: formattedPhone },
-            { isPhoneVerified: true }
-          )
+        await findAndUpdateUserBy(
+          { phone: formattedPhone },
+          { isPhoneVerified: true }
+        )
 
-          return Respond.success(res, 'Phone number verification complete')
-        })
+        return Respond.success(res, 'Phone number verification complete')
+      })
     } catch (err) {
       next(err)
     }
