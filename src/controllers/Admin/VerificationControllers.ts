@@ -32,7 +32,7 @@ class VerificationControllers {
         { _id: userId },
         { status: 'verified' }
       )
-      const verification = await findVerificationBy({ userId })
+      const verification = await findVerificationBy({ user: userId })
       return Respond.success(
         res,
         'Verification has been Verified successfully',
