@@ -13,6 +13,10 @@ const schema = new Schema(
       required: true,
       ref: 'User',
     },
+    lastMessage: {
+      type: Types.ObjectId,
+      ref: 'Chat',
+    },
   },
   { timestamps: true }
 )

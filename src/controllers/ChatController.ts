@@ -1,5 +1,6 @@
 import {
   createChatLog,
+  findAndUpdateChatLogBy,
   findChatLogBy,
   findChatLogsBy,
 } from '@data/chatLog/chatLogRepository'
@@ -60,7 +61,6 @@ class ChatController {
       }
 
       const chatLogs = await findChatLogsBy(queryParam)
-
       return Respond.success(res, 'Chat logs gotten', chatLogs)
     } catch (err) {
       next(err)
@@ -69,27 +69,27 @@ class ChatController {
 
   async createChat(req: Request, res: Response, next: NextFunction) {
     try {
-      const { message, senderId, receiverId, chatLog } = req.body
+      const { message, sender, receiver, chatLog } = req.body
 
-      const messageToSave = await createMessage({
+      const savedMessage = await createMessage({
         message,
-        sender: senderId,
-        receiver: receiverId,
+        sender: sender,
+        receiver: receiver,
         chatLog: chatLog,
       })
+      await findAndUpdateChatLogBy({_id: chatLog}, { lastMessage: savedMessage._id})
 
       const receiverSocket = getConnectedUserSocketByUserId(
-        messageToSave.receiver
+        savedMessage.receiver
       )
-
       if (receiverSocket) {
         // @ts-ignore
-        emitMessage(global.io, receiverSocket, messageToSave)
+        emitMessage(global.io, receiverSocket, savedMessage)
       }
       return Respond.success(
         res,
         'Message created successfully.',
-        messageToSave
+        savedMessage
       )
     } catch (err) {
       return next(err)
@@ -101,6 +101,8 @@ class ChatController {
       const user = getUserCredentialsFromReq(req)
 
       const userChats = await findMessagesById(user._id)
+
+      console.log(userChats);
       return Respond.success(res, 'Messages fetched successfully', userChats)
     } catch (err) {
       next(err)

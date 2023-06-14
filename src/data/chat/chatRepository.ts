@@ -9,8 +9,8 @@ export async function createMessage(message: Partial<Chat>) {
 }
 
 export async function findMessagesById(userId: string | Types.ObjectId) {
-  const chatsSentByMe = await ChatModel.find({ senderId: userId })
-  const chatsSentToMe = await ChatModel.find({ receiverId: userId })
+  const chatsSentByMe = await ChatModel.find({ sender: userId })
+  const chatsSentToMe = await ChatModel.find({ receiver: userId })
   return [...chatsSentByMe, ...chatsSentToMe]
 }
 

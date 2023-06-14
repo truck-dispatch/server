@@ -1,7 +1,5 @@
-import { findUserBy } from '../user/userRepository'
 import ChatLogQuery from 'interfaces/ChatLogQuery'
 import { ChatLogModel } from './ChatLogModel'
-import { findLastMessage } from '../chat/chatRepository'
 
 export async function createChatLog(data: ChatLogQuery) {
   const chatLog = new ChatLogModel(data)
@@ -12,14 +10,26 @@ export async function createChatLog(data: ChatLogQuery) {
 
 export function findChatLogBy(searchParam: ChatLogQuery) {
   return ChatLogModel.findOne(searchParam)
-    .populate('client', '-password')
-    .populate('transporter', '-password')
+  .populate('client', '-password')
+  .populate('transporter', '-password')
+  .populate('lastMessage');
 }
 
 export async function findChatLogsBy(searchParam: Partial<ChatLogQuery>) {
   const chatLogs = await ChatLogModel.find(searchParam)
     .populate('client', '-password')
     .populate('transporter', '-password')
+    .populate('lastMessage');
+
+  return chatLogs
+}
+export async function findAndUpdateChatLogBy(searchParam: Partial<ChatLogQuery>, data: Partial<ChatLogQuery>) {
+  const chatLogs = await ChatLogModel.findOneAndUpdate(searchParam, data, {
+    new: true,
+  })
+  .populate('client', '-password')
+  .populate('transporter', '-password')
+  .populate('lastMessage');;
 
   return chatLogs
 }

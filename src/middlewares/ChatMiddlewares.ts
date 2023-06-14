@@ -4,12 +4,12 @@ import Respond from '@helpers/Respond'
 
 class ChatMiddlewares {
   checkDataForCreateMessage(req: Request, res: Response, next: NextFunction) {
-    const { message, senderId, receiverId, chatLog } = req.body
+    const { message, sender, receiver, chatLog } = req.body
 
     if (!message) return Respond.error(res, 'Message was not provided', 400)
-    if (!senderId)
+    if (!sender)
       return Respond.error(res, 'Sender ID is required to send a message', 400)
-    if (!receiverId)
+    if (!receiver)
       return Respond.error(
         res,
         'Receiver ID is required to send a message',

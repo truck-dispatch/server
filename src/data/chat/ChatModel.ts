@@ -9,7 +9,7 @@ const schema = new Schema(
       ref: 'ChatLog',
     },
     message: {
-      type: Types.ObjectId,
+      type: String,
       required: true,
     },
     sender: {
