@@ -9,7 +9,13 @@ export async function createBid(bid: CreateBidBody) {
   const data = new BidModel(bid)
   await data.save()
 
-  return data.populate('trip')
+  return data.populate({
+    path: 'trip',
+    populate: {
+      path: 'tripOwner',
+      model: 'User',
+    },
+  })
 }
 
 export function deleteBidBy(searchParam: Partial<Bid>) {
@@ -20,9 +26,13 @@ export function findAndUpdateBidBy(
   searchParam: Partial<Bid>,
   data: Partial<Bid>
 ) {
-  return BidModel.findOneAndUpdate(searchParam, data, { new: true }).populate(
-    'trip'
-  )
+  return BidModel.findOneAndUpdate(searchParam, data, { new: true }).populate({
+    path: 'trip',
+    populate: {
+      path: 'tripOwner',
+      model: 'User',
+    },
+  })
 }
 
 export async function findBidBy(
