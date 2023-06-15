@@ -1,4 +1,4 @@
-import { Model, Document } from 'mongoose'
+import { Model } from 'mongoose'
 
 export default async function countDocuments<T>(
   model: Model<T>,
@@ -19,8 +19,6 @@ export default async function countDocuments<T>(
       totalItems,
     }
   } catch (err) {
-    throw new Error(
-      (err as Error).message || 'Internal Server Error in paginate'
-    )
+    return Promise.reject(err);
   }
 }
