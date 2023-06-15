@@ -23,7 +23,6 @@ class Sms {
 
   verifyOTP(to: string, pin: string) {
     try {
-
       return client.verify.v2
         .services(SMS_SERVICE_SID!)
         .verificationChecks.create({ to, code: pin })
