@@ -264,7 +264,6 @@ class TripController {
   async unassignTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const { _id } = getUserCredentialsFromReq(req)
 
       const updatedTrip = await findAndUpdateTripBy(
         { _id: tripId },
