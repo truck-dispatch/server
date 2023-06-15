@@ -359,7 +359,7 @@ async function setTripToCompleted(tripId: string) {
   const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner._id })
   Mail.tripHasBeenSetToCompleted(
     tripOwner?.email!,
-    `${FRONTEND_URL}/my-trips/${tripId}/status`,
+    `${FRONTEND_URL}/my-trips/${tripId}`,
     `${user?.firstName} ${user?.lastName}`
   )
 
@@ -375,7 +375,7 @@ async function setTripToInProgress(tripId: string) {
   const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner._id })
   Mail.tripHasBeenSetToInProgress(
     tripOwner?.email!,
-    `${FRONTEND_URL}/my-trips/${tripId}/status`,
+    `${FRONTEND_URL}/my-trips/${tripId}`,
     `${user?.firstName} ${user?.lastName}`
   )
 
