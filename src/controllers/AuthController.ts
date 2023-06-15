@@ -133,8 +133,9 @@ class AuthController {
           { phone: formattedPhone },
           { isPhoneVerified: true }
         )
-
         return Respond.success(res, 'Phone number verification complete')
+      }).catch((err) => {
+        return Respond.error(res, "Verification code expired. Kindly request a new verification code.")
       })
     } catch (err) {
       next(err)
