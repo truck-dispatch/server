@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { decodeToken, getUserCredentialsFromReq } from '../services/JWT'
 import User from '../interfaces/User'
-import Admin from '../interfaces/Admin'
 import { clientUserTypes, serviceBasedUserTypes } from '@common/constants'
 import { findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
@@ -26,7 +25,7 @@ class JWTMiddlewares {
       if (!user) return Respond.error(res, 'User does not exist', 401)
       next()
     } catch (err) {
-      Respond.error(res, (err as Error).message)
+      Respond.error(res, 'Invalid JWT')
     }
   }
 
