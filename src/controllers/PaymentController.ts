@@ -58,7 +58,7 @@ class PaymentController {
       const transporter = await findUserBy({ _id: transporterCredentials._id })
       Mail.paymentHasBeenRequestedByTransporter(
         tripOwner?.email!,
-        `${FRONTEND_URL}/my-trips/${tripId}/view-payment-request`,
+        `${FRONTEND_URL}/my-trips/${tripId}`,
         `${transporter?.firstName} ${transporter?.lastName}`
       )
 
@@ -104,7 +104,7 @@ class PaymentController {
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentRequestHasBeenRejected(
         transporter?.email!,
-        `${FRONTEND_URL}/my-trips/${trip?._id}/request-payment-for-trip`,
+        `${FRONTEND_URL}/my-trips/${trip?._id}`,
         `${tripOwner?.firstName} ${tripOwner?.lastName}`
       )
       return Respond.success(res, 'Payment request rejected', trip)
@@ -144,7 +144,7 @@ class PaymentController {
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentRequestHasBeenApproved(
         transporter?.email!,
-        `${FRONTEND_URL}/my-trips/${trip?._id}/status`,
+        `${FRONTEND_URL}/my-trips/${trip?._id}`,
         `${tripOwner?.firstName} ${tripOwner?.lastName}`
       )
 
@@ -181,7 +181,7 @@ class PaymentController {
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
       Mail.paymentHasBeenUpdatedByTransporter(
         tripOwner?.email!,
-        `${FRONTEND_URL}/my-trips/${trip?._id}/view-payment-request`,
+        `${FRONTEND_URL}/my-trips/${trip?._id}`,
         `${transporter?.firstName} ${transporter?.lastName}`
       )
       return Respond.success(res, 'Payment request successfully updated', trip)
