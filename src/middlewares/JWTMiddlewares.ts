@@ -13,10 +13,10 @@ class JWTMiddlewares {
       if (!token) {
         return Respond.error(res, 'No JWT was provided', 401)
       }
+      // If auth exists, it means it's a token meant for auth and is not valid for the dashboard.
+      const decodedUser = decodeToken(token) as User & { auth?: true}
 
-      const decodedUser = decodeToken(token) as User
-
-      if (!decodedUser) {
+      if (!decodedUser || decodedUser.auth) {
         return Respond.error(res, 'Invalid JWT', 401)
       }
 
