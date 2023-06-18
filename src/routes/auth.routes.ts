@@ -36,6 +36,11 @@ router.post(
 )
 router.post('/request-reset-password', AuthController.requestResetPasswordLink)
 router.post(
+  '/reset-password',
+  AuthMiddlewares.checkChangePassword,
+  AuthController.changeUserPassword
+)
+router.post(
   '/verify-email',
   JWTMiddlewares.jwtIsValid,
   AuthMiddlewares.checkEmailVerification,

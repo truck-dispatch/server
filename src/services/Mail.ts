@@ -95,7 +95,7 @@ class Mail {
       actionUrl: url,
       actionText: 'Reset your password',
       firstParagraph: `Someone(hopefully you) has requested a password reset for your ${COMPANY_NAME} account. Follow the link below to set a new password.`,
-      paragraphAfterActionLink: `If you don't wish to reset your password, disregard this email and no action will be taken.`,
+      paragraphAfterActionLink: `This email expires in one hour. If you don't wish to reset your password, disregard this email and no action will be taken.`,
     })
 
     return this.sendMail(to, 'Reset Password', template)
