@@ -88,7 +88,7 @@ class AuthController {
 
       const token = generateJWT(
         { _id: user._id, auth: true },
-        '1m'
+        '1h'
       )
 
       await Mail.requestResetPassword(
