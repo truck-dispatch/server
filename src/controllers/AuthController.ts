@@ -110,10 +110,12 @@ class AuthController {
       const { password, token } = req.body
       const decodedPassword = await encrypt(password)
 
-      const { _id } = decodeToken<{ _id: string }>(token)
+      
+      const decodedToken = decodeToken<{ _id: string }>(token)
+      if (!decodedToken) return Respond.error(res, 'Invalid Token')
 
       const updatedUser = await findAndUpdateUserBy(
-        { _id },
+        { _id: decodedToken._id },
         { password: decodedPassword, fromFirebase: false }
       )
       return Respond.success(res, 'Password has been updated', updatedUser)
@@ -185,10 +187,12 @@ class AuthController {
   async verifyEmail(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.body.token
-      const tokenDetails = decodeToken<{ _id: string; email: string }>(token)
+      
+      const decodedToken = decodeToken<{ _id: string }>(token)
+      if (!decodedToken) return Respond.error(res, 'Invalid Token')
 
       const updatedUser = await findAndUpdateUserBy(
-        { _id: tokenDetails._id },
+        { _id: decodedToken._id },
         { isEmailVerified: true }
       )
       return Respond.success(res, 'Email has been verified', updatedUser)

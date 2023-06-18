@@ -164,8 +164,9 @@ class AuthMiddlewares {
     try {
       const token = req.body.token
       if (!token) return Respond.error(res, 'Token was not passed.')
-      const tokenDetails = decodeToken<{ _id: string }>(token)
-      const user = await findUserBy({ _id: tokenDetails._id })
+      const decodedToken = decodeToken<{ _id: string }>(token)
+      if (!decodedToken) return Respond.error(res, 'Invalid Token')
+      const user = await findUserBy({ _id: decodedToken._id })
 
       if (!user) return Respond.error(res, 'User does not exist')
 
@@ -180,7 +181,8 @@ class AuthMiddlewares {
       const { token, password } = req.body
       if (!token) return Respond.error(res, 'Token was not passed.')
 
-      const tokenDetails = decodeToken<{ _id: string }>(token)
+      const decodedToken = decodeToken<{ _id: string }>(token)
+      if (!decodedToken) return Respond.error(res, 'Invalid Token')
 
       if (!password)
         return Respond.error(
@@ -188,7 +190,7 @@ class AuthMiddlewares {
           'A password is requested to be able to reset password.'
         )
 
-      const user = await findUserBy({ _id: tokenDetails._id })
+      const user = await findUserBy({ _id: decodedToken._id })
 
       if (!user) return Respond.error(res, 'User does not exist')
 
