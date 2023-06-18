@@ -19,6 +19,6 @@ export default async function countDocuments<T>(
       totalItems,
     }
   } catch (err) {
-    return Promise.reject(err);
+    return Promise.reject(err)
   }
 }

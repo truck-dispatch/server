@@ -15,6 +15,7 @@ import {
 import Sms from '@services/Sms'
 import User from 'interfaces/User'
 import { FRONTEND_URL } from '@common/privateKeys'
+import { encrypt } from '@services/encrypt'
 
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
@@ -86,13 +87,13 @@ class AuthController {
         return Respond.error(res, 'user does not exist in our database')
 
       const token = generateJWT(
-        { _id: user._id, userType: user.userType },
-        '10m'
+        { _id: user._id, auth: true },
+        '1h'
       )
 
       await Mail.requestResetPassword(
         email,
-        `${FRONTEND_URL}/profile/manage-password?action=sign-in&token=${token}`
+        `${FRONTEND_URL}/auth/reset-password?token=${token}`
       )
 
       return Respond.success(
@@ -104,6 +105,22 @@ class AuthController {
     }
   }
 
+  async changeUserPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { password, token } = req.body
+      const decodedPassword = await encrypt(password)
+
+      const { _id } = decodeToken<{ _id: string }>(token)
+
+      const updatedUser = await findAndUpdateUserBy(
+        { _id },
+        { password: decodedPassword, fromFirebase: false }
+      )
+      return Respond.success(res, 'Password has been updated', updatedUser)
+    } catch (err) {
+      next(err)
+    }
+  }
   async requestSmsVerificationCode(
     req: Request,
     res: Response,
@@ -125,18 +142,23 @@ class AuthController {
     try {
       const { phone, pin } = req.body
       const formattedPhone = Helpers.convertPhone(phone)
-      return Sms.verifyOTP(formattedPhone, pin).then(async (response) => {
-        if (response.status === 'pending')
-          return Respond.error(res, 'Invalid or Expired Code')
+      return Sms.verifyOTP(formattedPhone, pin)
+        .then(async (response) => {
+          if (response.status === 'pending')
+            return Respond.error(res, 'Invalid or Expired Code')
 
-        await findAndUpdateUserBy(
-          { phone: formattedPhone },
-          { isPhoneVerified: true }
-        )
-        return Respond.success(res, 'Phone number verification complete')
-      }).catch((err) => {
-        return Respond.error(res, "Verification code expired. Kindly request a new verification code.")
-      })
+          await findAndUpdateUserBy(
+            { phone: formattedPhone },
+            { isPhoneVerified: true }
+          )
+          return Respond.success(res, 'Phone number verification complete')
+        })
+        .catch((err) => {
+          return Respond.error(
+            res,
+            'Verification code expired. Kindly request a new verification code.'
+          )
+        })
     } catch (err) {
       next(err)
     }
