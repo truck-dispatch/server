@@ -3,9 +3,9 @@ import { ChatLogModel } from './ChatLogModel'
 
 export async function createChatLog(data: ChatLogQuery) {
   const chatLog = new ChatLogModel(data)
-  const savedChatLog = await chatLog.save()
+  const savedChatLog =  await chatLog.save();
 
-  return savedChatLog.toObject({ versionKey: false })
+  return findChatLogBy({_id: savedChatLog._id});
 }
 
 export function findChatLogBy(searchParam: ChatLogQuery) {

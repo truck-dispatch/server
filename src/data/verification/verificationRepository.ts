@@ -1,4 +1,3 @@
-import { findUserBy } from '@data/user/userRepository'
 import Verification from 'interfaces/Verification'
 import { VerificationModel } from './VerificationModel'
 
@@ -17,21 +16,10 @@ export function findAndUpdateVerificationBy(
 }
 
 export async function findVerificationBy(param: Partial<Verification>) {
-  const verification = await VerificationModel.findOne(param).lean()
-  if (!verification) return null
-  return verification
+  return VerificationModel.findOne(param).populate('user', '-password');
 }
 
-export async function findVerificationsBy(param: Partial<Verification>) {
-  const verifications = await VerificationModel.find(param).lean()
-  const data = await Promise.all(
-    verifications.map(async (verification) => {
-      const user = await findUserBy({ _id: verification.user })
-      return {
-        ...verification,
-        user,
-      }
-    })
-  )
-  return data
+export function findVerificationsBy(param: Partial<Verification>) {
+  return VerificationModel.find(param)
+  .sort({ updatedAt: -1 }).populate('user', '-password')
 }
