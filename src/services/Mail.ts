@@ -120,6 +120,13 @@ class Mail {
     })
     return this.sendMail('admin@gettruckdispatch.com', 'A new user signed up', template)
   }
+  newTripCreated() {
+    const template = this.emailTemplate({
+      title: 'A new trip has been created',
+      firstParagraph: `A new trip has been created`,
+    })
+    return this.sendMail('admin@gettruckdispatch.com', 'A new trip has been created', template)
+  }
   transporterHasSentBid(to: string, transporterName: string, url: string) {
     const template = this.emailTemplate({
       title: 'Your trip just received a bid',
