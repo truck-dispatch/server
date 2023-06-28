@@ -63,7 +63,7 @@ class TripController {
         status: 'awaiting-bid',
         reference: Helpers.generateReference(),
       })
-
+      Mail.newTripCreated()
       return Respond.success(res, 'Trip created successfully', trip)
     } catch (err) {
       next(err)
