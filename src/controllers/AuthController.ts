@@ -47,6 +47,7 @@ class AuthController {
         userType: user?.userType,
       })
 
+      await Mail.newUserSignedUp(`${firstName} ${lastName}`)
       return Respond.success(res, 'User created successfully...', {
         smsData: {
           to: formattedPhone,

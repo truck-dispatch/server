@@ -8,8 +8,8 @@ import nodemailer from 'nodemailer'
 
 interface TemplateProps {
   title: string
-  actionText: string
-  actionUrl: string
+  actionText?: string
+  actionUrl?: string
   firstParagraph?: string
   paragraphAfterActionLink?: string
 }
@@ -60,9 +60,9 @@ class Mail {
           : ''
       }
 
-      <div style="text-align: left;">
+      ${actionUrl ?`<div style="text-align: left;">
         <a href="${actionUrl}" style="color: #4326C4; text-decoration: underline; border-radius: 8px;">${actionText}</a>
-      </div>
+      </div>` : ''}
     
       ${
         paragraphAfterActionLink
@@ -113,6 +113,13 @@ class Mail {
     return this.sendMail(to, 'Verify Email', template)
   }
 
+  newUserSignedUp(userName: string) {
+    const template = this.emailTemplate({
+      title: 'A new user signed up',
+      firstParagraph: `${userName} just signed up to the platform.`,
+    })
+    return this.sendMail('admin@gettruckdispatch.com', 'A new user signed up', template)
+  }
   transporterHasSentBid(to: string, transporterName: string, url: string) {
     const template = this.emailTemplate({
       title: 'Your trip just received a bid',
