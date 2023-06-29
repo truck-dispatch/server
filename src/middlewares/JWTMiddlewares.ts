@@ -23,6 +23,8 @@ class JWTMiddlewares {
       const user = await findUserBy({ _id: decodedUser._id })
 
       if (!user) return Respond.error(res, 'User does not exist', 401)
+
+      if (user.isSuspended) return Respond.error(res, 'User has been suspended. reach out to admin for more information');
       next()
     } catch (err) {
       Respond.error(res, 'Invalid JWT')
