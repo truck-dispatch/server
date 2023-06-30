@@ -1,4 +1,8 @@
-import { findAndUpdateUserBy, findUsersBy, findUserBy } from '@data/user/userRepository'
+import {
+  findAndUpdateUserBy,
+  findUsersBy,
+  findUserBy,
+} from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { NextFunction, Request, Response } from 'express'
 
@@ -40,7 +44,7 @@ class UserController {
         { _id: userId },
         { isSuspended: false }
       )
-      
+
       return Respond.success(
         res,
         'User has been suspended successfully',
@@ -53,16 +57,16 @@ class UserController {
 
   async getUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { userId } = req.params;
+      const { userId } = req.params
 
-      if (!userId) return Respond.error(res, 'UserId was not passed.');
+      if (!userId) return Respond.error(res, 'UserId was not passed.')
 
-      const user = await findUserBy({_id: userId});
-      if (!user) return Respond.error(res, 'User does not exist');
+      const user = await findUserBy({ _id: userId })
+      if (!user) return Respond.error(res, 'User does not exist')
 
-      return Respond.success(res, 'user fetched successfully', user);
+      return Respond.success(res, 'user fetched successfully', user)
     } catch (err) {
-      next(err);
+      next(err)
     }
   }
 }
