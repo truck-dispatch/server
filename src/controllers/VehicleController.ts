@@ -34,7 +34,9 @@ class VehicleController {
     try {
       const { _id } = getUserCredentialsFromReq(req)
 
-      const vehicles = await findVehiclesBy({ owner: _id })
+      const { page, limit } = req.query
+
+      const vehicles = await findVehiclesBy({ owner: _id }, page as string, limit as string)
 
       return Respond.success(res, 'Vehicles fetched successfully', vehicles)
     } catch (err) {
