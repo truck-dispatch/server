@@ -94,7 +94,10 @@ class TripMiddlewares {
       if (!trip) return Respond.error(res, 'Trip not found', 404)
       if (
         !(trip?.tripOwner._id! as Types.ObjectId).equals(user._id) &&
-        !(trip?.transporter && !(trip.transporter._id! as Types.ObjectId).equals(user._id))
+        !(
+          trip?.transporter &&
+          !(trip.transporter._id! as Types.ObjectId).equals(user._id)
+        )
       ) {
         return Respond.error(res, 'User is not associated to this trip.', 401)
       }

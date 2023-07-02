@@ -14,7 +14,7 @@ class JWTMiddlewares {
         return Respond.error(res, 'No JWT was provided', 401)
       }
       // If auth exists, it means it's a token meant for auth and is not valid for the dashboard.
-      const decodedUser = decodeToken(token) as User & { auth?: true}
+      const decodedUser = decodeToken(token) as User & { auth?: true }
 
       if (!decodedUser || decodedUser.auth) {
         return Respond.error(res, 'Invalid JWT', 401)
@@ -24,7 +24,11 @@ class JWTMiddlewares {
 
       if (!user) return Respond.error(res, 'User does not exist', 401)
 
-      if (user.isSuspended) return Respond.error(res, 'User has been suspended. reach out to admin for more information');
+      if (user.isSuspended)
+        return Respond.error(
+          res,
+          'User has been suspended. reach out to admin for more information'
+        )
       next()
     } catch (err) {
       Respond.error(res, 'Invalid JWT')

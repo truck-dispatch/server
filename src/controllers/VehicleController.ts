@@ -36,7 +36,11 @@ class VehicleController {
 
       const { page, limit } = req.query
 
-      const vehicles = await findVehiclesBy({ owner: _id }, page as string, limit as string)
+      const vehicles = await findVehiclesBy(
+        { owner: _id },
+        page as string,
+        limit as string
+      )
 
       return Respond.success(res, 'Vehicles fetched successfully', vehicles)
     } catch (err) {
