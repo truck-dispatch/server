@@ -13,7 +13,8 @@ const icons = {
   user: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328269/assets/leavkexonhgoz28cng4v.png',
   truck: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328400/assets/rcdsnkl2nzfpzhfsgin2.png',
   truckTime: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328484/assets/qv7ybhlxdvpiydl6ws2b.png',
-  receipe: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328590/assets/i5sz4x8zkruh8ybrdnah.png'
+  receipe: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328590/assets/i5sz4x8zkruh8ybrdnah.png',
+  avatar: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688329364/assets/ha5ajd1ubxfj57frbidh.png'
 }
 
 interface TemplateProps {
@@ -170,18 +171,32 @@ class Mail {
     })
     return this.sendMail('admin@gettruckdispatch.com', 'A new trip has been created', template)
   }
-  transporterHasSentBid(to: string, transporterName: string, url: string) {
+  transporterHasSentBid(to: string, transporterName: string, url: string, transporterAvatar?: string, ) {
     const template = this.emailTemplate({
       title: 'Bid Received',
       content: `
         <p>
           <b>${transporterName}</b> just sent a bid to your job. Click on the button below to view bid and negotiate or accept bid.
         </p>
-        <div class="content-purple-info-container fit-content">
-        
-        </div>
-      `,
+        <div class="content-purple-info-container mt-32 mb-32 fit-content">
 
+          <div class="item-label">Transporter</div>
+
+          <div class="d-flex">
+            <img src="${transporterAvatar || icons.avatar}" class="avatar" alt="user avatar">
+            <div class="user-profile-details ml-8">
+              <div>
+                <div class="user-name">${transporterName}</div>
+                <div class="user-contact">************</div>
+              </div>
+              <a href="" class="secondary-btn ml-24">View Profile</a>
+            </div>
+          </div>
+        </div>
+        <a href="${url}" class="action-trigger mt-32 mb-32">View Bid</a>
+        <p class="mb-32">Thank you for working with us.</p>
+      `,
+      icon: icons.truck
     })
     return this.sendMail(to, 'A bid has been received for your trip', template)
   }

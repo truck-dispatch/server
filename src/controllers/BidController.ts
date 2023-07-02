@@ -34,7 +34,8 @@ class BidController {
       Mail.transporterHasSentBid(
         tripOwner?.email!,
         `${transporter?.firstName} ${transporter?.lastName}`,
-        `${FRONTEND_URL}/my-trips/${tripId}/bids/${bidResponse._id}`
+        `${FRONTEND_URL}/my-trips/${tripId}/bids?bid=${bidResponse._id}`,
+        transporter?.avatar
       )
       return Respond.success(
         res,
