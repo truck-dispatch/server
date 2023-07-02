@@ -2,7 +2,6 @@ export const styles = `
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;400;500;600&display=swap');
   .template {
-    font-family: Arial, sans-serif;
     text-align: left;
     background: #F2F0FB;
     font-family: 'Oswald', sans-serif;
@@ -14,22 +13,53 @@ export const styles = `
     margin: auto;
     padding: 32px;
   }
+
+  .icon-container {
+    border-radius: 63.75px;
+    width: 82px;
+    height: 82px;
+    padding: 17px;
+    background:  #D9D3F3;
+    display: flex;
+    margin: auto;
+  }
+  .icon-container__inner {
+    border-radius: 34px;
+    width: 32px;
+    height: 32px;
+    padding: 17px;
+    background: #B3A8E7;
+    margin: auto;
+  }
+
   .mail-card {
     background: white;
     padding: 16px 32px 32px 32px;
     border-radius: 4px 4px 0px 0px;
     overflow: hidden;
   }
+
   .info-container {
     border-radius: 0px 0px 4px 4px;
     padding: 16px 32px 32px 32px;
     background: #EFFBF5;
+    text-align: center;
+    color: #57575B;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
   }
 
   h1 {
     color: #222;
     font-size: 24px;
     font-weight: 600;
+  }
+  .content-purple-info-container {
+    background: #F2F0FB;
+    border-radius: 8px;
+    padding: 16px;
   }
   .action-trigger {
     text-transform: uppercase;
@@ -73,6 +103,42 @@ export const styles = `
     font-weight: 500;
     line-height: 20px;
     margin-bottom: 32px;
+  }
+  .social-link{
+    text-decoration: none;
+    margin: 0 12px;
+  }
+  .social-spacer {
+    width: 50%;
+    padding: 1px;
+  }
+  .social-icons {
+    display: flex;
+    width: fit-content;
+    margin: 20px auto;
+  }
+  .logo-container {
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+  }
+  .logo-title {
+    color: #15131B;
+    font-size: 16px;
+    margin-left: 8px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 140%;
+    letter-spacing: -0.32px;
+    margin-top: 4px;
+  }
+  .mt-32 {
+    margin-top: 32px;
+  }
+  .mx-auto {
+    width: fit-content;
+    margin-right: auto;
+    margin-left: auto;
   }
 </style>
 `

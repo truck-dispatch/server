@@ -6,22 +6,16 @@ import {
 } from '@common/privateKeys'
 import nodemailer from 'nodemailer'
 import { styles } from './mail/assets/styles'
-const fs = require('fs');
-const path = require('path');
-const { promisify } = require('util');
 
-async function getBase64(imgPath: string) {
-  // Read the image file as a buffer
-  const imagePath = path.join(__dirname, imgPath);
-  const readFile = promisify(fs.readFile);
-  const imageBuffer = await readFile(imagePath);
-
-  // Convert the image buffer to base64 encoding
-  const imageBase64 = imageBuffer.toString('base64');
+const icons = {
+  padlock: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688321980/assets/nvkcjbww66grnef7oznz.jpg',
+  close: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688325062/assets/nvkcjbww66grnef7oznz.png',
 }
+
 interface TemplateProps {
   title: string
   content?: string;
+  icon?: string;
   actionText?: string
   actionUrl?: string
   firstParagraph?: string
@@ -58,6 +52,7 @@ class Mail {
   private emailTemplate({
     title,
     content,
+    icon
   }: TemplateProps) {
     return `
     <!DOCTYPE html>
@@ -68,32 +63,46 @@ class Mail {
       </head>
       <body class="template">
         <div class="mail-body">
-          <div class="mail-card">
+          <a href="https://www.gettruckdispatch.com/" class="logo-container">
+            <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688316396/assets/yfvpnj3okri3o3u3wgpk.png" width="30" height="30" alt="truckdispatch-logo">
+            <span class="logo-title">TruckDispatch</span>
+          </a>
+          ${!!icon && `
+              <div class="icon-container">
+                <div class="icon-container__inner"><img src="${icon}" alt="category icon" /></div>
+              </div>
+          `}
+          <div class="mail-card mt-32">
             <section>
               <h1>${title}</h1>
               ${content}
             </section>
           </div>
           <div class="info-container">
-            <p class="the-truck-dispatch-team">
+            <div class="mt-16">
               The Truckdispatch Team.
-            </p>
-            <div class="truck-dispatch-socials">
-              <span>Truckdispatch</span>
-              <div>
-              <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <g id="Frame" clip-path="url(#clip0_3160_17274)">
-              <path id="Vector" d="M22.1621 6.08082C21.3986 6.41852 20.589 6.6403 19.7601 6.73882C20.6338 6.21626 21.2878 5.39384 21.6001 4.42482C20.7801 4.91282 19.8811 5.25482 18.9441 5.43982C18.3147 4.7664 17.4804 4.31979 16.571 4.16941C15.6616 4.01903 14.728 4.17331 13.9153 4.60828C13.1026 5.04324 12.4564 5.73451 12.0772 6.57462C11.6979 7.41472 11.6068 8.3566 11.8181 9.25382C10.1552 9.17048 8.52838 8.73835 7.04334 7.98549C5.55829 7.23263 4.24818 6.17587 3.19805 4.88382C2.82634 5.52227 2.63101 6.24805 2.63205 6.98682C2.63205 8.43682 3.37005 9.71782 4.49205 10.4678C3.82806 10.4469 3.17869 10.2676 2.59805 9.94482V9.99682C2.59825 10.9625 2.93242 11.8984 3.5439 12.6459C4.15538 13.3933 5.00653 13.9063 5.95305 14.0978C5.33667 14.2649 4.69036 14.2895 4.06305 14.1698C4.32992 15.0011 4.85006 15.728 5.55064 16.2489C6.25123 16.7698 7.09718 17.0586 7.97005 17.0748C7.10253 17.7561 6.10923 18.2598 5.04693 18.557C3.98464 18.8542 2.87418 18.9391 1.77905 18.8068C3.69075 20.0363 5.91615 20.6889 8.18905 20.6868C15.8821 20.6868 20.0891 14.3138 20.0891 8.78682C20.0891 8.60682 20.0841 8.42482 20.0761 8.24682C20.8949 7.65499 21.6017 6.92184 22.1631 6.08182L22.1621 6.08082Z" fill="#6A7C94"/>
-              </g>
-              <defs>
-              <clipPath id="clip0_3160_17274">
-              <rect width="24" height="24" fill="white" transform="translate(0 0.424835)"/>
-              </clipPath>
-              </defs>
-              </svg>
-              
-              </div>
             </div>
+            <div class="mt-32">
+              Copyright © Truckdispatch. ${new Date().getFullYear()} All Rights Reserved
+            </div>
+            <a href="https://www.gettruckdispatch.com/" class="logo-container mx-auto mt-32">
+              <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688316396/assets/yfvpnj3okri3o3u3wgpk.png" width="30" height="30" alt="truckdispatch-logo">
+              <span class="logo-title">TruckDispatch</span>
+            </a>
+              <div class="social-icons mt-32">
+                <a href="twitter.com" class="social-link">
+                  <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308501/assets/g2vlasdrthm0jr9zpfc2.jpg" alt="twitter-logo">
+                </a>
+                <a href="https://www.linkedin.com/company/truckdispatch/" class="social-link">
+                  <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308265/assets/o2inkopsdnga18lk5sp4.jpg" alt="linked-in logo">
+                </a>
+                <a href="https://www.instagram.com/gettruckdispatch/" class="social-link">
+                  <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308416/assets/xmyy3djwrhkhxfznhj4h.jpg" alt="instagram logo">
+                </a>
+                <a href="https://www.instagram.com/gettruckdispatch/" class="social-link">
+                  <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308605/assets/qybt981czug696m7i5ym.jpg" alt="instagram logo">
+                </a>
+              </div>
           </div>
         </div>
       </body>
@@ -124,7 +133,8 @@ class Mail {
         <p class="content-paragraph">
           If you don’t wish to reset your password, disregard this email and no action will be taken.
         </p>
-      `
+      `,
+      icon: icons.padlock
     })
 
     return this.sendMail(to, 'Reset Password', template)
@@ -158,10 +168,13 @@ class Mail {
   }
   transporterHasSentBid(to: string, transporterName: string, url: string) {
     const template = this.emailTemplate({
-      title: 'Your trip just received a bid',
-      actionUrl: url,
-      actionText: 'View Bid',
-      firstParagraph: `${transporterName} just sent a bid to your job. Follow this link to view the bid and negotiate or accept it.`,
+      title: 'Bid Received',
+      content: `
+        <p>
+          <b>${transporterName}</b> just sent a bid to your job. Click on the button below to view bid and negotiate or accept bid.
+        </p>
+      `,
+
     })
     return this.sendMail(to, 'A bid has been received for your trip', template)
   }
