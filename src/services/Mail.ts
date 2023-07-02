@@ -1,25 +1,29 @@
 import {
   COMPANY_NAME,
   EMAIL_PASSWORD,
-  FRONTEND_URL,
   NO_REPLY_EMAIL_ADDRESS,
 } from '@common/privateKeys'
 import nodemailer from 'nodemailer'
 import { styles } from './mail/assets/styles'
 
 const icons = {
-  padlock: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688321980/assets/nvkcjbww66grnef7oznz.jpg',
+  padlock: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328062/assets/gws6dkltdt7b7qmatots.png',
   close: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688325062/assets/nvkcjbww66grnef7oznz.png',
+  moneys: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328169/assets/punb1u2ouspvcdijs9td.png',
+  user: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328269/assets/leavkexonhgoz28cng4v.png',
+  truck: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328400/assets/rcdsnkl2nzfpzhfsgin2.png',
+  truckTime: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328484/assets/qv7ybhlxdvpiydl6ws2b.png',
+  receipe: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328590/assets/i5sz4x8zkruh8ybrdnah.png'
 }
 
 interface TemplateProps {
-  title: string
+  title: string;
   content?: string;
   icon?: string;
-  actionText?: string
-  actionUrl?: string
-  firstParagraph?: string
-  paragraphAfterActionLink?: string
+  actionText?: string;
+  actionUrl?: string;
+  firstParagraph?: string;
+  paragraphAfterActionLink?: string;
 }
 class Mail {
   private transport = nodemailer.createTransport({
@@ -68,7 +72,7 @@ class Mail {
             <span class="logo-title">TruckDispatch</span>
           </a>
           ${!!icon && `
-              <div class="icon-container">
+              <div class="icon-container mt-32">
                 <div class="icon-container__inner"><img src="${icon}" alt="category icon" /></div>
               </div>
           `}
@@ -173,6 +177,9 @@ class Mail {
         <p>
           <b>${transporterName}</b> just sent a bid to your job. Click on the button below to view bid and negotiate or accept bid.
         </p>
+        <div class="content-purple-info-container fit-content">
+        
+        </div>
       `,
 
     })

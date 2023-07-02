@@ -16,8 +16,8 @@ export const styles = `
 
   .icon-container {
     border-radius: 63.75px;
-    width: 82px;
-    height: 82px;
+    width: 72px;
+    height: 72px;
     padding: 17px;
     background:  #D9D3F3;
     display: flex;
@@ -60,6 +60,26 @@ export const styles = `
     background: #F2F0FB;
     border-radius: 8px;
     padding: 16px;
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 32px;
+  }
+  .fit-content {
+    width: fit-content;
+  }
+
+  .item-label {
+    color: #848288;
+    leading-trim: both;
+    text-edge: cap;
+    font-size: 12px;
+    font-family: THICCCBOI;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: 0.6px;
   }
   .action-trigger {
     text-transform: uppercase;
