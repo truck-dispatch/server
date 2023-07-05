@@ -213,6 +213,15 @@ export const styles = `
   .rating-checked {
     color: #F9C437;
   }
+  .note {
+    display: flex;
+    width: -webkit-fill-available;
+    padding: 16px;
+    flex-direction: column;
+    gap: 16px;
+    border-radius: 8px;
+    background: var(--primary-shades-purple-10, #F2F0FB);
+  }
   @media only screen and (max-width: 600px) {
     .truncate-word {
       white-space: nowrap;
