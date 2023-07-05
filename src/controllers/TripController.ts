@@ -235,6 +235,7 @@ class TripController {
         trip?.pickUpAddress!,
         trip?.deliveryAddress!,
         `${updatedUser?.firstName} ${updatedUser?.lastName}`,
+        `${updatedUser?.avatar}`,
         `${FRONTEND_URL}/my-trips/${tripId}`
       )
       return Respond.success(res, 'Trip assigned to transporter successfully', {

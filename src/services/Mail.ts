@@ -60,7 +60,7 @@ class Mail {
     <!DOCTYPE html>
     <html>
       <head>
-        <title>${title} lorem</title>
+        <title>${title}</title>
         ${styles}
       </head>
       <body class="template">
@@ -115,13 +115,7 @@ class Mail {
   portFromFirebase(to: string, url: string) {
     const template = this.emailTemplate({
       title: 'Password Reset',
-      icon: `<svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="102" height="102" rx="51" fill="#D9D3F3"/>
-<rect x="17" y="17" width="68" height="68" rx="34" fill="#B3A8E7"/>
-<path d="M51 58.5792C52.2753 58.5792 53.3091 57.5453 53.3091 56.27C53.3091 54.9947 52.2753 53.9608 51 53.9608C49.7246 53.9608 48.6908 54.9947 48.6908 56.27C48.6908 57.5453 49.7246 58.5792 51 58.5792Z" fill="#4326C4"/>
-<path d="M59.8967 47.5008V45.73C59.8967 41.905 58.9759 36.8333 51 36.8333C43.0242 36.8333 42.1034 41.905 42.1034 45.73V47.5008C38.1367 47.9967 36.8334 50.0083 36.8334 54.9525V57.5875C36.8334 63.3958 38.6042 65.1667 44.4125 65.1667H57.5875C63.3959 65.1667 65.1667 63.3958 65.1667 57.5875V54.9525C65.1667 50.0083 63.8634 47.9967 59.8967 47.5008ZM51 60.5483C48.6342 60.5483 46.7217 58.6217 46.7217 56.27C46.7217 53.9042 48.6484 51.9917 51 51.9917C53.3517 51.9917 55.2784 53.9183 55.2784 56.27C55.2784 58.6358 53.3659 60.5483 51 60.5483ZM44.4125 47.3733C44.2992 47.3733 44.2 47.3733 44.0867 47.3733V45.73C44.0867 41.5792 45.2625 38.8167 51 38.8167C56.7375 38.8167 57.9134 41.5792 57.9134 45.73V47.3875C57.8 47.3875 57.7009 47.3875 57.5875 47.3875H44.4125V47.3733Z" fill="#4326C4"/>
-</svg>
-`,
+      icon: icons.padlock,
       content: `
         <p>Someone (hopefully you) has requested a password reset for you Truckdispatch account. Click on the below button to continue to reset your password</p>
         <a href="${url}"><button class='email-action-button'>RESET PASSWORD</button></a>
@@ -191,7 +185,7 @@ class Mail {
       template
     )
   }
-  transporterHasSentBid(to: string, transporterName: string, url: string, transporterAvatar?: string,) {
+  transporterHasSentBid(to: string, transporterName: string, url: string, transporterAvatar?: string) {
     const template = this.emailTemplate({
       title: 'Bid Received',
       content: `
@@ -200,16 +194,16 @@ class Mail {
         </p>
         <div class="content-purple-info-container mt-32 mb-32 fit-content">
 
-          <div class="item-label">Transporter</div>
+          <div class="item-label">Transporter Responsible</div>
 
           <div class="d-flex">
             <img src="${transporterAvatar || icons.avatar}" class="avatar" alt="user avatar">
             <div class="user-profile-details ml-8">
               <div>
-                <div class="user-name">${transporterName}</div>
+                <div class="user-name truncate-word">${transporterName}</div>
                 <div class="user-contact">************</div>
               </div>
-              <a href="" class="secondary-btn ml-24">View Profile</a>
+              <a href="" class="secondary-btn ml-24 cta-button">View Profile</a>
             </div>
           </div>
         </div>
@@ -227,17 +221,7 @@ class Mail {
         <p>${transporterName} just updated his bid to your job. Click on the button below to view the bid and negotiate or accept it.</p>
         <a href="${url}"><button class='email-action-button'>VIEW BID</button></a>
       `,
-      to,
-      icon: `<svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="102" height="102" rx="51" fill="#D9D3F3"/>
-<rect x="17" y="17" width="68" height="68" rx="34" fill="#B3A8E7"/>
-<path d="M64.4583 55.9583C64.8549 55.9583 65.1666 56.27 65.1666 56.6667V58.0833C65.1666 60.435 63.2683 62.3333 60.9166 62.3333C60.9166 59.9958 59.0041 58.0833 56.6666 58.0833C54.3291 58.0833 52.4166 59.9958 52.4166 62.3333H49.5833C49.5833 59.9958 47.6708 58.0833 45.3333 58.0833C42.9958 58.0833 41.0833 59.9958 41.0833 62.3333C38.7316 62.3333 36.8333 60.435 36.8333 58.0833V55.25C36.8333 54.4708 37.4708 53.8333 38.2499 53.8333H51.7083C53.6633 53.8333 55.2499 52.2467 55.2499 50.2917V42.5C55.2499 41.7208 55.8874 41.0833 56.6666 41.0833H57.8566C58.8766 41.0833 59.8116 41.6358 60.3216 42.5142L61.2283 44.1008C61.3558 44.3275 61.1858 44.625 60.9166 44.625C58.9616 44.625 57.3749 46.2117 57.3749 48.1667V52.4167C57.3749 54.3717 58.9616 55.9583 60.9166 55.9583H64.4583Z" fill="#4326C4"/>
-<path d="M45.3333 65.1667C46.8981 65.1667 48.1667 63.8981 48.1667 62.3333C48.1667 60.7685 46.8981 59.5 45.3333 59.5C43.7685 59.5 42.5 60.7685 42.5 62.3333C42.5 63.8981 43.7685 65.1667 45.3333 65.1667Z" fill="#4326C4"/>
-<path d="M56.6666 65.1667C58.2314 65.1667 59.4999 63.8981 59.4999 62.3333C59.4999 60.7685 58.2314 59.5 56.6666 59.5C55.1018 59.5 53.8333 60.7685 53.8333 62.3333C53.8333 63.8981 55.1018 65.1667 56.6666 65.1667Z" fill="#4326C4"/>
-<path d="M65.1667 51.7508V53.8333H60.9167C60.1375 53.8333 59.5 53.1958 59.5 52.4167V48.1667C59.5 47.3875 60.1375 46.75 60.9167 46.75H62.7442L64.7983 50.3483C65.0392 50.7733 65.1667 51.255 65.1667 51.7508Z" fill="#4326C4"/>
-<path d="M52.5299 36.8333H42.0608C39.1708 36.8333 36.8333 39.1708 36.8333 42.0608V51.1133C36.8333 51.8925 37.4708 52.53 38.2499 52.53H51.2124C52.6574 52.53 53.8333 51.3542 53.8333 49.9092V38.1367C53.8333 37.4142 53.2524 36.8333 52.5299 36.8333ZM47.2883 45.2058C47.2883 45.5742 47.0899 45.9283 46.7783 46.1125L45.0074 47.175C44.8233 47.2883 44.6391 47.3308 44.4549 47.3308C44.1008 47.3308 43.7466 47.1467 43.5483 46.8208C43.2366 46.3108 43.4066 45.6592 43.9024 45.3617L45.1633 44.6108V43.0808C45.1633 42.5 45.6449 42.0183 46.2258 42.0183C46.8066 42.0183 47.2883 42.5 47.2883 43.0808V45.2058Z" fill="#4326C4"/>
-</svg>
-`,
+      icon: icons.truck
     })
 
     return this.sendMail(to, 'A bid has been updated', template)
@@ -247,26 +231,32 @@ class Mail {
     pickUpLocation: string,
     deliveryLocation: string,
     tripOwnerName: string,
+    tripOwnerAvatar: string,
     url: string
   ) {
     const template = this.emailTemplate({
       title: 'Bid Accepted',
       content: `
         <p>Your bid has been accepted for a trip going from ${pickUpLocation} to ${deliveryLocation} by ${tripOwnerName}. Kindly proceed to the dashboard to proceed with the trip.</p>
+        <div class="content-purple-info-container mt-32 mb-32 fit-content">
+
+          <div class="item-label">Transporter Responsible</div>
+
+          <div class="d-flex">
+            <img src="${tripOwnerAvatar || icons.avatar}" class="avatar" alt="user avatar">
+            <div class="user-profile-details ml-8">
+              <div>
+                <div class="user-name truncate-word">${tripOwnerName}</div>
+                <div class="user-contact">************</div>
+              </div>
+              <a href="" class="secondary-btn ml-24 cta-button">View Profile</a>
+            </div>
+          </div>
+        </div>
         <a href="${url}"><button class='email-action-button'>VIEW TRIP</button></a>
         <p>Thank you for working with us.</p>
       `,
-      to,
-      icon: `<svg width="102" height="102" viewBox="0 0 102 102" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="102" height="102" rx="51" fill="#D9D3F3"/>
-<rect x="17" y="17" width="68" height="68" rx="34" fill="#B3A8E7"/>
-<path d="M53.8333 38.1367V49.9092C53.8333 51.3542 52.6575 52.53 51.2125 52.53H38.25C37.4708 52.53 36.8333 51.8925 36.8333 51.1133V42.0608C36.8333 39.1708 39.1708 36.8333 42.0608 36.8333H52.5158C53.2525 36.8333 53.8333 37.4142 53.8333 38.1367Z" fill="#4326C4"/>
-<path d="M64.4583 55.9583C64.855 55.9583 65.1666 56.27 65.1666 56.6667V58.0833C65.1666 60.435 63.2683 62.3333 60.9166 62.3333C60.9166 59.9958 59.0041 58.0833 56.6666 58.0833C54.3291 58.0833 52.4166 59.9958 52.4166 62.3333H49.5833C49.5833 59.9958 47.6708 58.0833 45.3333 58.0833C42.9958 58.0833 41.0833 59.9958 41.0833 62.3333C38.7316 62.3333 36.8333 60.435 36.8333 58.0833V55.25C36.8333 54.4708 37.4708 53.8333 38.25 53.8333H51.7083C53.6633 53.8333 55.25 52.2467 55.25 50.2917V42.5C55.25 41.7208 55.8875 41.0833 56.6666 41.0833H57.8566C58.8766 41.0833 59.8116 41.6358 60.3216 42.5142L61.2283 44.1008C61.3558 44.3275 61.1858 44.625 60.9166 44.625C58.9616 44.625 57.375 46.2117 57.375 48.1667V52.4167C57.375 54.3717 58.9616 55.9583 60.9166 55.9583H64.4583Z" fill="#4326C4"/>
-<path d="M45.3333 65.1667C46.8981 65.1667 48.1667 63.8981 48.1667 62.3333C48.1667 60.7685 46.8981 59.5 45.3333 59.5C43.7685 59.5 42.5 60.7685 42.5 62.3333C42.5 63.8981 43.7685 65.1667 45.3333 65.1667Z" fill="#4326C4"/>
-<path d="M56.6666 65.1667C58.2315 65.1667 59.5 63.8981 59.5 62.3333C59.5 60.7685 58.2315 59.5 56.6666 59.5C55.1018 59.5 53.8333 60.7685 53.8333 62.3333C53.8333 63.8981 55.1018 65.1667 56.6666 65.1667Z" fill="#4326C4"/>
-<path d="M65.1667 51.7508V53.8333H60.9167C60.1375 53.8333 59.5 53.1958 59.5 52.4167V48.1667C59.5 47.3875 60.1375 46.75 60.9167 46.75H62.7442L64.7983 50.3483C65.0392 50.7733 65.1667 51.255 65.1667 51.7508Z" fill="#4326C4"/>
-</svg>
-`,
+      icon: icons.truck
     })
 
     return this.sendMail(to, 'Verify Email', template)

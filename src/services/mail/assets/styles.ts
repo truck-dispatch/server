@@ -68,6 +68,7 @@ export const styles = `
   }
   .user-profile-details {
     display: flex;
+    align-items: center;
   }
   .user-name {
     color: #15131B;
@@ -209,5 +210,26 @@ export const styles = `
   .d-flex {
     display: flex;
   }
+  .rating-checked {
+    color: #F9C437;
+  }
+  @media only screen and (max-width: 600px) {
+    .truncate-word {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 18ch
+    }
+    .user-profile-details {
+      display: block;
+    }
+    .cta-button {
+      width: 100%;
+      margin-left: 0 !important;
+    }
+    .fit-content {
+      width: inherit;
+    }
+}
 </style>
 `
