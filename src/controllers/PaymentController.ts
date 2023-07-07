@@ -76,9 +76,15 @@ class PaymentController {
     try {
       const user = getUserCredentialsFromReq(req)
 
-      const paymentRequests = await findPaymentRequestsBy({
-        transporter: user._id,
-      })
+      const { page, limit } = req.query
+
+      const paymentRequests = await findPaymentRequestsBy(
+        {
+          transporter: user._id,
+        },
+        page as string,
+        limit as string
+      )
 
       return Respond.success(
         res,
