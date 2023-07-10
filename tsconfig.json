@@ -1,28 +1,44 @@
 {
-    "compilerOptions": {
-      "baseUrl": "./src",
-      "paths": {
-        "@common/*": ["common/*"],
-        "@controllers/*": ["controllers/*"],
-        "@helpers/*": ["helpers/*"],
-        "@services/*": ["services/*"],
-        "@interfaces/*": ["interfaces/*"],
-        "@middlewares/*": ["middlewares/*"],
-        "@data/*": ["data/*"],
-      },
-      "target": "es6",
-      "module": "commonjs",
-      "outDir": "./dist",
-      "esModuleInterop": true,
-      "sourceMap": true,
-      "strict": true,
-      "moduleResolution": "node",
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@common/*": [
+        "common/*"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@controllers/*": [
+        "controllers/*"
+      ],
+      "@helpers/*": [
+        "helpers/*"
+      ],
+      "@services/*": [
+        "services/*"
+      ],
+      "@interfaces/*": [
+        "interfaces/*"
+      ],
+      "@middlewares/*": [
+        "middlewares/*"
+      ],
+      "@data/*": [
+        "data/*"
+      ],
     },
-    "exclude": [
-      "node_modules",
-      "**/*.test.ts"
-    ]
-  }
-  
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts"
+  ]
+}

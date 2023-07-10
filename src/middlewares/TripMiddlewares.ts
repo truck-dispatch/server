@@ -6,12 +6,15 @@ import {
   tripStatus,
 } from '@common/constants'
 import { findTripBy } from '@data/trip/tripRepository'
-import { findUserBy } from '@data/user/userRepository'
+import { creditUser, findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import PaymentRequest from '@interfaces/PaymentRequest'
 import { Types } from 'mongoose'
 import { findPaymentRequestBy } from '@data/paymentRequest/paymentRequestRepository'
+import { findBidBy } from '@data/bid/bidRepository'
+import { Helpers } from '@helpers/index'
+import { createPaymentLog } from '@data/paymentLog/paymentLogRepository'
 
 class TripMiddlewares {
   canCreateTrip(req: Request, res: Response, next: NextFunction) {
@@ -92,9 +95,13 @@ class TripMiddlewares {
 
       const trip = await findTripBy({ _id: tripId })
       if (!trip) return Respond.error(res, 'Trip not found', 404)
+
       if (
         !(trip?.tripOwner._id! as Types.ObjectId).equals(user._id) &&
-        !(trip?.transporter && !(trip.transporter._id! as Types.ObjectId).equals(user._id))
+        !(
+          trip?.transporter &&
+          (trip.transporter._id! as Types.ObjectId).equals(user._id)
+        )
       ) {
         return Respond.error(res, 'User is not associated to this trip.', 401)
       }
@@ -117,6 +124,17 @@ class TripMiddlewares {
         return Respond.error(res, `${status} is not an acceptable status`, 400)
       }
       const trip = await findTripBy({ _id: tripId })
+
+      if (
+        (trip?.paymentRequest as unknown as PaymentRequest)?.status !==
+        'completed'
+      ) {
+        return Respond.error(
+          res,
+          'Payment must be completed before trip begins.',
+          400
+        )
+      }
       const presentStatusIndex = tripStatus.findIndex((s) => trip?.status === s)
 
       if (presentStatusIndex > statusIndex)
@@ -189,6 +207,21 @@ class TripMiddlewares {
 
       if (!to) return Respond.error(res, 'to field was not passed.', 400)
 
+      if (paymentSource === 'paystack') {
+        await createPaymentLog({
+          from,
+          to,
+          trip: tripId,
+          bid: bidId,
+          type: 'payment',
+          amount: amountInBid,
+          totalAmount: totalAmountPaid,
+          processorReference,
+          transaction,
+          tripReference: Helpers.generateReference(),
+          status: 'success',
+        })
+      }
       const transporter = await findUserBy({ _id: to })
       if (!transporter)
         return Respond.error(res, 'Transporter does not exist', 404)
@@ -213,7 +246,7 @@ class TripMiddlewares {
       if (!paymentSources.includes(paymentSource))
         return Respond.error(
           res,
-          'the only payment sources currently available are paystack and balance.'
+          'the payment source is not supported.'
         )
 
       if (paymentSource === 'balance') {
@@ -230,6 +263,63 @@ class TripMiddlewares {
           res,
           'Payment processor is unavailable. Kindly reach out to support if you have been debited.'
         )
+
+      next()
+    } catch (err) {
+      return Respond.error(res, (err as Error).message)
+    }
+  }
+
+  async checkIfTripIsAssignable(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const {
+        from,
+        tripId,
+        bidId,
+        paymentSource,
+        amountInBid,
+      } = req.body
+
+      const bid = await findBidBy({ _id: bidId })
+      if (!bid) {
+        if (paymentSource !== 'paystack') {
+          return Respond.error(
+            res,
+            'This bid does not exist or may have been deleted. no money has been deducted from your account',
+            400
+          )
+        }
+        await creditUser(from, amountInBid)
+
+        return Respond.error(
+          res,
+          'This bid does not exist or may have been deleted. We have moved the amount paid into your wallet balance',
+          400
+        )
+      }
+
+      const trip = await findTripBy({ _id: tripId })
+
+      if (trip?.status !== 'awaiting-bid') {
+        if (paymentSource !== 'paystack') {
+          return Respond.error(
+            res,
+            'This trip has already been assigned to a transporter. No money has been taken from your wallet.',
+            400
+          )
+        }
+        await creditUser(from, amountInBid)
+
+        return Respond.error(
+          res,
+          'This bid does not exist or may have been deleted. We have moved the amount paid into your wallet balance',
+          400
+        )
+      }
 
       next()
     } catch (err) {

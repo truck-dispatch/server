@@ -1,17 +1,34 @@
+import nodemailer from 'nodemailer'
 import {
   COMPANY_NAME,
   EMAIL_PASSWORD,
-  FRONTEND_URL,
   NO_REPLY_EMAIL_ADDRESS,
 } from '@common/privateKeys'
-import nodemailer from 'nodemailer'
+import { styles } from './mail/assets/styles'
+
+const icons = {
+  padlock:
+    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328062/assets/gws6dkltdt7b7qmatots.png',
+  close:
+    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688325062/assets/nvkcjbww66grnef7oznz.png',
+  moneys:
+    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328169/assets/punb1u2ouspvcdijs9td.png',
+  user: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328269/assets/leavkexonhgoz28cng4v.png',
+  truck:
+    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328400/assets/rcdsnkl2nzfpzhfsgin2.png',
+  truckTime:
+    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328484/assets/qv7ybhlxdvpiydl6ws2b.png',
+  receipt:
+    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328590/assets/i5sz4x8zkruh8ybrdnah.png',
+  avatar:
+    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688329364/assets/ha5ajd1ubxfj57frbidh.png',
+}
 
 interface TemplateProps {
   title: string
-  actionText?: string
-  actionUrl?: string
-  firstParagraph?: string
-  paragraphAfterActionLink?: string
+  content: string
+  icon?: string
+  to?: string
 }
 class Mail {
   private transport = nodemailer.createTransport({
@@ -41,130 +58,247 @@ class Mail {
     )
   }
 
-  private emailTemplate({
-    title,
-    actionText,
-    actionUrl,
-    firstParagraph,
-    paragraphAfterActionLink,
-  }: TemplateProps) {
-    return `<!DOCTYPE html>
+  private emailTemplate({ title, content, icon }: TemplateProps) {
+    return `
+    <!DOCTYPE html>
     <html>
-    <head>
-      <title>${title}</title>
-    </head>
-    <body style="font-family: Arial, sans-serif; width: 400px; margin: auto; text-align: left;">
-      ${
-        firstParagraph
-          ? `<p style="text-align: left; color: #000;">${firstParagraph}</p>`
-          : ''
-      }
-
-      ${actionUrl ?`<div style="text-align: left;">
-        <a href="${actionUrl}" style="color: #4326C4; text-decoration: underline; border-radius: 8px;">${actionText}</a>
-      </div>` : ''}
-    
-      ${
-        paragraphAfterActionLink
-          ? `<p style="  color: #000;">${paragraphAfterActionLink}</p>`
-          : ''
-      }
-      
-      <p style="text-align: left; border-top: 1px solid #DCDAE4; padding-top: 10px">The ${COMPANY_NAME} team.</p>
-      <a href="${FRONTEND_URL}" style="color: #4326C4;">${FRONTEND_URL}</a>
-    </body>
+      <head>
+        <title>${title}</title>
+        ${styles}
+      </head>
+      <body class="template">
+        <div class="mail-body">
+          <a href="https://www.gettruckdispatch.com/" class="logo-container">
+            <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688316396/assets/yfvpnj3okri3o3u3wgpk.png" width="30" height="30">
+            <span class="logo-title">TruckDispatch</span>
+          </a>
+          ${
+            !!icon
+              ? `
+              <div class="icon-container mt-32">
+                <div class="icon-container__inner"><img src="${icon}" /></div>
+              </div>
+          `
+              : ''
+          }
+          <div class="mail-card mt-32">
+            <section>
+              <h1>${title}</h1>
+              ${content}
+            </section>
+          </div>
+          <div class="info-container">
+            <div class="mt-16">
+              The Truckdispatch Team.
+            </div>
+            <div class="mt-32">
+              Copyright © Truckdispatch. ${new Date().getFullYear()} All Rights Reserved
+            </div>
+            <a href="https://www.gettruckdispatch.com/" class="logo-container mx-auto mt-32">
+              <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688316396/assets/yfvpnj3okri3o3u3wgpk.png" width="30" height="30" alt="truckdispatch-logo">
+              <span class="logo-title">TruckDispatch</span>
+            </a>
+              <div class="social-icons mt-32">
+                <a href="twitter.com" class="social-link">
+                  <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308501/assets/g2vlasdrthm0jr9zpfc2.jpg" alt="twitter-logo">
+                </a>
+                <a href="https://www.linkedin.com/company/truckdispatch/" class="social-link">
+                  <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308265/assets/o2inkopsdnga18lk5sp4.jpg" alt="linked-in logo">
+                </a>
+                <a href="https://www.instagram.com/gettruckdispatch/" class="social-link">
+                  <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308416/assets/xmyy3djwrhkhxfznhj4h.jpg" alt="instagram logo">
+                </a>
+                <a href="https://www.instagram.com/gettruckdispatch/" class="social-link">
+                  <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308605/assets/qybt981czug696m7i5ym.jpg" alt="instagram logo">
+                </a>
+              </div>
+          </div>
+        </div>
+      </body>
     </html>
     `
   }
-
   portFromFirebase(to: string, url: string) {
     const template = this.emailTemplate({
-      title: 'Reset Password',
-      actionUrl: url,
-      actionText: 'Reset your password',
-      firstParagraph: `We recently underwent a database upgrade; Due to that, all previous passwords have been lost. Kindly reset your password to regain access to your dashboard.`,
-      paragraphAfterActionLink: `If you don't wish to reset your password, disregard this email and no action will be taken.`,
+      title: 'Password Reset',
+      icon: icons.padlock,
+      content: `
+        <p> class="content-paragraph">Someone (hopefully you) tried logging into your account. The Truckdispatch team underwent a database upgrade.
+        Due to this upgrade, passwords were lost. Kindly use the Link below to reset your password.</p>
+        <a href="${url}" class="action-trigger mt-16 mb-16">reset password</a>
+        <p class="content-paragraph">
+          If you don’t wish to reset your password, disregard this email and no action will be taken.
+        </p>
+      `,
+      to,
     })
 
     return this.sendMail(to, 'Reset Password', template)
   }
-
   requestResetPassword(to: string, url: string) {
     const template = this.emailTemplate({
-      title: 'Reset Password',
-      actionUrl: url,
-      actionText: 'Reset your password',
-      firstParagraph: `Someone(hopefully you) has requested a password reset for your ${COMPANY_NAME} account. Follow the link below to set a new password.`,
-      paragraphAfterActionLink: `This email expires in one hour. If you don't wish to reset your password, disregard this email and no action will be taken.`,
+      title: 'Password Reset',
+      content: `
+        <p class="content-paragraph">
+          Someone (hopefully you) has requested a password reset for you Truckdispatch account. Click on the below button to continue to reset your password
+        </p>
+        <a href="${url}" class="action-trigger mt-16 mb-16">reset password</a>
+        <p class="content-paragraph">
+          If you don’t wish to reset your password, disregard this email and no action will be taken.
+        </p>
+      `,
+      icon: icons.padlock,
     })
 
     return this.sendMail(to, 'Reset Password', template)
   }
-
   verifyMail(to: string, url: string) {
     const template = this.emailTemplate({
       title: 'Verify Email',
-      actionUrl: url,
-      actionText: 'Verify Email',
-      firstParagraph: `Welcome to ${COMPANY_NAME}; Follow the link below to verify your email`,
-      paragraphAfterActionLink: `This link expires in 1 day`,
+      content: `
+        <p class="content-paragraph">Welcome to ${COMPANY_NAME}; Follow the link below to verify your email</p>
+        <a href="${url}" class="action-trigger mt-16 mb-16">VERIFY EMAIL</a>
+        <p class="content-paragraph">This link expires in 1 day</p>
+      `,
+      to,
     })
 
     return this.sendMail(to, 'Verify Email', template)
   }
-
   newUserSignedUp(userName: string) {
     const template = this.emailTemplate({
       title: 'A new user signed up',
-      firstParagraph: `${userName} just signed up to the platform.`,
+      content: `
+        <p>${userName} just signed up to the platform.</p>
+      `,
+      to: 'admin@gettruckdispatch.com',
     })
-    return this.sendMail('admin@gettruckdispatch.com', 'A new user signed up', template)
+    return this.sendMail(
+      'admin@gettruckdispatch.com',
+      'A new user signed up',
+      template
+    )
   }
   newTripCreated() {
     const template = this.emailTemplate({
       title: 'A new trip has been created',
-      firstParagraph: `A new trip has been created`,
+      content: `<p>A new trip has been created</p>`,
+      to: 'admin@gettruckdispatch.com',
     })
-    return this.sendMail('admin@gettruckdispatch.com', 'A new trip has been created', template)
+    return this.sendMail(
+      'admin@gettruckdispatch.com',
+      'A new trip has been created',
+      template
+    )
   }
-  transporterHasSentBid(to: string, transporterName: string, url: string) {
+  transporterHasSentBid(
+    to: string,
+    transporterName: string,
+    url: string,
+    transporterAvatar?: string
+  ) {
     const template = this.emailTemplate({
-      title: 'Your trip just received a bid',
-      actionUrl: url,
-      actionText: 'View Bid',
-      firstParagraph: `${transporterName} just sent a bid to your job. Follow this link to view the bid and negotiate or accept it.`,
+      title: 'Bid Received',
+      content: `
+        <p class="content-paragraph">
+          <b>${transporterName}</b> just sent a bid to your job. Click on the button below to view bid and negotiate or accept bid.
+        </p>
+        <div class="content-purple-info-container mt-32 mb-32 fit-content">
+
+          <div class="item-label">Transporter Responsible</div>
+
+          <div class="d-flex">
+            <img src="${
+              transporterAvatar || icons.avatar
+            }" class="avatar" alt="user avatar">
+            <div class="user-profile-details ml-8">
+              <div>
+                <div class="user-name truncate-word">${transporterName}</div>
+                <div class="user-contact">************</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="${url}" class="action-trigger mt-32 mb-32">View Bid</a>
+        <p class="mb-32">Thank you for working with us.</p>
+      `,
+      icon: icons.truck,
     })
     return this.sendMail(to, 'A bid has been received for your trip', template)
   }
-
-  transporterHasUpdatedBid(to: string, transporterName: string, url: string) {
+  transporterHasUpdatedBid(
+    to: string,
+    transporterName: string,
+    url: string,
+    transporterAvatar?: string
+  ) {
     const template = this.emailTemplate({
-      title: 'A bid to your trip has been updated',
-      actionUrl: url,
-      actionText: 'View Bid',
-      firstParagraph: `${transporterName} just updated his bid to your job. Follow this link to view the bid and negotiate or accept it.`,
+      title: 'A bid has been updated.',
+      content: `
+      <p class="content-paragraph">
+        <b>${transporterName}</b> just updated a bid to your job. Click on the button below to view bid and negotiate or accept bid.
+      </p>
+      <div class="content-purple-info-container mt-32 mb-32 fit-content">
+
+        <div class="item-label">Transporter Responsible</div>
+
+        <div class="d-flex">
+          <img src="${
+            transporterAvatar || icons.avatar
+          }" class="avatar" alt="user avatar">
+          <div class="user-profile-details ml-8">
+            <div>
+              <div class="user-name truncate-word">${transporterName}</div>
+              <div class="user-contact">************</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="${url}" class="action-trigger mt-32 mb-32">View Bid</a>
+      <p class="mb-32">Thank you for working with us.</p>
+    `,
+      icon: icons.truck,
     })
 
     return this.sendMail(to, 'A bid has been updated', template)
   }
-
   bidHasBeenAccepted(
     to: string,
     pickUpLocation: string,
     deliveryLocation: string,
     tripOwnerName: string,
+    tripOwnerAvatar: string,
     url: string
   ) {
     const template = this.emailTemplate({
-      title: 'Bid has been accepted',
-      actionUrl: url,
-      actionText: 'View Trip',
-      firstParagraph: `Your bid has been accepted for a trip going from ${pickUpLocation} to ${deliveryLocation} by ${tripOwnerName}. Kindly proceed to the dashboard to proceed with the trip. `,
-      paragraphAfterActionLink: `Thank you for working with us.`,
-    })
-    return this.sendMail(to, 'Verify Email', template)
-  }
+      title: 'Bid Accepted',
+      content: `
+        <p class="content-paragraph">Your bid has been accepted for a trip going from <b>${pickUpLocation} </b>  to <b>${deliveryLocation} </b>  by  <b>${tripOwnerName} </b>. Kindly proceed to the dashboard to proceed with the trip.</p>
+        <div class="content-purple-info-container mt-32 mb-32 fit-content">
 
+          <div class="item-label">Trip Owner</div>
+
+          <div class="d-flex">
+            <img src="${
+              tripOwnerAvatar || icons.avatar
+            }" class="avatar" alt="user avatar">
+            <div class="user-profile-details ml-8">
+              <div>
+                <div class="user-name truncate-word">${tripOwnerName}</div>
+                <div class="user-contact">************</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <a href="${url}" class="action-trigger mt-32 mb-32">View trip</a>
+        <p>Thank you for working with us.</p>
+      `,
+      icon: icons.truck,
+    })
+
+    return this.sendMail(to, 'Bid Accepted', template)
+  }
   tripStarted(
     to: string,
     pickUpLocation: string,
@@ -173,41 +307,55 @@ class Mail {
     url: string
   ) {
     const template = this.emailTemplate({
-      title: 'Bid has been accepted',
-      actionUrl: url,
-      actionText: 'View Trip',
-      firstParagraph: `Your bid has been accepted for a trip going from ${pickUpLocation} to ${deliveryLocation} by ${tripOwnerName}. Kindly proceed to the dashboard to proceed with the trip. `,
-      paragraphAfterActionLink: `Thank you for working with us.`,
+      title: 'Trip started',
+      content: `
+        <p class="content-paragraph">Your trip going from ${pickUpLocation} to ${deliveryLocation} by ${tripOwnerName} just started. Kindly proceed to the dashboard to view details on this trip.</p>
+        
+        <a href="${url}" class="action-trigger mt-32 mb-32">View trip</a>
+        <p class="content-paragraph">Thank you for working with us.</p>
+      `,
     })
 
     return this.sendMail(to, 'Transporter has commenced the trip', template)
   }
-
   accountHasBeenVerifiedByAdmin(to: string, url: string) {
     const template = this.emailTemplate({
-      title: 'Verify Email',
-      actionUrl: url,
-      actionText: 'Verify Email',
-      firstParagraph: `Welcome to ${COMPANY_NAME}; Follow the link below to verify your email`,
-      paragraphAfterActionLink: `This link expires in 1 day`,
+      title: 'Account Verified 🎉 ',
+      content: `
+        <p class="content-paragraph">
+          Congratulations! Your profile has been successfully verified! 🎉 
+          We are thrilled to inform you that your account now carries the prestigious "Verified" badge, highlighting your authenticity and
+          credibility within our community.
+        </p>
+
+        <a href="${url}" class="action-trigger mt-32 mb-32">View Profile</a>
+      `,
+      icon: icons.avatar,
     })
 
-    return this.sendMail(to, 'Your account has been verified', template)
+    return this.sendMail(
+      to,
+      'Your profile has been successfully verified! 🎉 ',
+      template
+    )
   }
-
   paymentHasBeenRequestedByTransporter(
     to: string,
     url: string,
     transporterName: string
   ) {
     const template = this.emailTemplate({
-      title: 'Review transporters payment request',
-      actionUrl: url,
-      actionText: 'Review payment request',
-      firstParagraph: `${transporterName} has requested payment for a trip. Transporters require payment before they can proceed with the trip. Follow the link below to review payment request `,
-      paragraphAfterActionLink: `Ensure that the proof of loading is the same as what was described in the bid made by ${transporterName}`,
-    })
+      title: 'Payment Requested',
+      content: `
+        <p class="content-paragraph"><b>${transporterName}</b> has requested payment for a trip. Transporters require payment before they can proceed with the trip. Click on the button below to review payment request.</p>
 
+        <a href="${url}" class="action-trigger mt-32 mb-32">View Trip</a>
+        <div class="note mt-32">
+          <p>Ensure that the proof of loading is the same as what was descriped in the bid made by ${transporterName}.</p>
+        </div>
+      `,
+      icon: icons.receipt,
+    })
     return this.sendMail(
       to,
       'Transporter has requested payment for his trip',
@@ -221,10 +369,15 @@ class Mail {
   ) {
     const template = this.emailTemplate({
       title: 'Payment request has been updated',
-      actionUrl: url,
-      actionText: 'Review payment request',
-      firstParagraph: `${transporterName} has updated his request for payment for a trip. Transporters require payment before they can proceed with the trip. Follow the link below to review payment request.`,
-      paragraphAfterActionLink: `Ensure that the proof of loading is the same as what was described in the bid made by ${transporterName}`,
+      content: `
+        <p class="content-paragraph">${transporterName} has updated his request for payment for a trip. Transporters require payment before they can proceed with the trip. Follow the link below to review payment request.</p>
+        
+        <a href="${url}" class="action-trigger mt-32 mb-32">View Trip</a>
+        <div class="note mt-32">
+          <p>Ensure that the proof of loading is the same as what was descriped in the bid made by ${transporterName}.</p>
+        </div>
+      `,
+      icon: icons.receipt,
     })
 
     return this.sendMail(
@@ -239,10 +392,13 @@ class Mail {
     tripOwnerName: string
   ) {
     const template = this.emailTemplate({
-      title: 'Payment request has been rejected',
-      actionUrl: url,
-      actionText: 'Review payment request',
-      firstParagraph: `${tripOwnerName} has rejected your payment request. To view his comment on the request, click the link below to see why your request was rejected and work on it.`,
+      title: 'Payment Rejected',
+      content: `
+        <p class="content-paragraph"><b>${tripOwnerName}</b> has rejected your payment request. To view his comment on the request, click the button below to see why your request was rejected and work on it.</p>
+
+        <a href="${url}" class="action-trigger mt-32 mb-32">View Trip</a>
+      `,
+      icon: icons.receipt,
     })
 
     return this.sendMail(to, 'Your payment request has been rejected', template)
@@ -253,34 +409,37 @@ class Mail {
     tripOwnerName: string
   ) {
     const template = this.emailTemplate({
-      title: 'Payment request has been approved',
-      actionUrl: url,
-      actionText: 'Proceed with trip',
-      firstParagraph: `${tripOwnerName} has approved your payment request therefore your money is on it's way to your account. If the money does not reflect in the next 1hr, kindly contact us via email support@gettruckdispatch.com or use the chat dialogue at the bottom of the page.`,
+      title: 'Your money is on the way 🤑',
+      content: `
+        <p class="content-paragraph"><b>${tripOwnerName}</b> has approved your payment request therefore your money is on it's way to your account. If the money does not reflect in the next 1hr, kindly contact us via email support@gettruckdispatch.com or use the chat dialogue at the bottom of the page.</p>
+        
+        <a href="${url}" class="action-trigger mt-32 mb-32">Proceed with trip</a>
+      `,
+      icon: icons.receipt,
     })
-
     return this.sendMail(to, "Your money is on it's way", template)
   }
-
   tripHasBeenSetToInProgress(to: string, url: string, transporterName: string) {
     const template = this.emailTemplate({
-      title: 'Trip has been placed in-progress',
-      actionUrl: url,
-      actionText: 'View Trip',
-      firstParagraph: `${transporterName} has started the trip, keep calm and expect your delivery soon.`,
-      paragraphAfterActionLink:
-        'If you notice any issues with your trips, kindly reach out to our customer service and they would help you address any issues that exist.',
+      title: "Your  goods are on it's way",
+      content: `
+        <p class="content-paragraph"><b>${transporterName}</b> has started the trip, keep calm and expect your delivery soon.</p>
+        
+        <a href="${url}" class="action-trigger mt-32 mb-32">View Trip</a>
+        <p class="content-paragraph">If you notice any issues with your trips, kindly reach out to our customer service and they would help you address any issues that exist.</p>
+      `,
     })
-
     return this.sendMail(to, "Your  goods are on it's way", template)
   }
   tripHasBeenSetToCompleted(to: string, url: string, transporterName: string) {
     const template = this.emailTemplate({
       title: 'Your goods have arrived',
-      actionUrl: url,
-      actionText: 'Rate Transporter',
-      firstParagraph: `${transporterName} has completed the trip. Thank you for choosing ${COMPANY_NAME}. Kindly help us rate ${transporterName}, as it would help keep our platform safe`,
-      paragraphAfterActionLink: `If the trip has not arrived yet, please inform the ${COMPANY_NAME} team to investigate immediately.`,
+      content: `
+        <p class="content-paragraph"><b>${transporterName}</b> has completed the trip. Thank you for choosing ${COMPANY_NAME}. Kindly help us rate <b>${transporterName}</b>, as it would help keep our platform safe</p>
+        
+        <a href="${url}" class="action-trigger mt-32 mb-32">Rate Transporter</a>
+        <p class="content-paragraph">If the trip has not arrived yet, please inform the ${COMPANY_NAME} team to investigate immediately.</p>
+      `,
     })
 
     return this.sendMail(to, 'Your goods have arrived', template)
