@@ -193,11 +193,7 @@ class TripController {
         to,
         tripId,
         bidId,
-        processorReference,
         paymentSource,
-        totalAmountPaid,
-        transaction,
-        amountInBid
       } = req.body
       const transporter = await findUserBy({ _id: to })
       const bid = await findAndUpdateBidBy(
@@ -205,26 +201,6 @@ class TripController {
         { status: 'accepted' }
       )
 
-      if (!bid) {
-        await creditUserLedgerBalance(from, amountInBid);
-        return Respond.error(res, 'This bid does not exist or may have been deleted. We have moved the aid amount into your wallet balance', 400)
-      }
-
-      if (paymentSource === 'paystack') {
-        await createPaymentLog({
-          from,
-          to: transporter?._id!,
-          trip: tripId,
-          bid: bidId,
-          type: 'payment',
-          amount: bid?.price!,
-          totalAmount: totalAmountPaid,
-          processorReference,
-          transaction,
-          tripReference: Helpers.generateReference(),
-          status: 'success',
-        })
-      }
       if (paymentSource === 'balance') {
         await debitUser(from, bid?.price!)
       }

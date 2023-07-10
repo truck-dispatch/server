@@ -60,6 +60,7 @@ export const styles = `
     background: #F2F0FB;
     border-radius: 8px;
     padding: 16px;
+    min-width: 250px;
   }
   .avatar {
     width: 40px;
