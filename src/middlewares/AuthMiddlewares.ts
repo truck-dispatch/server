@@ -84,7 +84,6 @@ class AuthMiddlewares {
           400
         )
       }
-      // TODO: remove this line of code when all users from firebase have migrated away from firebase.
       if (user.fromFirebase) {
         const token = generateJWT(
           { _id: user._id, userType: user.userType },
@@ -106,16 +105,6 @@ class AuthMiddlewares {
       )
       if (!passwordsMatch) {
         return Respond.error(res, 'Email and Password do not match', 400)
-      }
-
-      if (!user.isPhoneVerified) {
-        const verificationData = await Sms.sendOTP({ to: user.phone })
-        return Respond.error(
-          res,
-          'Phone has not been verified',
-          401,
-          verificationData
-        )
       }
 
       next()
