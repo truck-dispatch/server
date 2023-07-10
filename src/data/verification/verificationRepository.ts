@@ -16,10 +16,11 @@ export function findAndUpdateVerificationBy(
 }
 
 export async function findVerificationBy(param: Partial<Verification>) {
-  return VerificationModel.findOne(param).populate('user', '-password');
+  return VerificationModel.findOne(param).populate('user', '-password')
 }
 
 export function findVerificationsBy(param: Partial<Verification>) {
   return VerificationModel.find(param)
-  .sort({ updatedAt: -1 }).populate('user', '-password')
+    .sort({ updatedAt: -1 })
+    .populate('user', '-password')
 }

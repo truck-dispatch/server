@@ -87,10 +87,7 @@ class AuthController {
       if (!user)
         return Respond.error(res, 'user does not exist in our database')
 
-      const token = generateJWT(
-        { _id: user._id, auth: true },
-        '1h'
-      )
+      const token = generateJWT({ _id: user._id, auth: true }, '1h')
 
       await Mail.requestResetPassword(
         email,
@@ -111,7 +108,6 @@ class AuthController {
       const { password, token } = req.body
       const decodedPassword = await encrypt(password)
 
-      
       const decodedToken = decodeToken<{ _id: string }>(token)
       if (!decodedToken) return Respond.error(res, 'Invalid Token')
 
@@ -188,7 +184,7 @@ class AuthController {
   async verifyEmail(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.body.token
-      
+
       const decodedToken = decodeToken<{ _id: string }>(token)
       if (!decodedToken) return Respond.error(res, 'Invalid Token')
 

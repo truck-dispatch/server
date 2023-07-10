@@ -193,10 +193,7 @@ class TripController {
         to,
         tripId,
         bidId,
-        processorReference,
         paymentSource,
-        totalAmountPaid,
-        transaction,
       } = req.body
       const transporter = await findUserBy({ _id: to })
       const bid = await findAndUpdateBidBy(
@@ -204,24 +201,10 @@ class TripController {
         { status: 'accepted' }
       )
 
-      if (paymentSource === 'paystack') {
-        await createPaymentLog({
-          from,
-          to: transporter?._id!,
-          trip: tripId,
-          bid: bidId,
-          type: 'payment',
-          amount: bid?.price!,
-          totalAmount: totalAmountPaid,
-          processorReference,
-          transaction,
-          tripReference: Helpers.generateReference(),
-          status: 'success',
-        })
-      }
       if (paymentSource === 'balance') {
         await debitUser(from, bid?.price!)
       }
+
       const [updatedUser, trip] = await Promise.all([
         creditUserLedgerBalance(from, bid?.price!),
         findAndUpdateTripBy(
@@ -235,6 +218,7 @@ class TripController {
         trip?.pickUpAddress!,
         trip?.deliveryAddress!,
         `${updatedUser?.firstName} ${updatedUser?.lastName}`,
+        `${updatedUser?.avatar}`,
         `${FRONTEND_URL}/my-trips/${tripId}`
       )
       return Respond.success(res, 'Trip assigned to transporter successfully', {

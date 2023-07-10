@@ -62,6 +62,7 @@ router.post(
   JwtMiddlewares.checkisClientBasedUserType,
   TripMiddlewares.isTripCreator,
   TripMiddlewares.checkDataForTripAssignmentIsComplete,
+  TripMiddlewares.checkIfTripIsAssignable,
   TripController.assignTrip
 )
 
