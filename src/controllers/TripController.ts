@@ -315,7 +315,7 @@ class TripController {
       const bid = await findBidBy({ trip: tripId, transporter: user._id })
       await findAndUpdateTripBy(
         { _id: trip?._id },
-        { transporter: null, status: 'awaiting-bid' }
+        { transporter: null, status: 'awaiting-bid', acceptedBid: null }
       )
       await refundTripOwnerMoneyForCancelledTrip(
         trip?.tripOwner._id!,
