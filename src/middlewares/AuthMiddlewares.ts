@@ -91,7 +91,7 @@ class AuthMiddlewares {
         )
         await Mail.portFromFirebase(
           user.email,
-          `${FRONTEND_URL}/profile/manage-password?action=sign-in&token=${token}&isPhoneVerified=${user.isPhoneVerified}`
+          `${FRONTEND_URL}/auth/reset-password?token=${token}`
         )
         await findAndUpdateUserBy({ _id: user._id }, { isEmailVerified: true })
         return Respond.error(
