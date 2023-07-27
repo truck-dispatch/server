@@ -56,13 +56,11 @@ app.use((req, res, next) => {
 // error handler
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // set locals, only providing error in development
-
-  res.locals.message = err.message || 'Something went wrong'
   res.locals.error = req.app.get('env') === 'development' ? err : {}
 
   res.status(err.status).json({
     error: true,
-    message: err.message || 'Something went wrong',
+    message: 'Something went wrong',
   })
   next()
 }

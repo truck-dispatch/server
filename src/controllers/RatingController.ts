@@ -6,6 +6,7 @@ import {
 } from '@data/rating/ratingRepository'
 import { findAndUpdateUserBy, findUserBy } from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
+import { getUserCredentialsFromReq } from '@services/JWT'
 
 class RatingController {
   async rateUser(req: Request, res: Response, next: NextFunction) {
@@ -31,15 +32,16 @@ class RatingController {
     }
   }
 
-  async getTripRating(req: Request, res: Response, next: NextFunction) {
+  async getUsersTripRating(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
+      const user = getUserCredentialsFromReq(req);
 
-      const rating = await findRatingBy({ trip: tripId })
+      const rating = await findRatingBy({ trip: tripId, userRating: user._id })
 
       return Respond.success(
         res,
-        'Your rating has been saved. We would look into your ratings ',
+        'Thank you for rating. your rating helps keep our community safe',
         rating
       )
     } catch (err) {
