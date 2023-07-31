@@ -9,7 +9,6 @@ import {
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes, tripStatus } from '@common/constants'
 import { findAndUpdateBidBy, findBidBy } from '@data/bid/bidRepository'
-import { createPaymentLog } from '@data/paymentLog/paymentLogRepository'
 import {
   createTrip,
   deleteTrip,
