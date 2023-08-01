@@ -16,6 +16,8 @@ import Paystack from '@services/Paystack'
 import ApiError from 'interfaces/ApiError'
 import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
+import { getConnectedUserSocketByUserId } from '@services/socket/connectedUsers.socket'
+import { emitTripDetails } from '@services/socket/events.socket'
 
 class PaymentController {
   async requestPaymentForTrip(req: Request, res: Response, next: NextFunction) {
@@ -56,6 +58,11 @@ class PaymentController {
 
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: transporterCredentials._id })
+      const receiverSocket = getConnectedUserSocketByUserId(updatedTrip?.tripOwner._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitTripDetails(global.io, receiverSocket, updatedTrip)
+      }
       Mail.paymentHasBeenRequestedByTransporter(
         tripOwner?.email!,
         `${FRONTEND_URL}/my-trips/${tripId}`,
@@ -102,6 +109,11 @@ class PaymentController {
       const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
+      const receiverSocket = getConnectedUserSocketByUserId(trip?.transporter?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitTripDetails(global.io, receiverSocket, trip)
+      }
       Mail.paymentRequestHasBeenRejected(
         transporter?.email!,
         `${FRONTEND_URL}/my-trips/${trip?._id}`,
@@ -142,6 +154,11 @@ class PaymentController {
       const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
+      const receiverSocket = getConnectedUserSocketByUserId(trip?.transporter?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitTripDetails(global.io, receiverSocket, trip)
+      }
       Mail.paymentRequestHasBeenApproved(
         transporter?.email!,
         `${FRONTEND_URL}/my-trips/${trip?._id}`,
@@ -179,6 +196,11 @@ class PaymentController {
       const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
+      const receiverSocket = getConnectedUserSocketByUserId(trip?.tripOwner?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitTripDetails(global.io, receiverSocket, trip)
+      }
       Mail.paymentHasBeenUpdatedByTransporter(
         tripOwner?.email!,
         `${FRONTEND_URL}/my-trips/${trip?._id}`,
