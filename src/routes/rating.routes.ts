@@ -18,7 +18,7 @@ router.get(
   '/:tripId',
   JWTMiddlewares.jwtIsValid,
   TripMiddlewares.checkIfUserIsAssociatedToTrip,
-  RatingController.getTripRating
+  RatingController.getUsersTripRating
 )
 
 export default router

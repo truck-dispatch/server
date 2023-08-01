@@ -9,7 +9,6 @@ import {
 import { NextFunction, Request, Response } from 'express'
 import { clientUserTypes, tripStatus } from '@common/constants'
 import { findAndUpdateBidBy, findBidBy } from '@data/bid/bidRepository'
-import { createPaymentLog } from '@data/paymentLog/paymentLogRepository'
 import {
   createTrip,
   deleteTrip,
@@ -29,6 +28,8 @@ import { FRONTEND_URL } from '@common/privateKeys'
 import PopulatedTrip from '@interfaces/PopulatedTrip'
 import { findAndDeletePaymentRequestsBy } from '@data/paymentRequest/paymentRequestRepository'
 import { Types } from 'mongoose'
+import { emitRemoveTrip, emitTripDetails } from '@services/socket/events.socket'
+import { getConnectedUserSocketByUserId } from '@services/socket/connectedUsers.socket'
 
 class TripController {
   async createTrip(req: Request, res: Response, next: NextFunction) {
@@ -176,6 +177,11 @@ class TripController {
       } else {
         return Respond.error(res, 'This is not an acceptable status')
       }
+      const receiverSocket = getConnectedUserSocketByUserId(updatedTrip?.tripOwner._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitTripDetails(global.io, receiverSocket, updatedTrip)
+      }
       return Respond.success(
         res,
         'Trip status has been changed successfully.',
@@ -221,6 +227,11 @@ class TripController {
         `${updatedUser?.avatar}`,
         `${FRONTEND_URL}/my-trips/${tripId}`
       )
+      const receiverSocket = getConnectedUserSocketByUserId(transporter?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitTripDetails(global.io, receiverSocket, trip)
+      }
       return Respond.success(res, 'Trip assigned to transporter successfully', {
         trip,
         user: updatedUser,
@@ -239,6 +250,11 @@ class TripController {
 
       const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { TDO })
 
+      const receiverSocket = getConnectedUserSocketByUserId(updatedTrip?.transporter?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitTripDetails(global.io, receiverSocket, updatedTrip)
+      }
       return Respond.success(res, 'TDO has been uploaded', updatedTrip)
     } catch (err) {
       next(err)
@@ -263,9 +279,13 @@ class TripController {
         updatedTrip?._id!,
         bid?.price!
       )
+      const receiverSocket = getConnectedUserSocketByUserId(updatedTrip?.transporter?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitRemoveTrip(global.io, receiverSocket, updatedTrip._id);
+      }
 
       // TODO: Notify transporter that trip has been unassigned
-
       return Respond.success(res, 'Trip has been unassigned..', {
         trip: updatedTrip,
         user,
@@ -296,6 +316,12 @@ class TripController {
 
       await deleteTrip(tripId)
 
+      const receiverSocket = getConnectedUserSocketByUserId(trip?.transporter?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitRemoveTrip(global.io, receiverSocket, tripId);
+      }
+
       // TODO: Notify transporter that trip has been cancelled
       return Respond.success(res, 'Trip has been cancelled.')
     } catch (err) {
@@ -313,7 +339,7 @@ class TripController {
 
       const trip = await findTripBy({ _id: tripId })
       const bid = await findBidBy({ trip: tripId, transporter: user._id })
-      await findAndUpdateTripBy(
+      const updatedTrip = await findAndUpdateTripBy(
         { _id: trip?._id },
         { transporter: null, status: 'awaiting-bid', acceptedBid: null }
       )
@@ -322,6 +348,11 @@ class TripController {
         trip?._id!,
         bid?.price!
       )
+      const receiverSocket = getConnectedUserSocketByUserId(trip?.tripOwner?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitTripDetails(global.io, receiverSocket, updatedTrip)
+      }
       // Notify transporter that trip has been cancelled
       return Respond.success(res, 'Trip has been cancelled.')
     } catch (err) {
