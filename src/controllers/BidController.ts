@@ -5,6 +5,7 @@ import {
   findAndUpdateBidBy,
   findBidsBy,
   deleteBidBy,
+  findBidBy,
 } from '@data/bid/bidRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
@@ -12,6 +13,8 @@ import Mail from '@services/Mail'
 import { findTripBy } from '@data/trip/tripRepository'
 import { findUserBy } from '@data/user/userRepository'
 import { FRONTEND_URL } from '@common/privateKeys'
+import { getConnectedUserSocketByUserId } from '@services/socket/connectedUsers.socket'
+import { emitBidDetails, emitRemoveBid } from '@services/socket/events.socket'
 
 class BidController {
   async createBid(req: Request, res: Response, next: NextFunction) {
@@ -30,7 +33,13 @@ class BidController {
       const trip = await findTripBy({ _id: tripId })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: user?._id! })
+      const populatedBid = await findBidBy({_id: bidResponse._id});
 
+      const receiverSocket = getConnectedUserSocketByUserId(tripOwner?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitBidDetails(global.io, receiverSocket, populatedBid)
+      }
       Mail.transporterHasSentBid(
         tripOwner?.email!,
         `${transporter?.firstName} ${transporter?.lastName}`,
@@ -59,6 +68,11 @@ class BidController {
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id })
 
+      const receiverSocket = getConnectedUserSocketByUserId(tripOwner?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitBidDetails(global.io, receiverSocket, bidResponse)
+      }
       Mail.transporterHasUpdatedBid(
         tripOwner?.email!,
         `${transporter?.firstName} ${transporter?.lastName}`,
@@ -96,8 +110,16 @@ class BidController {
   async deleteBid(req: Request, res: Response, next: NextFunction) {
     try {
       const { bidId } = req.params
+      const bid = await findBidBy({_id: bidId});
+      const trip = await findTripBy({ _id: bid?.trip._id!});
 
       await deleteBidBy({ _id: bidId })
+
+      const receiverSocket = getConnectedUserSocketByUserId(trip?.tripOwner?._id!)
+      if (receiverSocket) {
+        // @ts-ignore
+        emitRemoveBid(global.io, receiverSocket, bidId)
+      }
 
       return Respond.success(res, 'Bid successfully deleted')
     } catch (err) {
