@@ -11,8 +11,12 @@ class TripController {
       const paramToFetchWith: Partial<Trip> = {}
       if (tripStatus.includes(status as string))
         paramToFetchWith.status = status as string
-      const trips = await findTripsBy(paramToFetchWith, page as string, limit as string)
-      return Respond.success(res, 'Trips fetched successfully', {...trips})
+      const trips = await findTripsBy(
+        paramToFetchWith,
+        page as string,
+        limit as string
+      )
+      return Respond.success(res, 'Trips fetched successfully', { ...trips })
     } catch (err) {
       next(err)
     }

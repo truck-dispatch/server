@@ -35,7 +35,7 @@ class RatingController {
   async getUsersTripRating(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const user = getUserCredentialsFromReq(req);
+      const user = getUserCredentialsFromReq(req)
 
       const rating = await findRatingBy({ trip: tripId, userRating: user._id })
 

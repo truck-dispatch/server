@@ -244,10 +244,7 @@ class TripMiddlewares {
         )
       }
       if (!paymentSources.includes(paymentSource))
-        return Respond.error(
-          res,
-          'the payment source is not supported.'
-        )
+        return Respond.error(res, 'the payment source is not supported.')
 
       if (paymentSource === 'balance') {
         const { _id } = getUserCredentialsFromReq(req)
@@ -276,13 +273,7 @@ class TripMiddlewares {
     next: NextFunction
   ) {
     try {
-      const {
-        from,
-        tripId,
-        bidId,
-        paymentSource,
-        amountInBid,
-      } = req.body
+      const { from, tripId, bidId, paymentSource, amountInBid } = req.body
 
       const bid = await findBidBy({ _id: bidId })
       if (!bid) {

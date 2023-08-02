@@ -15,7 +15,7 @@ export async function createBid(bid: CreateBidBody) {
       path: 'tripOwner',
       model: 'User',
     },
-  });
+  })
 }
 
 export function deleteBidBy(searchParam: Partial<Bid>) {
@@ -26,27 +26,29 @@ export function findAndUpdateBidBy(
   searchParam: Partial<Bid>,
   data: Partial<Bid>
 ) {
-  return BidModel.findOneAndUpdate(searchParam, data, { new: true }).populate({
-    path: 'trip',
-    populate: {
-      path: 'tripOwner',
-      model: 'User',
-    },
-  })
-  .populate('transporter')
+  return BidModel.findOneAndUpdate(searchParam, data, { new: true })
+    .populate({
+      path: 'trip',
+      populate: {
+        path: 'tripOwner',
+        model: 'User',
+      },
+    })
+    .populate('transporter')
 }
 
 export async function findBidBy(
   searchParam: Partial<Bid>
 ): Promise<PopulatedBid | null> {
-  const data = await BidModel.findOne(searchParam).populate({
-    path: 'trip',
-    populate: {
-      path: 'tripOwner',
-      model: 'User',
-    },
-  })
-  .populate('transporter')
+  const data = await BidModel.findOne(searchParam)
+    .populate({
+      path: 'trip',
+      populate: {
+        path: 'tripOwner',
+        model: 'User',
+      },
+    })
+    .populate('transporter')
   if (!data) return null
   return data
 }
