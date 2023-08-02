@@ -33,7 +33,7 @@ class BidController {
       const trip = await findTripBy({ _id: tripId })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: user?._id! })
-      const populatedBid = await findBidBy({_id: bidResponse._id});
+      const populatedBid = await findBidBy({ _id: bidResponse._id })
 
       const receiverSocket = getConnectedUserSocketByUserId(tripOwner?._id!)
       if (receiverSocket) {
@@ -110,12 +110,14 @@ class BidController {
   async deleteBid(req: Request, res: Response, next: NextFunction) {
     try {
       const { bidId } = req.params
-      const bid = await findBidBy({_id: bidId});
-      const trip = await findTripBy({ _id: bid?.trip._id!});
+      const bid = await findBidBy({ _id: bidId })
+      const trip = await findTripBy({ _id: bid?.trip._id! })
 
       await deleteBidBy({ _id: bidId })
 
-      const receiverSocket = getConnectedUserSocketByUserId(trip?.tripOwner?._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        trip?.tripOwner?._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
         emitRemoveBid(global.io, receiverSocket, bidId)

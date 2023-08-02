@@ -58,7 +58,9 @@ class PaymentController {
 
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: transporterCredentials._id })
-      const receiverSocket = getConnectedUserSocketByUserId(updatedTrip?.tripOwner._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        updatedTrip?.tripOwner._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
         emitTripDetails(global.io, receiverSocket, updatedTrip)
@@ -109,7 +111,9 @@ class PaymentController {
       const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
-      const receiverSocket = getConnectedUserSocketByUserId(trip?.transporter?._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        trip?.transporter?._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
         emitTripDetails(global.io, receiverSocket, trip)
@@ -154,7 +158,9 @@ class PaymentController {
       const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
-      const receiverSocket = getConnectedUserSocketByUserId(trip?.transporter?._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        trip?.transporter?._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
         emitTripDetails(global.io, receiverSocket, trip)
@@ -196,7 +202,9 @@ class PaymentController {
       const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
       const transporter = await findUserBy({ _id: trip?.transporter?._id })
-      const receiverSocket = getConnectedUserSocketByUserId(trip?.tripOwner?._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        trip?.tripOwner?._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
         emitTripDetails(global.io, receiverSocket, trip)

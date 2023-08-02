@@ -444,6 +444,40 @@ class Mail {
 
     return this.sendMail(to, 'Your goods have arrived', template)
   }
+  tripHasBeenCanceledByTransporter(
+    to: string,
+    url: string,
+    transporterName: string
+  ) {
+    const template = this.emailTemplate({
+      title: `${transporterName} has cancelled the trip 😞`,
+      content: `
+        <p class="content-paragraph"><b>${transporterName}</b> has cancelled the trip 😞. However, you can reassign the trip to another transporter by viewing trip bids.</p>
+        
+        <a href="${url}" class="action-trigger mt-32 mb-32">View Trip bids</a>
+        <p class="content-paragraph">The money paid to ${transporterName} has been reverted back to your account and can now be used to pay for your next trip or withdrawn.</p>
+      `,
+    })
+
+    return this.sendMail(to, `${transporterName} has cancelled the trip 😞`, template)
+  }
+  tripHasBeenCanceledByShipper(
+    to: string,
+    url: string,
+    shipperName: string
+  ) {
+    const template = this.emailTemplate({
+      title: `${shipperName} has cancelled the trip 😞`,
+      content: `
+        <p class="content-paragraph"><b>${shipperName}</b> has cancelled the trip 😞.  In the mean time, feel free to look through the Job board to see other trips you may be eligible for</p>
+        
+        <a href="${url}" class="action-trigger mt-32 mb-32">View Other Jobs</a>
+        <p class="content-paragraph">The team would look into the reason it was cancelled and get back to you if need be.</p>
+      `,
+    })
+
+    return this.sendMail(to, `${shipperName} has cancelled the trip 😞`, template)
+  }
 }
 
 export default new Mail()

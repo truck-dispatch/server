@@ -177,7 +177,9 @@ class TripController {
       } else {
         return Respond.error(res, 'This is not an acceptable status')
       }
-      const receiverSocket = getConnectedUserSocketByUserId(updatedTrip?.tripOwner._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        updatedTrip?.tripOwner._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
         emitTripDetails(global.io, receiverSocket, updatedTrip)
@@ -194,13 +196,7 @@ class TripController {
 
   async assignTrip(req: Request, res: Response, next: NextFunction) {
     try {
-      const {
-        from,
-        to,
-        tripId,
-        bidId,
-        paymentSource,
-      } = req.body
+      const { from, to, tripId, bidId, paymentSource } = req.body
       const transporter = await findUserBy({ _id: to })
       const bid = await findAndUpdateBidBy(
         { _id: bidId },
@@ -250,7 +246,9 @@ class TripController {
 
       const updatedTrip = await findAndUpdateTripBy({ _id: tripId }, { TDO })
 
-      const receiverSocket = getConnectedUserSocketByUserId(updatedTrip?.transporter?._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        updatedTrip?.transporter?._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
         emitTripDetails(global.io, receiverSocket, updatedTrip)
@@ -264,7 +262,7 @@ class TripController {
   async unassignTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-
+      const trip = await findTripBy({_id: tripId});
       const updatedTrip = await findAndUpdateTripBy(
         { _id: tripId },
         { transporter: null, status: 'awaiting-bid', acceptedBid: null }
@@ -279,12 +277,15 @@ class TripController {
         updatedTrip?._id!,
         bid?.price!
       )
-      const receiverSocket = getConnectedUserSocketByUserId(updatedTrip?.transporter?._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        updatedTrip?.transporter?._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
-        emitRemoveTrip(global.io, receiverSocket, updatedTrip._id);
+        emitRemoveTrip(global.io, receiverSocket, updatedTrip._id)
       }
 
+      await Mail.tripHasBeenCanceledByShipper(trip?.transporter?.email!, ``, `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`)
       // TODO: Notify transporter that trip has been unassigned
       return Respond.success(res, 'Trip has been unassigned..', {
         trip: updatedTrip,
@@ -316,12 +317,14 @@ class TripController {
 
       await deleteTrip(tripId)
 
-      const receiverSocket = getConnectedUserSocketByUserId(trip?.transporter?._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        trip?.transporter?._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
-        emitRemoveTrip(global.io, receiverSocket, tripId);
+        emitRemoveTrip(global.io, receiverSocket, tripId)
       }
-
+      await Mail.tripHasBeenCanceledByShipper(trip?.transporter?.email!, ``, `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`)
       // TODO: Notify transporter that trip has been cancelled
       return Respond.success(res, 'Trip has been cancelled.')
     } catch (err) {
@@ -348,11 +351,18 @@ class TripController {
         trip?._id!,
         bid?.price!
       )
-      const receiverSocket = getConnectedUserSocketByUserId(trip?.tripOwner?._id!)
+      const receiverSocket = getConnectedUserSocketByUserId(
+        trip?.tripOwner?._id!
+      )
       if (receiverSocket) {
         // @ts-ignore
         emitTripDetails(global.io, receiverSocket, updatedTrip)
       }
+      await Mail.tripHasBeenCanceledByTransporter(
+        trip?.tripOwner.email!,
+        `${FRONTEND_URL}/my-trips/${trip?._id}/bids`,
+        `${trip?.transporter?.firstName} ${trip?.transporter?.lastName}`
+      )
       // Notify transporter that trip has been cancelled
       return Respond.success(res, 'Trip has been cancelled.')
     } catch (err) {

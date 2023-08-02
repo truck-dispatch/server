@@ -1,5 +1,5 @@
-import Bid from "@interfaces/Bid"
-import Trip from "@interfaces/Trip"
+import Bid from '@interfaces/Bid'
+import Trip from '@interfaces/Trip'
 
 export function emitMessage(io: any, receiverId: string, data: unknown) {
   io?.to(receiverId).emit('message', data)
