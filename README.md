@@ -101,6 +101,45 @@ If SMS expires or wasn't sent, this would be the ideal endpoint to use.
   }
 ```
 
+### REQUEST EMAIL VERIFICATION
+
+POST `/auth/request-email-verification`
+
+```
+  Requires JWT
+```
+
+### REQUEST PASSWORD RESET
+
+POST `/auth/request-reset-password`
+
+```
+  {
+    email: string
+  }
+```
+
+### PASSWORD RESET
+
+POST `/auth/reset-password`
+
+```
+  {
+    token: string (JWT from email),
+    password: string (new password)
+  }
+```
+
+### VERIFY EMAIL
+
+POST `/auth/verify-email`
+
+```
+  REQUIRES JWT
+  {
+    token: string (JWT from email)
+  }
+```
 
 ### LOGIN
 
@@ -113,3 +152,98 @@ POST `/auth/login`
   }
 ```
 
+## BIDS
+
+### CREATE BID
+
+POST `/bids/:tripId`
+
+This feature is only available for service based users ('transporter', 'transportCompany') to indicate interest in an existing and unassigned trip.
+
+```
+  {
+    extraNotes?: string,
+    price: number,
+    presentLocation: string (present truck location),
+    vehicle: Vehicle (Check type in Types),
+    tripId: string
+  }
+```
+
+### UPDATE BID
+
+PATCH `/bids/:tripId`
+
+This feature is only available for service based users ('transporter', 'transportCompany') to update bid sent to an existing and unassigned trip.
+
+```
+  {
+    extraNotes?: string,
+    price?: number,
+    presentLocation?: string (present truck location),
+    vehicle?: Vehicle (Check type in Types),
+    tripId?: string
+  }
+```
+
+### GET BIDS BY TRIP CREATOR
+
+GET `/bids/:tripId`
+
+This feature is only available for client based users ('shipper', 'company') to fetch bids sent to his trip.
+
+### GET BIDS BY TRANSPORTER
+
+GET `/bids`
+
+This feature is only available for service based users ('transporter', 'transportCompany') to fetch previous but active bids.
+
+### DELETE BID
+
+DELETE `/bids/:tripId`
+
+This feature is only available for service based users ('transporter', 'transportCompany') to delete bid sent for a trip.
+
+## CHAT
+
+### CREATE CHAT
+
+POST `/chat`
+
+```
+  {
+    message: string,
+    sender: string,
+    receiver: string,
+    chatLog: string
+  }
+```
+
+### GET ALL CHAT
+
+GET `/chat`
+
+### CREATE CHAT LOG
+
+POST `/chat/log`
+
+```
+  {
+    clientId: string,
+    transporterId: string,
+  }
+```
+
+### GET CHAT LOGS
+
+GET `/chat/logs`
+
+### READ MESSAGE
+
+GET `/chat/logs`
+
+```
+  {
+    chatLog: string
+  }
+```
