@@ -61,6 +61,7 @@ npm run dev-win
 ```
 https://api.gettruckdispatch.com
 ```
+
 ## AUTHENTICATION
 
 ### REGISTER
@@ -247,3 +248,253 @@ GET `/chat/logs`
     chatLog: string
   }
 ```
+
+## EXTERNAL REQUESTS
+
+### LOAD BANKS
+
+GET `/externals/banks`
+
+### LOAD BANK ACCOUNT DETAILS
+
+GET `/externals/banks`
+
+```
+{
+  bank_code: string,
+  account_number: string
+}
+```
+
+## PAYMENTS
+
+### REQUEST PAYMENT
+
+POST `/payment/request-payment/trip/:tripId`
+
+This request is only available for transporters who have been assigned to a trip.
+
+```
+{
+  proofVideo: File (Video of the truck been loaded)
+}
+```
+
+### UPDATE PAYMENT REQUEST
+
+PATCH `/payment/request-payment/trip/:tripId`
+
+This request is only available for transporters who have been assigned to a trip.
+
+```
+{
+  proofVideo: File (Video of the truck been loaded)
+}
+```
+
+### REJECT PAYMENT REQUEST
+
+POST `/payment/payment-request/trip/:tripId/reject/:paymentRequestId`
+
+This request is only available for clients who need to reject a payment request.
+
+```
+{
+  reasonForReject: string
+}
+```
+
+### APPROVE PAYMENT REQUEST
+
+POST `/payment/payment-request/trip/:tripId/approve/:paymentRequestId`
+
+This request is only available for clients who need to reject a payment request.
+
+### GET ALL PAYMENT REQUESTS
+
+GET `/payment/payment-requests`
+
+This request is only available for transporters who need to see all payments.
+
+## RATINGS
+
+### RATE USER
+
+POST `/rating/:tripId`
+
+```
+{
+  comment: string,
+  userRating: string(userId),
+  userRated: string(userId),
+  tripId: string,
+  starRating: number (1-5)
+}
+```
+
+### GET TRIP RATING OF A USER
+
+GET `/rating/:tripId`
+
+this can be used to check if a user has rated after a trip has been completed. and if hasn't trigger rating form.
+
+## TRIP
+
+### CREATE TRIP
+
+POST `/trips`
+
+```
+{
+  pickUpAddress: string,
+  deliveryAddress: string,
+  pickUpDate: string,
+  deliveryDate: string,
+  typeOfGoods: string,
+  weight: number,
+  sizeOfContainer: string (e.g '20ft', '2 By 20ft', '40ft', '45ft'),
+  shippingLine: string (e.g 'Maersk line', 'Cosco', 'Zim', 'mol', 'Hapagllyod', 'CMA', 'ARKAS', 'MSC', 'OOCL'),
+  jobType: string (e.g 'Empty', 'Import', 'Export'),
+}
+```
+
+### UPDATE TRIP
+
+PATCH `/trips/:tripId`
+
+```
+{
+  pickUpAddress: string,
+  deliveryAddress: string,
+  pickUpDate: string,
+  deliveryDate: string,
+  typeOfGoods: string,
+  weight: number,
+  sizeOfContainer: string (e.g '20ft', '2 By 20ft', '40ft', '45ft'),
+  shippingLine: string (e.g 'Maersk line', 'Cosco', 'Zim', 'mol', 'Hapagllyod', 'CMA', 'ARKAS', 'MSC', 'OOCL'),
+  jobType: string (e.g 'Empty', 'Import', 'Export'),
+}
+```
+
+### GET TRIPS
+
+GET `/trips`
+
+### GET TRIP
+
+GET `/trips/:tripId`
+
+### GET JOBS
+
+GET `/trips/jobs`
+
+For a transporter to get all active jobs on the platform.
+
+### GET BIDS SENT TO A TRIP BY TRIP CREATOR
+
+GET `/trips/jobs/:tripId`
+
+For a client to get all bids sent to his trip.
+
+### CHANGE TRIP STATUS
+
+PATCH `/trips/change-status/:status`
+
+A transporter can change the status of a trip assigned to him from `assigned` => `in-progress` => `completed`
+
+### ASSIGN TRIP
+
+PATCH `/trips/:tripId/assign-trip`
+
+```
+{
+  from: string (userId of trip owner),
+  to: string (userId of assigned transporter),
+  tripId: string,
+  bidId: string (id of accepted bid),
+  processorReference?: string (paystack processor reference),
+  paymentSource: string ('balance' | 'paystack'),
+  amountInBid: number,
+  totalAmountPaid: number,
+  transaction?: string (for paystack),
+}
+```
+
+### UNASSIGN TRIP
+
+PATCH `/trips/:tripId/unassign-trip`
+
+```
+{
+  tripId: string
+}
+```
+
+### CANCEL TRIP BY TRIP OWNER
+
+PATCH `/trips/:tripId/cancel-trip-by-trip-owner`
+
+```
+{
+  tripId: string
+}
+```
+
+### CANCEL TRIP BY TRANSPORTER
+
+PATCH `/trips/:tripId/cancel-trip-by-transporter`
+
+```
+{
+  tripId: string
+}
+```
+
+### UPLOAD TDO
+
+```
+{
+  TDO: File
+}
+```
+
+## USER
+
+### GET PROFILE
+
+GET `/user`
+
+### UPDATE USER
+
+PATCH `/user`
+
+```
+{
+  avatar: File
+}
+```
+
+### ADD & UPDATE BANK DETAILS
+
+POST `/user/bank-details`
+
+```
+{
+  name: string,
+  account_number: number,
+  bank_code: number,
+  bank_name: string
+}
+```
+
+### UPDATE PASSWORD
+
+POST `/user/update-password`
+
+```
+{
+  password: string
+}
+```
+
+<!-- TODO: Document Vehicle and Verification -->
