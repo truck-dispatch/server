@@ -32,6 +32,10 @@ const schema = new Schema(
       required: true,
       ref: 'User',
     },
+    facialPicture: {
+      type: String,
+      required: true
+    },
     guarantor: {
       name: {
         type: String,
