@@ -54,8 +54,6 @@ class Cloudinary {
         }
       }
     }
-
-    console.log(extract ? (file as FileType).path : file as string);
     try {
       const result = await cloudinary.uploader.upload(extract ? (file as FileType).path : file as string, options)
       return result.secure_url!
