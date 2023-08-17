@@ -21,6 +21,7 @@ router.post(
   UserMiddlewares.checkBankAccountDetails,
   UserController.addBankAccount
 )
+// TODO: CHANGE TO PATCH
 router.post(
   '/update-password',
   JWTMiddlewares.jwtIsValid,

@@ -17,9 +17,12 @@ cloudinary.config({
   secure: true,
 })
 
+interface FileType { path: string }
+
 export interface UploadParams {
-  file: { path: string } // Change the type of file to 'any' or 'Buffer'
-  isVideo?: boolean
+  file: FileType | string // Change the type of file to 'any' or 'Buffer'
+  isVideo?: boolean,
+  extract?: boolean
 }
 
 class Cloudinary {
@@ -31,7 +34,7 @@ class Cloudinary {
    * @returns
    */
   async upload(
-    { file, isVideo }: UploadParams,
+    { file, isVideo, extract = true }: UploadParams,
     cloudinaryUrlForPreviousAsset?: string
   ): Promise<string> {
     let options: Record<string, unknown> = {
@@ -51,19 +54,18 @@ class Cloudinary {
         }
       }
     }
-
     try {
-      const result = await cloudinary.uploader.upload(file.path, options)
+      const result = await cloudinary.uploader.upload(extract ? (file as FileType).path : file as string, options)
       return result.secure_url!
     } catch (err) {
       // TODO: check format of error
       // @ts-ignore
       throw new Error(err.message)
     } finally {
-      // Delete in both success and error cases
-      fs.unlink(file.path, (err) => {
+      if (extract) {// Delete in both success and error cases
+      fs.unlink((file as FileType).path , (err) => {
         if (err) throw new Error(err.message)
-      })
+      })}
     }
   }
 }

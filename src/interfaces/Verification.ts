@@ -8,6 +8,7 @@ export default interface Verification {
   homeUtilityBill: string
   garageAddress: string
   officeAddress: string
+  facialPicture: string
   user: string | Types.ObjectId
   guarantor: {
     name: string

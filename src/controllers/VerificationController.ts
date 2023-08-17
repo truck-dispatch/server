@@ -134,7 +134,10 @@ async function extractedVerificationData(req: Request) {
     verificationData.guarantor.idDoc = await Cloudinary.upload({
       file: rawGuarantorIdDoc,
     })
-
+  if (req.body.facialPicture) verificationData.facialPicture = await Cloudinary.upload({
+    file: req.body.facialPicture,
+    extract: false
+  })
   if (req.body.idType) verificationData.idType = req.body.idType
   if (req.body.homeAddress) verificationData.homeAddress = req.body.homeAddress
   if (req.body.garageAddress)

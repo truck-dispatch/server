@@ -28,7 +28,7 @@ class VerificationMiddlewares {
           res,
           'User verification has already been submitted'
         )
-      const { idType, homeAddress, garageAddress, officeAddress } = req.body
+      const { idType, homeAddress, garageAddress, officeAddress, facialPicture } = req.body
       const idDoc = Helpers.extractFileFromReq(req, 'idDoc')
       const homeUtilityBill = Helpers.extractFileFromReq(req, 'homeUtilityBill')
       const guarantorIdDoc = Helpers.extractFileFromReq(req, 'guarantor.idDoc')
@@ -40,6 +40,7 @@ class VerificationMiddlewares {
         !idDoc ||
         !homeUtilityBill ||
         !guarantorIdDoc ||
+        !facialPicture ||
         !req.body['guarantor.name'] ||
         !req.body['guarantor.email'] ||
         !req.body['guarantor.phone'] ||
@@ -48,7 +49,7 @@ class VerificationMiddlewares {
       ) {
         return Respond.error(
           res,
-          'idType, homeAddress, garageAddress, officeAddress, idDoc, homeUtilityBill, guarantorIdDoc and all guarantor details are all compulsory fields.'
+          'idType, homeAddress, garageAddress, officeAddress, idDoc, homeUtilityBill, guarantorIdDoc, facialPicture and all guarantor details are all compulsory fields.'
         )
       }
       next()
