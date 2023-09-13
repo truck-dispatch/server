@@ -14,6 +14,10 @@ export function findRatingBy(searchParams: Partial<Rating>) {
   return RatingModel.findOne(searchParams)
 }
 
+export function findRatingsBy(searchParams: Partial<Rating>) {
+  return RatingModel.find(searchParams)
+}
+
 export async function getUsersNewRating(userId: string) {
   const ratings = await RatingModel.find({ userRated: userId }).lean()
 
