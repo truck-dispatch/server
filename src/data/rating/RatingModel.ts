@@ -24,7 +24,7 @@ const schema = new Schema(
       ref: 'User',
     },
     starRating: {
-      type: String,
+      type: Number,
       required: true,
     },
   },

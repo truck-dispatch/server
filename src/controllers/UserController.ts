@@ -120,8 +120,8 @@ class UserController {
       if (!userId) return Respond.error(res, 'userId was not passed')
       const user = await findUserBy({ _id: userId })
       if (!user) return Respond.error(res, 'user was not found')
-      const reviews = await findRatingsBy({ userRated: userId })
-      const responseData = { ...user, reviews, vehicles: [] as unknown[] }
+      const ratings = await findRatingsBy({ userRated: userId })
+      const responseData = { ...user, ratings, vehicles: [] as unknown[] }
 
       if (serviceBasedUserTypes.includes(user?.userType!)) {
         const { data } = await findVehiclesBy({ owner: userId })
