@@ -466,7 +466,6 @@ class Mail {
     url: string,
     shipperName: string
   ) {
-    console.log(to);
     const template = this.emailTemplate({
       title: `${shipperName} has cancelled the trip 😞`,
       content: `
