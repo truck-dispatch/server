@@ -324,8 +324,9 @@ class TripController {
         // @ts-ignore
         emitRemoveTrip(global.io, receiverSocket, tripId)
       }
-      await Mail.tripHasBeenCanceledByShipper(trip?.transporter?.email!, ``, `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`)
-      // TODO: Notify transporter that trip has been cancelled
+      if (trip?.transporter?.email) {
+        await Mail.tripHasBeenCanceledByShipper(trip?.transporter?.email, ``, `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`)
+      }
       return Respond.success(res, 'Trip has been cancelled.')
     } catch (err) {
       next(err)

@@ -7,6 +7,7 @@ import UserMiddlewares from '@middlewares/UserMiddlewares'
 const router = Router()
 
 router.get('/', JWTMiddlewares.jwtIsValid, UserController.getUser)
+router.get('/:userId', JWTMiddlewares.jwtIsValid, UserController.getUserProfile)
 
 router.patch(
   '/',
