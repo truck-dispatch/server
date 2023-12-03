@@ -14,8 +14,7 @@ class WalletController {
    */
   async topUpWallet(req: Request, res: Response, next: NextFunction) {
     try {
-      const { amount, totalAmountPaid, reference, transaction } =
-        req.body
+      const { amount, totalAmountPaid, reference, transaction } = req.body
       const user = getUserCredentialsFromReq(req)
 
       const [_, _trans, creditedUser] = await Promise.all([

@@ -4,9 +4,7 @@ import { Request, Response, NextFunction } from 'express'
 class WalletMiddlewares {
   allDataToTopupIsAvailable(req: Request, res: Response, next: NextFunction) {
     try {
-      const { totalAmountPaid, amount, transaction, reference } =
-        req.body
-        
+      const { totalAmountPaid, amount, transaction, reference } = req.body
 
       if (!totalAmountPaid || !amount || !transaction || !reference)
         return Respond.error(

@@ -272,7 +272,7 @@ class TripController {
         { trip: tripId, status: 'accepted' },
         { status: 'pending' }
       )
-      const [_, user] = await refundTripOwnerMoneyForCancelledTrip(
+      const updatedUser = await refundTripOwnerMoneyForCancelledTrip(
         updatedTrip?.tripOwner._id!,
         updatedTrip?._id!,
         bid?.price!
@@ -293,7 +293,7 @@ class TripController {
       // TODO: Notify transporter that trip has been unassigned
       return Respond.success(res, 'Trip has been unassigned..', {
         trip: updatedTrip,
-        user,
+        user: updatedUser,
       })
     } catch (err) {
       next(err)
@@ -306,13 +306,14 @@ class TripController {
       const user = getUserCredentialsFromReq(req)
 
       const trip = await findTripBy({ _id: tripId })
+      let updatedUser
       if (trip?.transporter) {
         // revert balance back to tripOwner;
         const bid = await findBidBy({
           trip: tripId,
           transporter: trip.transporter._id,
         })
-        await refundTripOwnerMoneyForCancelledTrip(
+        updatedUser = await refundTripOwnerMoneyForCancelledTrip(
           user._id,
           trip?._id!,
           bid?.price!
@@ -335,7 +336,7 @@ class TripController {
           `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`
         )
       }
-      return Respond.success(res, 'Trip has been cancelled.')
+      return Respond.success(res, 'Trip has been cancelled.', updatedUser)
     } catch (err) {
       next(err)
     }
@@ -421,10 +422,10 @@ async function refundTripOwnerMoneyForCancelledTrip(
   priceInBid: number
 ) {
   // For a transporter to exist, a price must have been paid prior to now.
-  return Promise.all([
-    debitUserEscrowBalance(tripOwner, priceInBid),
-    creditUser(tripOwner, priceInBid),
-    // If we happen to accept multiple payments under the same trip, this may need to be refactored.
-    findAndDeletePaymentRequestsBy({ trip: tripId }),
-  ])
+  await debitUserEscrowBalance(tripOwner, priceInBid)
+  const updatedUser = await creditUser(tripOwner, priceInBid)
+  // If we happen to accept multiple payments under the same trip, this may need to be refactored.
+  await findAndDeletePaymentRequestsBy({ trip: tripId })
+
+  return updatedUser
 }

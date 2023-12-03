@@ -24,9 +24,9 @@ const schema = new Schema(
       type: Number,
     },
     type: {
-        type: String,
-        required: true
-    }
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 )
