@@ -45,7 +45,7 @@ class PaymentController {
         transporter: transporterCredentials._id,
         trip: tripId,
         proofVideo,
-        tripReference: trip?.reference,
+        tripReference: trip.reference,
         reference: Helpers.generateReference(),
         // This is used to initiate the transfer to the user's bank account when the payment is approved.
         paymentReference: Helpers.generateUuid(),
@@ -139,11 +139,28 @@ class PaymentController {
         _id: paymentRequest?.transporter,
       })
 
+      if (!paymentRequest) {
+        return Respond.error(
+          res,
+          'This payment request does not exist. Kindly reach out to support for help.'
+        )
+      }
+      if (paymentRequest.status === 'completed') {
+        return Respond.error(res, 'This transaction has been completed')
+      }
+      if (!user?.bankDetails) {
+        return Respond.error(
+          res,
+          'Recipient has not inputted his account details.',
+          401
+        )
+      }
+
       const transferData = {
         source: 'balance',
         reason: `TruckDispatch trip-${paymentRequest?.tripReference} payment-${paymentRequest?.reference}`,
-        reference: paymentRequest?.paymentReference!,
-        recipient: user?.bankDetails.paystackRecipientCode!,
+        reference: paymentRequest.paymentReference,
+        recipient: user.bankDetails.paystackRecipientCode,
         amount: Helpers.nairaToKobo(paymentRequest?.amount!),
       }
 

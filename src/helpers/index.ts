@@ -31,7 +31,7 @@ export class Helpers {
     phone = phone.replace(/\D/g, '')
 
     if (phone.startsWith('+234')) {
-      return phone;
+      return phone
     }
 
     // If the phone starts with '0', replace it with '+234'

@@ -5,7 +5,11 @@ import AuthMiddlewares from '@middlewares/AuthMiddlewares'
 
 const router = Router()
 
-router.post('/create', AuthMiddlewares.registrationCredentialChecks, UserController.createUserProfile)
+router.post(
+  '/create',
+  AuthMiddlewares.registrationCredentialChecks,
+  UserController.createUserProfile
+)
 router.get('/', UserController.getUsers)
 router.get('/:userId', UserController.getUser)
 router.post('/suspend/:userId', UserController.suspendUser)

@@ -96,18 +96,18 @@ export async function debitUser(
   )
 }
 
-export async function creditUserLedgerBalance(
+export async function creditUserEscrowBalance(
   userId: string | Types.ObjectId,
   amount: number
 ) {
   return UserModel.findOneAndUpdate(
     { _id: userId },
-    { $inc: { ledgerBalance: amount } },
+    { $inc: { escrowBalance: amount } },
     { new: true }
   )
 }
 
-export async function debitUserLedgerBalance(
+export async function debitUserEscrowBalance(
   userId: string | Types.ObjectId,
   amount: number
 ) {
@@ -117,13 +117,13 @@ export async function debitUserLedgerBalance(
     throw new Error('User not found') // Throw an error if the user is not found
   }
 
-  if (user.ledgerBalance! < amount) {
+  if (user.escrowBalance! < amount) {
     throw new Error('Insufficient balance') // Throw an error if the ledger balance is not sufficient
   }
 
   return UserModel.findOneAndUpdate(
     { _id: userId },
-    { $inc: { ledgerBalance: -amount } },
+    { $inc: { escrowBalance: -amount } },
     { new: true }
   )
 }

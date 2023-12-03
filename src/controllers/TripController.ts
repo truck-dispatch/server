@@ -1,9 +1,9 @@
 import {
   findUserBy,
   findAndUpdateUserBy,
-  debitUserLedgerBalance,
+  debitUserEscrowBalance,
   creditUser,
-  creditUserLedgerBalance,
+  creditUserEscrowBalance,
   debitUser,
 } from '@data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
@@ -208,7 +208,7 @@ class TripController {
       }
 
       const [updatedUser, trip] = await Promise.all([
-        creditUserLedgerBalance(from, bid?.price!),
+        creditUserEscrowBalance(from, bid?.price!),
         findAndUpdateTripBy(
           { _id: tripId },
           { transporter: to, status: 'assigned', acceptedBid: bidId }
@@ -262,7 +262,7 @@ class TripController {
   async unassignTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const trip = await findTripBy({_id: tripId});
+      const trip = await findTripBy({ _id: tripId })
       const updatedTrip = await findAndUpdateTripBy(
         { _id: tripId },
         { transporter: null, status: 'awaiting-bid', acceptedBid: null }
@@ -285,7 +285,11 @@ class TripController {
         emitRemoveTrip(global.io, receiverSocket, updatedTrip._id)
       }
 
-      await Mail.tripHasBeenCanceledByShipper(trip?.transporter?.email!, ``, `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`)
+      await Mail.tripHasBeenCanceledByShipper(
+        trip?.transporter?.email!,
+        ``,
+        `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`
+      )
       // TODO: Notify transporter that trip has been unassigned
       return Respond.success(res, 'Trip has been unassigned..', {
         trip: updatedTrip,
@@ -325,7 +329,11 @@ class TripController {
         emitRemoveTrip(global.io, receiverSocket, tripId)
       }
       if (trip?.transporter?.email) {
-        await Mail.tripHasBeenCanceledByShipper(trip?.transporter?.email, ``, `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`)
+        await Mail.tripHasBeenCanceledByShipper(
+          trip?.transporter?.email,
+          ``,
+          `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`
+        )
       }
       return Respond.success(res, 'Trip has been cancelled.')
     } catch (err) {
@@ -414,7 +422,7 @@ async function refundTripOwnerMoneyForCancelledTrip(
 ) {
   // For a transporter to exist, a price must have been paid prior to now.
   return Promise.all([
-    debitUserLedgerBalance(tripOwner, priceInBid),
+    debitUserEscrowBalance(tripOwner, priceInBid),
     creditUser(tripOwner, priceInBid),
     // If we happen to accept multiple payments under the same trip, this may need to be refactored.
     findAndDeletePaymentRequestsBy({ trip: tripId }),

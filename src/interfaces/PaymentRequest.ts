@@ -9,7 +9,7 @@ export default interface PaymentRequest {
   transporter: string | Types.ObjectId
   trip: string | Types.ObjectId
   tripReference: string
-  paymentReference?: string
+  paymentReference: string
   reference: string
   amount: number
   reasonForReject?: string
