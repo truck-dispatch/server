@@ -1,6 +1,10 @@
 import { createPaymentLog } from '@data/paymentLog/paymentLogRepository'
 import { createTransaction } from '@data/transaction/transactionRepository'
-import { creditUser, creditUserEscrowBalance } from '@data/user/userRepository'
+import {
+  creditUser,
+  creditUserEscrowBalance,
+  findUserBy,
+} from '@data/user/userRepository'
 import Respond from '@helpers/Respond'
 import { getUserCredentialsFromReq } from '@services/JWT'
 import { NextFunction, Request, Response } from 'express'
@@ -47,6 +51,16 @@ class WalletController {
   async withdrawToAccount(req: Request, res: Response, next: NextFunction) {
     try {
       const { amount } = req.body
+      const { _id } = getUserCredentialsFromReq(req)
+
+      if (!amount) {
+        return Respond.error(res, 'Amount was not provided')
+      }
+      const user = await findUserBy({ _id })
+
+      if ((user?.balance || 0) < Number(amount)) {
+        return Respond.error(res, 'Insufficient funds', 400)
+      }
     } catch (err) {
       next(err)
     }
