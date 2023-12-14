@@ -11,5 +11,10 @@ router.post(
   WalletMiddlewares.allDataToTopupIsAvailable,
   WalletController.topUpWallet
 )
+router.post(
+  '/withdraw',
+  JWTMiddlewares.jwtIsValid,
+  WalletController.withdrawToAccount
+)
 
 export default router

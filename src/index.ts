@@ -17,6 +17,7 @@ import { PORT } from './common/privateKeys'
 
 import http from 'http'
 import { connectSocket } from './services/socket/connect.socket'
+import Respond from '@helpers/Respond'
 
 const app = express()
 const rateLimiter = rateLimit(rateLimitConfig)
@@ -53,18 +54,28 @@ app.use((req, res, next) => {
   return true
 })
 
-// error handler
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
+app.use('/api/v0.1', routes)
 
-  res.status(err.status).json({
-    error: true,
-    message: 'Something went wrong',
-  })
-  next()
+// global error handler
+const errorHandler: ErrorRequestHandler = (err, req, res) => {
+  if (res.headersSent) {
+    console.error('Headers already sent, cannot respond to client');
+    return;
+  }
+
+  const statusCode = err.status || 500;
+
+  return Respond.error(res, err.message || 'Something went wrong', statusCode);
 }
 app.use(errorHandler)
+
+// catch 404 and forward to error handler
+app.use((_, res) =>
+  res.status(404).json({
+    error: true,
+    message: 'you seem to be lost',
+  })
+)
 
 const server = http.createServer(app)
 const io = new Server(server, {
@@ -76,16 +87,6 @@ const io = new Server(server, {
 io.on('connect', connectSocket)
 // @ts-ignore;
 global.io = io
-
-app.use('/api/v0.1', routes)
-
-// catch 404 and forward to error handler
-app.use((_, res) =>
-  res.status(404).json({
-    error: true,
-    message: 'you seem to be lost',
-  })
-)
 
 server.listen(PORT, () => {
   console.log(`Running on port ${PORT}`)

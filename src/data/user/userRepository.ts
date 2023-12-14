@@ -59,11 +59,6 @@ export async function findUsersBy(param: Partial<User>) {
   return users.map(({ password, ...user }) => user)
 }
 
-export function deleteAllUsers() {
-  console.log('all users are about to be deleted')
-  UserModel.deleteMany({})
-}
-
 export async function creditUser(
   userId: string | Types.ObjectId,
   amount: number
@@ -86,7 +81,7 @@ export async function debitUser(
   }
 
   if (user.balance! < amount) {
-    throw new Error('Insufficient balance') // Throw an error if the ledger balance is not sufficient
+    throw new Error('Insufficient balance in account') // Throw an error if the ledger balance is not sufficient
   }
 
   return UserModel.findOneAndUpdate(
@@ -118,7 +113,7 @@ export async function debitUserEscrowBalance(
   }
 
   if (user.escrowBalance! < amount) {
-    throw new Error('Insufficient balance') // Throw an error if the ledger balance is not sufficient
+    throw new Error('Insufficient balance in escrow') // Throw an error if the ledger balance is not sufficient
   }
 
   return UserModel.findOneAndUpdate(

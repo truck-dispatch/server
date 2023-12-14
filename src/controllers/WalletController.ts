@@ -3,10 +3,14 @@ import { createTransaction } from '@data/transaction/transactionRepository'
 import {
   creditUser,
   creditUserEscrowBalance,
+  debitUser,
   findUserBy,
 } from '@data/user/userRepository'
+import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
+import ApiError from '@interfaces/ApiError'
 import { getUserCredentialsFromReq } from '@services/JWT'
+import Paystack from '@services/Paystack'
 import { NextFunction, Request, Response } from 'express'
 
 class WalletController {
@@ -58,9 +62,32 @@ class WalletController {
       }
       const user = await findUserBy({ _id })
 
+      if (!user?.bankDetails)
+        return Respond.error(
+          res,
+          'User bank details does not exist. Input bank details to proceed..'
+        )
+
       if ((user?.balance || 0) < Number(amount)) {
         return Respond.error(res, 'Insufficient funds', 400)
       }
+
+      const transferData = {
+        source: 'balance',
+        reason: 'TruckDispatch wallet payout payment',
+        reference: Helpers.generateReference(),
+        recipient: user.bankDetails.paystackRecipientCode,
+        amount: Helpers.nairaToKobo(Number(amount)),
+      }
+
+      await Paystack.makeTransfer(transferData).catch((err: ApiError) => {
+        throw new Error(err.response?.data?.message)
+      })
+
+      const debittedUser = await debitUser(user._id, Number(amount))
+      // TODO: send mail here.
+
+      return Respond.success(res, "Your money is on it's way", debittedUser)
     } catch (err) {
       next(err)
     }

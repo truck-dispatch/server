@@ -7,7 +7,7 @@ import {
   findPaymentRequestsBy,
 } from '@data/paymentRequest/paymentRequestRepository'
 import { findAndUpdateTripBy, findTripBy } from '@data/trip/tripRepository'
-import { findUserBy } from '@data/user/userRepository'
+import { debitUserEscrowBalance, findUserBy } from '@data/user/userRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
 import Cloudinary from '@services/Cloudinary'
@@ -132,23 +132,25 @@ class PaymentController {
   async approvePaymentRequest(req: Request, res: Response, next: NextFunction) {
     try {
       const { paymentRequestId } = req.params
+      const { _id: shipperId } = getUserCredentialsFromReq(req)
       const paymentRequest = await findPaymentRequestBy({
         _id: paymentRequestId,
       })
-      const user = await findUserBy({
-        _id: paymentRequest?.transporter,
-      })
-
       if (!paymentRequest) {
         return Respond.error(
           res,
           'This payment request does not exist. Kindly reach out to support for help.'
         )
       }
+
+      const transporter = await findUserBy({
+        _id: paymentRequest?.transporter,
+      })
+
       if (paymentRequest.status === 'completed') {
         return Respond.error(res, 'This transaction has been completed')
       }
-      if (!user?.bankDetails) {
+      if (!transporter?.bankDetails) {
         return Respond.error(
           res,
           'Recipient has not inputted his account details.',
@@ -160,13 +162,17 @@ class PaymentController {
         source: 'balance',
         reason: `TruckDispatch trip-${paymentRequest?.tripReference} payment-${paymentRequest?.reference}`,
         reference: paymentRequest.paymentReference,
-        recipient: user.bankDetails.paystackRecipientCode,
+        recipient: transporter.bankDetails.paystackRecipientCode,
         amount: Helpers.nairaToKobo(paymentRequest?.amount!),
       }
 
       await Paystack.makeTransfer(transferData).catch((err: ApiError) => {
         throw new Error(err.response?.data?.message)
       })
+      const debittedUser = await debitUserEscrowBalance(
+        shipperId,
+        Number(paymentRequest.amount)
+      )
 
       const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
         { _id: paymentRequestId },
@@ -174,7 +180,6 @@ class PaymentController {
       )
       const trip = await findTripBy({ _id: updatedPaymentRequest?.trip! })
       const tripOwner = await findUserBy({ _id: trip?.tripOwner._id })
-      const transporter = await findUserBy({ _id: trip?.transporter?._id })
       const receiverSocket = getConnectedUserSocketByUserId(
         trip?.transporter?._id!
       )
@@ -188,7 +193,10 @@ class PaymentController {
         `${tripOwner?.firstName} ${tripOwner?.lastName}`
       )
 
-      return Respond.success(res, 'Payment request approved', trip)
+      return Respond.success(res, 'Payment request approved', {
+        trip,
+        user: debittedUser,
+      })
     } catch (err) {
       next(err)
     }
