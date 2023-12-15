@@ -459,13 +459,13 @@ class Mail {
       `,
     })
 
-    return this.sendMail(to, `${transporterName} has cancelled the trip 😞`, template)
+    return this.sendMail(
+      to,
+      `${transporterName} has cancelled the trip 😞`,
+      template
+    )
   }
-  tripHasBeenCanceledByShipper(
-    to: string,
-    url: string,
-    shipperName: string
-  ) {
+  tripHasBeenCanceledByShipper(to: string, url: string, shipperName: string) {
     const template = this.emailTemplate({
       title: `${shipperName} has cancelled the trip 😞`,
       content: `
@@ -476,7 +476,11 @@ class Mail {
       `,
     })
 
-    return this.sendMail(to, `${shipperName} has cancelled the trip 😞`, template)
+    return this.sendMail(
+      to,
+      `${shipperName} has cancelled the trip 😞`,
+      template
+    )
   }
 }
 

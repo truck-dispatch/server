@@ -11,6 +11,7 @@ import externals from './externals.routes'
 import admin from './admin.routes'
 import rating from './rating.routes'
 import vehicle from './vehicle.routes'
+import wallet from './wallet.routes'
 
 const router = Router()
 
@@ -27,6 +28,7 @@ router.use('/vehicle', vehicle)
 router.use('/admin', admin)
 // External services required by the frontend.
 router.use('/externals', externals)
+router.use('/wallet', wallet)
 
 /* GET home page. */
 router.get('/', (req, res) => {

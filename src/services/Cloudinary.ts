@@ -17,11 +17,13 @@ cloudinary.config({
   secure: true,
 })
 
-interface FileType { path: string }
+interface FileType {
+  path: string
+}
 
 export interface UploadParams {
   file: FileType | string // Change the type of file to 'any' or 'Buffer'
-  isVideo?: boolean,
+  isVideo?: boolean
   extract?: boolean
 }
 
@@ -55,17 +57,22 @@ class Cloudinary {
       }
     }
     try {
-      const result = await cloudinary.uploader.upload(extract ? (file as FileType).path : file as string, options)
+      const result = await cloudinary.uploader.upload(
+        extract ? (file as FileType).path : (file as string),
+        options
+      )
       return result.secure_url!
     } catch (err) {
       // TODO: check format of error
       // @ts-ignore
       throw new Error(err.message)
     } finally {
-      if (extract) {// Delete in both success and error cases
-      fs.unlink((file as FileType).path , (err) => {
-        if (err) throw new Error(err.message)
-      })}
+      if (extract) {
+        // Delete in both success and error cases
+        fs.unlink((file as FileType).path, (err) => {
+          if (err) throw new Error(err.message)
+        })
+      }
     }
   }
 }

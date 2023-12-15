@@ -18,7 +18,6 @@ router.patch(
 router.post(
   '/bank-details',
   JWTMiddlewares.jwtIsValid,
-  JWTMiddlewares.checkIsServiceBasedUserType,
   UserMiddlewares.checkBankAccountDetails,
   UserController.addBankAccount
 )

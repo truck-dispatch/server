@@ -35,7 +35,6 @@ class VerificationMiddleware {
       const user = await findUserBy({ _id: userId })
       if (user?.status === 'verified')
         return Respond.error(res, 'User has already been verified')
-      console.log(user)
 
       next()
     } catch (err) {
