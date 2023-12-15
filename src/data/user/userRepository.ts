@@ -80,7 +80,7 @@ export async function debitUser(
     throw new Error('User not found') // Throw an error if the user is not found
   }
 
-  if (user.balance! < amount) {
+  if ((user.balance || 0) < amount) {
     throw new Error('Insufficient balance in account') // Throw an error if the ledger balance is not sufficient
   }
 

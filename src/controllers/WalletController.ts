@@ -68,10 +68,6 @@ class WalletController {
           'User bank details does not exist. Input bank details to proceed..'
         )
 
-      if ((user?.balance || 0) < Number(amount)) {
-        return Respond.error(res, 'Insufficient funds', 400)
-      }
-
       const transferData = {
         source: 'balance',
         reason: 'TruckDispatch wallet payout payment',
@@ -80,11 +76,11 @@ class WalletController {
         amount: Helpers.nairaToKobo(Number(amount)),
       }
 
+      const debittedUser = await debitUser(user._id, Number(amount))
       await Paystack.makeTransfer(transferData).catch((err: ApiError) => {
         throw new Error(err.response?.data?.message)
       })
 
-      const debittedUser = await debitUser(user._id, Number(amount))
       // TODO: send mail here.
 
       return Respond.success(res, "Your money is on it's way", debittedUser)
