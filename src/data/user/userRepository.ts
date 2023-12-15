@@ -77,11 +77,11 @@ export async function debitUser(
   const user = await UserModel.findById(userId)
 
   if (!user) {
-    throw new Error('User not found') // Throw an error if the user is not found
+    throw new Error('User not found')
   }
 
   if ((user.balance || 0) < amount) {
-    throw new Error('Insufficient balance in account') // Throw an error if the ledger balance is not sufficient
+    throw new Error('Insufficient balance in account')
   }
 
   return UserModel.findOneAndUpdate(
@@ -109,11 +109,11 @@ export async function debitUserEscrowBalance(
   const user = await UserModel.findById(userId)
 
   if (!user) {
-    throw new Error('User not found') // Throw an error if the user is not found
+    throw new Error('User not found')
   }
 
   if (user.escrowBalance! < amount) {
-    throw new Error('Insufficient balance in escrow') // Throw an error if the ledger balance is not sufficient
+    throw new Error('Insufficient balance in escrow')
   }
 
   return UserModel.findOneAndUpdate(

@@ -158,6 +158,10 @@ class PaymentController {
         )
       }
 
+      const debittedUser = await debitUserEscrowBalance(
+        shipperId,
+        Number(paymentRequest.amount)
+      )
       const transferData = {
         source: 'balance',
         reason: `TruckDispatch trip-${paymentRequest?.tripReference} payment-${paymentRequest?.reference}`,
@@ -169,10 +173,6 @@ class PaymentController {
       await Paystack.makeTransfer(transferData).catch((err: ApiError) => {
         throw new Error(err.response?.data?.message)
       })
-      const debittedUser = await debitUserEscrowBalance(
-        shipperId,
-        Number(paymentRequest.amount)
-      )
 
       const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
         { _id: paymentRequestId },

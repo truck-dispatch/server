@@ -267,15 +267,15 @@ class TripController {
         { _id: tripId },
         { transporter: null, status: 'awaiting-bid', acceptedBid: null }
       )
-      // revert balance back to tripOwner;
       const bid = await findAndUpdateBidBy(
         { trip: tripId, status: 'accepted' },
         { status: 'pending' }
       )
+      if (!bid) return Respond.error(res, 'Bid does not exist. Kindly reach out to the team for support.')
       const updatedUser = await refundTripOwnerMoneyForCancelledTrip(
         updatedTrip?.tripOwner._id!,
         updatedTrip?._id!,
-        bid?.price!
+        bid.price!
       )
       const receiverSocket = getConnectedUserSocketByUserId(
         updatedTrip?.transporter?._id!
