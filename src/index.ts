@@ -39,7 +39,7 @@ app.use(
 )
 
 /*
- * Cors is enabled so the client can acces enpoint on this API wthout having to make request *
+ * Cors is enabled so the client can acces enpoint on this API wthout having to make request
  *  from the same Origin
  */
 app.use((req, res, next) => {
@@ -55,20 +55,6 @@ app.use((req, res, next) => {
 })
 
 app.use('/api/v0.1', routes)
-
-// global error handler
-const errorHandler: ErrorRequestHandler = (err, req, res) => {
-  if (res.headersSent) {
-    console.error('Headers already sent, cannot respond to client');
-    return;
-  }
-
-  const statusCode = err.status || 500;
-
-  return Respond.error(res, err.message || 'Something went wrong', statusCode);
-}
-app.use(errorHandler)
-
 // catch 404 and forward to error handler
 app.use((_, res) =>
   res.status(404).json({
@@ -76,6 +62,16 @@ app.use((_, res) =>
     message: 'you seem to be lost',
   })
 )
+// global error handler
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  const statusCode = err.status || 500;
+  const genericMessage = 'Something went wrong, The team has been notified and are working on fixing it.'
+  const errorMessage = req.app.get('env') === 'development' ? err.message || genericMessage : genericMessage
+
+  return Respond.error(res, errorMessage, statusCode);
+}
+app.use(errorHandler)
+
 
 const server = http.createServer(app)
 const io = new Server(server, {
