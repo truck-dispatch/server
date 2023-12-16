@@ -271,7 +271,11 @@ class TripController {
         { trip: tripId, status: 'accepted' },
         { status: 'pending' }
       )
-      if (!bid) return Respond.error(res, 'Bid does not exist. Kindly reach out to the team for support.')
+      if (!bid)
+        return Respond.error(
+          res,
+          'Bid does not exist. Kindly reach out to the team for support.'
+        )
       const updatedUser = await refundTripOwnerMoneyForCancelledTrip(
         updatedTrip?.tripOwner._id!,
         updatedTrip?._id!,
@@ -387,14 +391,17 @@ async function setTripToCompleted(tripId: string) {
     { _id: tripId },
     { status: 'completed', completionTime: new Date().toISOString() }
   )
-  const user = await findUserBy({ _id: updatedTrip?.transporter?._id })
-  const completedTrips = user?.completedTrips! + 1
-  await findAndUpdateUserBy({ _id: user?._id! }, { completedTrips })
+  const transporter = await findUserBy({ _id: updatedTrip?.transporter?._id })
+  const shipper = await findUserBy({ _id: updatedTrip?.tripOwner?._id })
+  const TransportercompletedTrips = transporter?.completedTrips! + 1
+  const shippercompletedTrips = shipper?.completedTrips! + 1
+  await findAndUpdateUserBy({ _id: transporter?._id! }, { completedTrips: TransportercompletedTrips })
+  await findAndUpdateUserBy({ _id: shipper?._id! }, { completedTrips: shippercompletedTrips })
   const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner._id })
   Mail.tripHasBeenSetToCompleted(
     tripOwner?.email!,
     `${FRONTEND_URL}/my-trips/${tripId}`,
-    `${user?.firstName} ${user?.lastName}`
+    `${transporter?.firstName} ${transporter?.lastName}`
   )
 
   return updatedTrip

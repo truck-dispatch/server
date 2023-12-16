@@ -64,14 +64,17 @@ app.use((_, res) =>
 )
 // global error handler
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  const statusCode = err.status || 500;
-  const genericMessage = 'Something went wrong, The team has been notified and are working on fixing it.'
-  const errorMessage = req.app.get('env') === 'development' ? err.message || genericMessage : genericMessage
+  const statusCode = err.status || 500
+  const genericMessage =
+    'Something went wrong, The team has been notified and are working on fixing it.'
+  const errorMessage =
+    req.app.get('env') === 'development'
+      ? err.message || genericMessage
+      : genericMessage
 
-  return Respond.error(res, errorMessage, statusCode);
+  return Respond.error(res, errorMessage, statusCode)
 }
 app.use(errorHandler)
-
 
 const server = http.createServer(app)
 const io = new Server(server, {
