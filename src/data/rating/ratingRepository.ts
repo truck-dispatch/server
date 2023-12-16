@@ -16,6 +16,8 @@ export function findRatingBy(searchParams: Partial<Rating>) {
 
 export function findRatingsBy(searchParams: Partial<Rating>) {
   return RatingModel.find(searchParams)
+    .populate('userRating', '-password')
+    .populate('userRated', '-password')
 }
 
 export async function getUsersNewRating(userId: string) {
