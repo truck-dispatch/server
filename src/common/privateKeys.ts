@@ -18,3 +18,4 @@ export const CLOUDINARY_FOLDER_NAME = process.env.CLOUDINARY_FOLDER_NAME
 export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD
 export const NO_REPLY_EMAIL_ADDRESS = process.env.NO_REPLY_EMAIL_ADDRESS
 export const COMPANY_NAME = process.env.COMPANY_NAME
+export const SENTRY_DSN = process.env.SENTRY_DSN

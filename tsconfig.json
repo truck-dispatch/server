@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
+
     "paths": {
       "@common/*": [
         "common/*"
@@ -27,6 +28,7 @@
         "data/*"
       ],
     },
+
     "target": "es6",
     "module": "commonjs",
     "outDir": "./dist",
@@ -35,7 +37,13 @@
     "strict": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "inlineSources": true,
+
+    // Set `sourceRoot` to  "/" to strip the build path prefix
+    // from generated source code references.
+    // This improves issue grouping in Sentry.
+    "sourceRoot": "/"
   },
   "exclude": [
     "node_modules",

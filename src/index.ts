@@ -13,11 +13,14 @@ import './data/db'
 import routes from './routes'
 
 import corsConfig from './config/cors'
-import { PORT } from './common/privateKeys'
+import { PORT, SENTRY_DSN } from './common/privateKeys'
 
 import http from 'http'
 import { connectSocket } from './services/socket/connect.socket'
 import Respond from '@helpers/Respond'
+
+import { init as sentryInit, Integrations as SentryIntegrations, Handlers as SentryHandlers } from "@sentry/node";
+import { ProfilingIntegration } from "@sentry/profiling-node";
 
 const app = express()
 const rateLimiter = rateLimit(rateLimitConfig)
@@ -54,6 +57,20 @@ app.use((req, res, next) => {
   return true
 })
 
+sentryInit({
+  dsn: SENTRY_DSN,
+  integrations: [
+    new SentryIntegrations.Http({ tracing: true }),
+    new SentryIntegrations.Express({ app }),
+    new ProfilingIntegration(),
+  ],
+  tracesSampleRate: 1.0,
+  profilesSampleRate: 1.0,
+});
+
+app.use(SentryHandlers.requestHandler())
+app.use(SentryHandlers.tracingHandler());
+
 app.use('/api/v0.1', routes)
 // catch 404 and forward to error handler
 app.use((_, res) =>
@@ -62,7 +79,9 @@ app.use((_, res) =>
     message: 'you seem to be lost',
   })
 )
-// global error handler
+
+app.use(SentryHandlers.errorHandler());
+
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const statusCode = err.status || 500
   const genericMessage =
