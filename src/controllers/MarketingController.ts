@@ -13,7 +13,7 @@ class MarketingController {
         message
       } = req.body
 
-      if (!name || !email || !phone || !message) return Respond.error(res, "name, email, phone and message are compulsory fields")
+      // if (!name || !email || !phone || !message) return Respond.error(res, "name, email, phone and message are compulsory fields")
 
       const marketMessage = await recordMessage({
         name,
