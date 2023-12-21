@@ -59,11 +59,6 @@ export async function findUsersBy(param: Partial<User>) {
   return users.map(({ password, ...user }) => user)
 }
 
-export function deleteAllUsers() {
-  console.log('all users are about to be deleted')
-  UserModel.deleteMany({})
-}
-
 export async function creditUser(
   userId: string | Types.ObjectId,
   amount: number
@@ -82,11 +77,11 @@ export async function debitUser(
   const user = await UserModel.findById(userId)
 
   if (!user) {
-    throw new Error('User not found') // Throw an error if the user is not found
+    throw new Error('User not found')
   }
 
-  if (user.balance! < amount) {
-    throw new Error('Insufficient balance') // Throw an error if the ledger balance is not sufficient
+  if ((user.balance || 0) < amount) {
+    throw new Error('Insufficient balance in account')
   }
 
   return UserModel.findOneAndUpdate(
@@ -96,34 +91,34 @@ export async function debitUser(
   )
 }
 
-export async function creditUserLedgerBalance(
+export async function creditUserEscrowBalance(
   userId: string | Types.ObjectId,
   amount: number
 ) {
   return UserModel.findOneAndUpdate(
     { _id: userId },
-    { $inc: { ledgerBalance: amount } },
+    { $inc: { escrowBalance: amount } },
     { new: true }
   )
 }
 
-export async function debitUserLedgerBalance(
+export async function debitUserEscrowBalance(
   userId: string | Types.ObjectId,
   amount: number
 ) {
   const user = await UserModel.findById(userId)
 
   if (!user) {
-    throw new Error('User not found') // Throw an error if the user is not found
+    throw new Error('User not found')
   }
 
-  if (user.ledgerBalance! < amount) {
-    throw new Error('Insufficient balance') // Throw an error if the ledger balance is not sufficient
+  if (user.escrowBalance! < amount) {
+    throw new Error('Insufficient balance in escrow')
   }
 
   return UserModel.findOneAndUpdate(
     { _id: userId },
-    { $inc: { ledgerBalance: -amount } },
+    { $inc: { escrowBalance: -amount } },
     { new: true }
   )
 }

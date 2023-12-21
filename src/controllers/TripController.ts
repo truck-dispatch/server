@@ -1,9 +1,9 @@
 import {
   findUserBy,
   findAndUpdateUserBy,
-  debitUserLedgerBalance,
+  debitUserEscrowBalance,
   creditUser,
-  creditUserLedgerBalance,
+  creditUserEscrowBalance,
   debitUser,
 } from '@data/user/userRepository'
 import { NextFunction, Request, Response } from 'express'
@@ -208,7 +208,7 @@ class TripController {
       }
 
       const [updatedUser, trip] = await Promise.all([
-        creditUserLedgerBalance(from, bid?.price!),
+        creditUserEscrowBalance(from, bid?.price!),
         findAndUpdateTripBy(
           { _id: tripId },
           { transporter: to, status: 'assigned', acceptedBid: bidId }
@@ -262,20 +262,24 @@ class TripController {
   async unassignTrip(req: Request, res: Response, next: NextFunction) {
     try {
       const { tripId } = req.params
-      const trip = await findTripBy({_id: tripId});
+      const trip = await findTripBy({ _id: tripId })
       const updatedTrip = await findAndUpdateTripBy(
         { _id: tripId },
         { transporter: null, status: 'awaiting-bid', acceptedBid: null }
       )
-      // revert balance back to tripOwner;
       const bid = await findAndUpdateBidBy(
         { trip: tripId, status: 'accepted' },
         { status: 'pending' }
       )
-      const [_, user] = await refundTripOwnerMoneyForCancelledTrip(
+      if (!bid)
+        return Respond.error(
+          res,
+          'Bid does not exist. Kindly reach out to the team for support.'
+        )
+      const updatedUser = await refundTripOwnerMoneyForCancelledTrip(
         updatedTrip?.tripOwner._id!,
         updatedTrip?._id!,
-        bid?.price!
+        bid.price!
       )
       const receiverSocket = getConnectedUserSocketByUserId(
         updatedTrip?.transporter?._id!
@@ -285,11 +289,15 @@ class TripController {
         emitRemoveTrip(global.io, receiverSocket, updatedTrip._id)
       }
 
-      await Mail.tripHasBeenCanceledByShipper(trip?.transporter?.email!, ``, `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`)
+      await Mail.tripHasBeenCanceledByShipper(
+        trip?.transporter?.email!,
+        ``,
+        `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`
+      )
       // TODO: Notify transporter that trip has been unassigned
       return Respond.success(res, 'Trip has been unassigned..', {
         trip: updatedTrip,
-        user,
+        user: updatedUser,
       })
     } catch (err) {
       next(err)
@@ -302,13 +310,14 @@ class TripController {
       const user = getUserCredentialsFromReq(req)
 
       const trip = await findTripBy({ _id: tripId })
+      let updatedUser
       if (trip?.transporter) {
         // revert balance back to tripOwner;
         const bid = await findBidBy({
           trip: tripId,
           transporter: trip.transporter._id,
         })
-        await refundTripOwnerMoneyForCancelledTrip(
+        updatedUser = await refundTripOwnerMoneyForCancelledTrip(
           user._id,
           trip?._id!,
           bid?.price!
@@ -325,9 +334,13 @@ class TripController {
         emitRemoveTrip(global.io, receiverSocket, tripId)
       }
       if (trip?.transporter?.email) {
-        await Mail.tripHasBeenCanceledByShipper(trip?.transporter?.email, ``, `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`)
+        await Mail.tripHasBeenCanceledByShipper(
+          trip?.transporter?.email,
+          ``,
+          `${trip?.tripOwner.firstName} ${trip?.tripOwner.lastName}`
+        )
       }
-      return Respond.success(res, 'Trip has been cancelled.')
+      return Respond.success(res, 'Trip has been cancelled.', updatedUser)
     } catch (err) {
       next(err)
     }
@@ -378,14 +391,17 @@ async function setTripToCompleted(tripId: string) {
     { _id: tripId },
     { status: 'completed', completionTime: new Date().toISOString() }
   )
-  const user = await findUserBy({ _id: updatedTrip?.transporter?._id })
-  const completedTrips = user?.completedTrips! + 1
-  await findAndUpdateUserBy({ _id: user?._id! }, { completedTrips })
+  const transporter = await findUserBy({ _id: updatedTrip?.transporter?._id })
+  const shipper = await findUserBy({ _id: updatedTrip?.tripOwner?._id })
+  const TransportercompletedTrips = transporter?.completedTrips! + 1
+  const shippercompletedTrips = shipper?.completedTrips! + 1
+  await findAndUpdateUserBy({ _id: transporter?._id! }, { completedTrips: TransportercompletedTrips })
+  await findAndUpdateUserBy({ _id: shipper?._id! }, { completedTrips: shippercompletedTrips })
   const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner._id })
   Mail.tripHasBeenSetToCompleted(
     tripOwner?.email!,
     `${FRONTEND_URL}/my-trips/${tripId}`,
-    `${user?.firstName} ${user?.lastName}`
+    `${transporter?.firstName} ${transporter?.lastName}`
   )
 
   return updatedTrip
@@ -413,10 +429,10 @@ async function refundTripOwnerMoneyForCancelledTrip(
   priceInBid: number
 ) {
   // For a transporter to exist, a price must have been paid prior to now.
-  return Promise.all([
-    debitUserLedgerBalance(tripOwner, priceInBid),
-    creditUser(tripOwner, priceInBid),
-    // If we happen to accept multiple payments under the same trip, this may need to be refactored.
-    findAndDeletePaymentRequestsBy({ trip: tripId }),
-  ])
+  await debitUserEscrowBalance(tripOwner, priceInBid)
+  const updatedUser = await creditUser(tripOwner, priceInBid)
+  // If we happen to accept multiple payments under the same trip, this may need to be refactored.
+  await findAndDeletePaymentRequestsBy({ trip: tripId })
+
+  return updatedUser
 }

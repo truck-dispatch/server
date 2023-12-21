@@ -28,7 +28,13 @@ class VerificationMiddlewares {
           res,
           'User verification has already been submitted'
         )
-      const { idType, homeAddress, garageAddress, officeAddress, facialPicture } = req.body
+      const {
+        idType,
+        homeAddress,
+        garageAddress,
+        officeAddress,
+        facialPicture,
+      } = req.body
       const idDoc = Helpers.extractFileFromReq(req, 'idDoc')
       const homeUtilityBill = Helpers.extractFileFromReq(req, 'homeUtilityBill')
       const guarantorIdDoc = Helpers.extractFileFromReq(req, 'guarantor.idDoc')

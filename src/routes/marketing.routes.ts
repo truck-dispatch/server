@@ -8,4 +8,4 @@ router.post(
   MarketingController.sendMessage
 )
  
-export default router  
+export default router   

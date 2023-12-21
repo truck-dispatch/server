@@ -12,8 +12,7 @@ import { NextFunction, Request, Response } from 'express'
 class UserController {
   async createUserProfile(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, phone, userType, firstName, lastName } =
-        req.body
+      const { email, phone, userType, firstName, lastName } = req.body
       const formattedPhone = Helpers.convertPhone(phone)
 
       const data = {

@@ -30,6 +30,10 @@ export class Helpers {
     // Remove any non-digits from the input phone
     phone = phone.replace(/\D/g, '')
 
+    if (phone.startsWith('+234')) {
+      return phone
+    }
+
     // If the phone starts with '0', replace it with '+234'
     if (phone.startsWith('0')) {
       phone = '+234' + phone.substring(1)

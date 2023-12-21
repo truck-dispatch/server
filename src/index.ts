@@ -13,10 +13,14 @@ import './data/db'
 import routes from './routes'
 
 import corsConfig from './config/cors'
-import { PORT } from './common/privateKeys'
+import { PORT, SENTRY_DSN } from './common/privateKeys'
 
 import http from 'http'
 import { connectSocket } from './services/socket/connect.socket'
+import Respond from '@helpers/Respond'
+
+import { init as sentryInit, Integrations as SentryIntegrations, Handlers as SentryHandlers } from "@sentry/node";
+import { ProfilingIntegration } from "@sentry/profiling-node";
 
 const app = express()
 const rateLimiter = rateLimit(rateLimitConfig)
@@ -38,7 +42,7 @@ app.use(
 )
 
 /*
- * Cors is enabled so the client can acces enpoint on this API wthout having to make request *
+ * Cors is enabled so the client can acces enpoint on this API wthout having to make request
  *  from the same Origin
  */
 app.use((req, res, next) => {
@@ -53,16 +57,41 @@ app.use((req, res, next) => {
   return true
 })
 
-// error handler
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
+sentryInit({
+  dsn: SENTRY_DSN,
+  integrations: [
+    new SentryIntegrations.Http({ tracing: true }),
+    new SentryIntegrations.Express({ app }),
+    new ProfilingIntegration(),
+  ],
+  tracesSampleRate: 1.0,
+  profilesSampleRate: 1.0,
+});
 
-  res.status(err.status).json({
+app.use(SentryHandlers.requestHandler())
+app.use(SentryHandlers.tracingHandler());
+
+app.use('/api/v0.1', routes)
+// catch 404 and forward to error handler
+app.use((_, res) =>
+  res.status(404).json({
     error: true,
-    message: 'Something went wrong',
+    message: 'you seem to be lost',
   })
-  next()
+)
+
+app.use(SentryHandlers.errorHandler());
+
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  const statusCode = err.status || 500
+  const genericMessage =
+    'Something went wrong, The team has been notified and are working on fixing it.'
+  const errorMessage =
+    req.app.get('env') === 'development'
+      ? err.message || genericMessage
+      : genericMessage
+
+  return Respond.error(res, errorMessage, statusCode)
 }
 app.use(errorHandler)
 
@@ -76,16 +105,6 @@ const io = new Server(server, {
 io.on('connect', connectSocket)
 // @ts-ignore;
 global.io = io
-
-app.use('/api/v0.1', routes)
-
-// catch 404 and forward to error handler
-app.use((_, res) =>
-  res.status(404).json({
-    error: true,
-    message: 'you seem to be lost',
-  })
-)
 
 server.listen(PORT, () => {
   console.log(`Running on port ${PORT}`)

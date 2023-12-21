@@ -20,7 +20,7 @@ class BidController {
   async createBid(req: Request, res: Response, next: NextFunction) {
     try {
       const { extraNotes, price, presentLocation, vehicle, tripId } = req.body
-      
+
       const user = getUserCredentialsFromReq(req)
       const bidResponse = await createBid({
         extraNotes,

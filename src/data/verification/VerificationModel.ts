@@ -34,7 +34,7 @@ const schema = new Schema(
     },
     facialPicture: {
       type: String,
-      required: true
+      required: true,
     },
     guarantor: {
       name: {

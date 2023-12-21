@@ -44,7 +44,7 @@ const schema = new Schema(
       type: Number,
       default: 0,
     },
-    ledgerBalance: {
+    escrowBalance: {
       type: Number,
       default: 0,
     },
