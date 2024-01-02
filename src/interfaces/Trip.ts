@@ -29,5 +29,5 @@ export default interface Trip {
   completionTime?: string
   status: (typeof tripStatus)[number]
   acceptedBid?: Types.ObjectId | string | null
-  shipperBidPrice?: number
+  proposedPrice?: number
 }

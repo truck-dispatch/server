@@ -57,7 +57,7 @@ const schema = new Schema(
     jobType: {
       type: String,
     },
-    shipperBidPrice: {
+    proposedPrice: {
       type: String,
     },
     instructions: {
