@@ -6,13 +6,13 @@ import Respond from '@helpers/Respond';
 class HelpController {
   async sendGetHelpData (req: Request, res: Response, next: NextFunction) {
     try {
-      const { reportedTripId, reporterId, reportedId, issueMessage} = req.body
+      const { reportedTripId, reporterId, reportedId, complaint} = req.body
 
-      if( !reportedTripId || !reporterId || !reportedId || !issueMessage ) return Respond.error(res, 'reportedTripId, reporterId, reportedId, issueMessage fields are required')
+      if( !reportedTripId || !reporterId || !reportedId || !complaint ) return Respond.error(res, 'reportedTripId, reporterId, reportedId, issueMessage fields are required')
 
-      const helpData = await recordGetHelpData({reportedTripId, reporterId, reportedId, issueMessage});
+      const helpData = await recordGetHelpData({reportedTripId, reporterId, reportedId, complaint});
 
-      return Respond.success(res, 'Your complaint has been recorded you will hear from us shortly', {})
+      return Respond.success(res, 'Your complaint has been recorded you will hear from us shortly', {helpData})
 
     } catch (err) {
       next(err)

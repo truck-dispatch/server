@@ -18,7 +18,7 @@ const schema = new Schema (
       type:  Mongoose.Types.ObjectId,
       ref: 'User'
     },
-    issueMessage:{
+    complaint:{
       required: true,
       type: String
     }
