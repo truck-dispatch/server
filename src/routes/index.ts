@@ -12,6 +12,7 @@ import admin from './admin.routes'
 import rating from './rating.routes'
 import vehicle from './vehicle.routes'
 import marketing from './marketing.routes'
+import getHelp from './getHelp.routes'
 import wallet from './wallet.routes'
 
 const router = Router()
@@ -26,6 +27,7 @@ router.use('/payment', payment)
 router.use('/rating', rating)
 router.use('/vehicle', vehicle)
 router.use('/marketing', marketing)
+router.use('/get-help', getHelp)
 // Admin
 router.use('/admin', admin)
 // External services required by the frontend.
