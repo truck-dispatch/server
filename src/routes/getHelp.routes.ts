@@ -1,11 +1,11 @@
 import { Router } from "express";
-import GetHelpController from "@controllers/GetHelpController";
+import HelpController from "@controllers/HelpController";
 
 const router = Router();
 
 router.post(
   '/',
-  GetHelpController.sendGetHelpData
+  HelpController.sendGetHelpData
 )
  
 export default router   
