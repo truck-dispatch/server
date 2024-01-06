@@ -57,6 +57,9 @@ const schema = new Schema(
     jobType: {
       type: String,
     },
+    proposedPrice: {
+      type: Number,
+    },
     instructions: {
       type: String,
     },
