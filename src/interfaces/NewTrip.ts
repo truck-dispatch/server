@@ -16,4 +16,5 @@ export default interface NewTrip {
   instructions: string
   status: (typeof tripStatus)[number]
   reference: string
+  proposedPrice: number
 }
