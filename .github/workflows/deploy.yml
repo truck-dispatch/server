@@ -24,6 +24,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Print Environment Variables
+        run: |
+          echo "SENTRY_DSN: ${{ secrets.SENTRY_DSN }}"
+          echo "SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}"
+
       - name: Deploy to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
