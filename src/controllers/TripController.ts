@@ -58,7 +58,7 @@ class TripController {
         deliveryDate,
         typeOfGoods,
         weight,
-        proposedPrice,
+        proposedPrice: proposedPrice && Number(proposedPrice),
         sizeOfContainer,
         shippingLine,
         jobType,

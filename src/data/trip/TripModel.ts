@@ -58,7 +58,7 @@ const schema = new Schema(
       type: String,
     },
     proposedPrice: {
-      type: String,
+      type: Number,
     },
     instructions: {
       type: String,
