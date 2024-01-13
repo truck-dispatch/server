@@ -16,12 +16,25 @@ import Sms from '@services/Sms'
 import User from 'interfaces/User'
 import { FRONTEND_URL } from '@common/privateKeys'
 import { encrypt } from '@services/encrypt'
+import { createReferral } from '@data/referral/referralRepository'
+import {
+  referralCommisionForClientBasedUsers,
+  referralCommisionForServiceBasedUsers,
+  serviceBasedUserTypes,
+} from '@common/constants'
 
 class AuthController {
   async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, phone, userType, firstName, lastName, roleInCompany } =
-        req.body
+      const {
+        email,
+        phone,
+        userType,
+        firstName,
+        lastName,
+        roleInCompany,
+        referralCode,
+      } = req.body
       const formattedPhone = Helpers.convertPhone(phone)
 
       const data = {
@@ -38,6 +51,19 @@ class AuthController {
       if (userType !== 'shipper') data.status = 'unverified'
       const user = await createUser(data)
 
+      if (referralCode) {
+        const referrer = await findUserBy({ referrerCode: referralCode })
+        if (referrer) {
+          await createReferral({
+            commission: serviceBasedUserTypes.includes(userType)
+              ? referralCommisionForServiceBasedUsers
+              : referralCommisionForClientBasedUsers,
+            status: 'pending',
+            referred: user?._id,
+            referrer: referrer._id,
+          })
+        }
+      }
       await Sms.sendOTP({
         to: formattedPhone,
       })
