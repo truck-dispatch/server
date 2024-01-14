@@ -10,7 +10,6 @@ import { findAndUpdateTripBy, findTripBy } from '@data/trip/tripRepository'
 import {
   creditUser,
   debitUserEscrowBalance,
-  findAndUpdateUserBy,
   findUserBy,
 } from '@data/user/userRepository'
 import { Helpers } from '@helpers/index'
