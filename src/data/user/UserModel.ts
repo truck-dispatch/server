@@ -79,10 +79,6 @@ const schema = new Schema(
     companyDetails: {
       type: Object,
     },
-    // ID of the referrer
-    referralCode: {
-      type: String,
-    },
     referrerCode: {
       type: String,
       default: shortid.generate,
