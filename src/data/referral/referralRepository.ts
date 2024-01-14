@@ -10,3 +10,9 @@ export async function findAllReferrals(query: Partial<Referral>) {
     .populate('referrer', '-password')
     .populate('referred', '-password')
 }
+export async function findAndUpdateReferral(
+  query: Partial<Referral>,
+  data: Partial<Referral>
+) {
+  return ReferralModel.findOneAndUpdate(query, data, { new: true })
+}

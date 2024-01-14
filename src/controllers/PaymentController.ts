@@ -7,7 +7,12 @@ import {
   findPaymentRequestsBy,
 } from '@data/paymentRequest/paymentRequestRepository'
 import { findAndUpdateTripBy, findTripBy } from '@data/trip/tripRepository'
-import { debitUserEscrowBalance, findUserBy } from '@data/user/userRepository'
+import {
+  creditUser,
+  debitUserEscrowBalance,
+  findAndUpdateUserBy,
+  findUserBy,
+} from '@data/user/userRepository'
 import { Helpers } from '@helpers/index'
 import Respond from '@helpers/Respond'
 import Cloudinary from '@services/Cloudinary'
@@ -18,6 +23,8 @@ import Mail from '@services/Mail'
 import { FRONTEND_URL } from '@common/privateKeys'
 import { getConnectedUserSocketByUserId } from '@services/socket/connectedUsers.socket'
 import { emitTripDetails } from '@services/socket/events.socket'
+import { findAndUpdateReferral } from '@data/referral/referralRepository'
+import { minPriceForReferralCommission } from '@common/constants'
 
 class PaymentController {
   async requestPaymentForTrip(req: Request, res: Response, next: NextFunction) {
@@ -173,6 +180,28 @@ class PaymentController {
       await Paystack.makeTransfer(transferData).catch((err: ApiError) => {
         throw new Error(err.response?.data?.message)
       })
+
+      if (paymentRequest?.amount >= minPriceForReferralCommission) {
+        // Referral payouts
+        const transporterReferral = await findAndUpdateReferral(
+          { referred: transporter._id, status: 'pending' },
+          { status: 'completed' }
+        )
+        const shipperReferral = await findAndUpdateReferral(
+          { referred: shipperId, status: 'pending' },
+          { status: 'completed' }
+        )
+
+        if (transporterReferral) {
+          await creditUser(
+            transporterReferral.referrer,
+            transporterReferral.commission
+          )
+        }
+        if (shipperReferral) {
+          await creditUser(shipperReferral.referrer, shipperReferral.commission)
+        }
+      }
 
       const updatedPaymentRequest = await findAndUpdatePaymentRequestBy(
         { _id: paymentRequestId },

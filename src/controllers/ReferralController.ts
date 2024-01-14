@@ -9,7 +9,11 @@ class ReferralController {
       const { _id } = getUserCredentialsFromReq(req)
       const referrals = await findAllReferrals({ referrer: _id })
 
-      return Respond.success(res, "Referred users fetched suuccessfully", referrals)
+      return Respond.success(
+        res,
+        'Referred users fetched suuccessfully',
+        referrals
+      )
     } catch (err) {
       next(err)
     }

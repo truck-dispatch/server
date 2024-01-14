@@ -4,10 +4,6 @@ import ReferralController from '@controllers/ReferralController'
 
 const router = Router()
 
-router.get(
-  '/',
-  JWTMiddlewares.jwtIsValid,
-  ReferralController.getReferees
-)
+router.get('/', JWTMiddlewares.jwtIsValid, ReferralController.getReferees)
 
 export default router
