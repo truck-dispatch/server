@@ -1,5 +1,6 @@
 import { model, Schema } from 'mongoose'
 import User from 'interfaces/User'
+import shortid from 'shortid'
 
 const schema = new Schema(
   {
@@ -77,6 +78,11 @@ const schema = new Schema(
     },
     companyDetails: {
       type: Object,
+    },
+    referrerCode: {
+      type: String,
+      default: shortid.generate,
+      unique: true,
     },
   },
   { timestamps: true }

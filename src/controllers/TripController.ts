@@ -42,6 +42,7 @@ class TripController {
         deliveryDate,
         typeOfGoods,
         weight,
+        proposedPrice,
         sizeOfContainer,
         shippingLine,
         jobType,
@@ -57,6 +58,7 @@ class TripController {
         deliveryDate,
         typeOfGoods,
         weight,
+        proposedPrice: proposedPrice && Number(proposedPrice),
         sizeOfContainer,
         shippingLine,
         jobType,
@@ -64,7 +66,7 @@ class TripController {
         status: 'awaiting-bid',
         reference: Helpers.generateReference(),
       })
-      Mail.newTripCreated()
+      if (process.env.NODE_ENV !== 'development') Mail.newTripCreated()
       return Respond.success(res, 'Trip created successfully', trip)
     } catch (err) {
       next(err)
@@ -395,8 +397,14 @@ async function setTripToCompleted(tripId: string) {
   const shipper = await findUserBy({ _id: updatedTrip?.tripOwner?._id })
   const TransportercompletedTrips = transporter?.completedTrips! + 1
   const shippercompletedTrips = shipper?.completedTrips! + 1
-  await findAndUpdateUserBy({ _id: transporter?._id! }, { completedTrips: TransportercompletedTrips })
-  await findAndUpdateUserBy({ _id: shipper?._id! }, { completedTrips: shippercompletedTrips })
+  await findAndUpdateUserBy(
+    { _id: transporter?._id! },
+    { completedTrips: TransportercompletedTrips }
+  )
+  await findAndUpdateUserBy(
+    { _id: shipper?._id! },
+    { completedTrips: shippercompletedTrips }
+  )
   const tripOwner = await findUserBy({ _id: updatedTrip?.tripOwner._id })
   Mail.tripHasBeenSetToCompleted(
     tripOwner?.email!,

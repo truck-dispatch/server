@@ -14,6 +14,7 @@ import vehicle from './vehicle.routes'
 import marketing from './marketing.routes'
 import getHelp from './getHelp.routes'
 import wallet from './wallet.routes'
+import referral from './referral.routes'
 
 const router = Router()
 
@@ -28,6 +29,7 @@ router.use('/rating', rating)
 router.use('/vehicle', vehicle)
 router.use('/marketing', marketing)
 router.use('/get-help', getHelp)
+router.use('/referrals', referral)
 // Admin
 router.use('/admin', admin)
 // External services required by the frontend.
@@ -35,7 +37,7 @@ router.use('/externals', externals)
 router.use('/wallet', wallet)
 
 /* GET home page. */
-router.get('/', (req, res) => {
+router.get('/', (_, res) => {
   return Respond.success(res, 'Welcome to truckdispatch API.')
 })
 
