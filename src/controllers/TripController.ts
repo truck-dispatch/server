@@ -66,7 +66,7 @@ class TripController {
         status: 'awaiting-bid',
         reference: Helpers.generateReference(),
       })
-      Mail.newTripCreated()
+      if (process.env.NODE_ENV !== 'development') Mail.newTripCreated()
       return Respond.success(res, 'Trip created successfully', trip)
     } catch (err) {
       next(err)

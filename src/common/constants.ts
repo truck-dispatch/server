@@ -30,3 +30,8 @@ export const userTypes = [...clientUserTypes, ...serviceBasedUserTypes]
 export const rolesInACompany = ['CEO', 'manager', 'secretary', 'accountant']
 
 export const paymentSources = ['balance', 'paystack']
+
+export const referralCommisionForServiceBasedUsers = 3000
+export const referralCommisionForClientBasedUsers = 5000
+
+export const minPriceForReferralCommission = 150000
