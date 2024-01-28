@@ -30,3 +30,5 @@ export const userTypes = [...clientUserTypes, ...serviceBasedUserTypes]
 export const rolesInACompany = ['CEO', 'manager', 'secretary', 'accountant']
 
 export const paymentSources = ['balance', 'paystack']
+
+export const DEFAULT_ADMIN_PASSWORD = 'admin12345'

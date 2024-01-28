@@ -20,3 +20,10 @@ export async function findAdminBy(
   const { password, ...adminWithoutPassword } = admin.toObject()
   return adminWithoutPassword as unknown as Admin
 }
+export async function findAdminsBy(
+  param: Partial<Admin>
+): Promise<Admin[] | null> {
+  const admins = await AdminModel.find(param).select('-password')
+
+  return admins
+}
