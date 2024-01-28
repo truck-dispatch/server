@@ -100,6 +100,30 @@ class JWTMiddlewares {
       Respond.error(res, (err as Error).message)
     }
   }
+
+  async checkIsSuperAdmin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = req.headers.authorization?.split(' ')[1]
+      if (!token) {
+        return Respond.error(res, 'No JWT was provided', 401)
+      }
+
+      const decodedUser = decodeToken(token) as User
+
+      if (!decodedUser) {
+        return Respond.error(res, 'Invalid JWT', 401)
+      }
+
+      const admin = await findAdminBy({ _id: decodedUser._id })
+      if (!admin) return Respond.error(res, 'Admin does not exist', 401)
+
+      if (admin.role !== 'super-admin')
+        return Respond.error(res, 'Unauthorized access', 401)
+      next()
+    } catch (err) {
+      Respond.error(res, (err as Error).message)
+    }
+  }
 }
 
 export default new JWTMiddlewares()

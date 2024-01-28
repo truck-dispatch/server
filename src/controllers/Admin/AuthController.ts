@@ -14,9 +14,10 @@ class AuthController {
         email: email.toLowerCase(),
         firstName,
         lastName,
+        role: 'super-admin',
         password: encryptedPassword,
       } as Admin
-      createAdmin(data)
+      await createAdmin(data)
       return Respond.success(res, 'Admin created successfully')
     } catch (err) {
       next(err)
