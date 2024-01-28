@@ -31,4 +31,5 @@ export default interface User {
   isSuspended: boolean
   roleInCompany: string
   companyDetails: Company
+  referrerCode: string
 }

@@ -32,3 +32,7 @@ export const rolesInACompany = ['CEO', 'manager', 'secretary', 'accountant']
 export const paymentSources = ['balance', 'paystack']
 
 export const DEFAULT_ADMIN_PASSWORD = 'admin12345'
+export const referralCommisionForServiceBasedUsers = 3000
+export const referralCommisionForClientBasedUsers = 5000
+
+export const minPriceForReferralCommission = 150000
