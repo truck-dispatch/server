@@ -6,6 +6,7 @@ const router = Router()
 
 router.get('/', JWTMiddlewares.checkAdminJwt, AdminController.getAdmin)
 router.post('/', JWTMiddlewares.checkIsSuperAdmin, AdminController.addAdmin)
+router.delete('/:adminId', JWTMiddlewares.checkIsSuperAdmin, AdminController.removeAdmin)
 router.get(
   '/admins',
   JWTMiddlewares.checkIsSuperAdmin,

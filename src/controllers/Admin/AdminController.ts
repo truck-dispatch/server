@@ -1,6 +1,7 @@
 import { DEFAULT_ADMIN_PASSWORD } from '@common/constants'
 import {
   createAdmin,
+  deleteAdminById,
   findAdminBy,
   findAdminsBy,
 } from '@data/Admin/adminRepository'
@@ -55,6 +56,26 @@ class AdminController {
       })
 
       return Respond.success(res, 'Admin created successfully', createdAdmin)
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async removeAdmin(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { adminId } = req.params
+
+      if (!adminId)
+        return Respond.error(res, 'Admin to be deleted does not exist')
+
+      const alreadyExistingAdmin = await findAdminBy({ _id: adminId })
+
+      if (!alreadyExistingAdmin)
+        return Respond.error(res, 'Admin with this  email does not exist')
+
+      await deleteAdminById(adminId)
+
+      return Respond.success(res, 'Admin deleted successfully')
     } catch (err) {
       next(err)
     }

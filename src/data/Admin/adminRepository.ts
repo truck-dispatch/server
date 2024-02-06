@@ -27,3 +27,7 @@ export async function findAdminsBy(
 
   return admins
 }
+
+export async function deleteAdminById(adminId: string) {
+  return AdminModel.deleteOne({ _id: adminId })
+}
