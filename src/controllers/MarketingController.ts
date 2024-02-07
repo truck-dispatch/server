@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { recordMessage } from '@data/marketing/marketingRepository'
+import { recordContactUsMessage } from '@data/contact-us/contactUsRepository'
 import Respond from '@helpers/Respond'
 
 class MarketingController {
@@ -7,14 +7,15 @@ class MarketingController {
     try {
       const { name, email, companyName, phone, message } = req.body
 
-      // if (!name || !email || !phone || !message) return Respond.error(res, "name, email, phone and message are compulsory fields")
+      if (!name || !email || !phone || !message) return Respond.error(res, "name, email, phone and message are compulsory fields")
 
-      const marketMessage = await recordMessage({
+      const marketMessage = await recordContactUsMessage({
         name,
         email,
         companyName,
         message,
-      })
+      });
+
       return Respond.success(
         res,
         'Your message has been recorded, we will get back to you shortly',

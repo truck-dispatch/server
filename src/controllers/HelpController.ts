@@ -23,7 +23,7 @@ class HelpController {
       return Respond.success(
         res,
         'Your complaint has been recorded you will hear from us shortly',
-        { helpData }
+        helpData
       )
     } catch (err) {
       next(err)

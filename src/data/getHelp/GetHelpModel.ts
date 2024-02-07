@@ -21,6 +21,11 @@ const schema = new Schema({
     required: true,
     type: String,
   },
+  resolved: {
+    required: true,
+    type: Boolean,
+    default: false,
+  },
 })
 
 export const GetHelpModel = model<GetHelpData>('GetHelp', schema)

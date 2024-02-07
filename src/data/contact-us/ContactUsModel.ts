@@ -1,5 +1,5 @@
-import Mongoose, { model, Schema } from 'mongoose'
-import MarketingMessage from '@interfaces/MarketingMessage'
+import { model, Schema } from 'mongoose'
+import ContactUsMessage from '@interfaces/ContactUsMessage'
 
 const schema = new Schema({
   name: {
@@ -18,4 +18,5 @@ const schema = new Schema({
     required: true,
   },
 })
-export const MarketingModel = model<MarketingMessage>('Marketing', schema)
+
+export const MarketingModel = model<ContactUsMessage>('ContactUsMessage', schema)
