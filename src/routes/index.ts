@@ -11,6 +11,8 @@ import externals from './externals.routes'
 import admin from './admin.routes'
 import rating from './rating.routes'
 import vehicle from './vehicle.routes'
+import marketing from './marketing.routes'
+import getHelp from './getHelp.routes'
 import wallet from './wallet.routes'
 import referral from './referral.routes'
 
@@ -25,6 +27,8 @@ router.use('/chat', chat)
 router.use('/payment', payment)
 router.use('/rating', rating)
 router.use('/vehicle', vehicle)
+router.use('/marketing', marketing)
+router.use('/get-help', getHelp)
 router.use('/referrals', referral)
 // Admin
 router.use('/admin', admin)
