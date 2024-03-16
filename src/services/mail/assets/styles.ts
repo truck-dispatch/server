@@ -14,24 +14,6 @@ export const styles = `
     padding: 32px;
   }
 
-  .icon-container {
-    border-radius: 63.75px;
-    width: 72px;
-    height: 72px;
-    padding: 17px;
-    background:  #D9D3F3;
-    display: flex;
-    margin: auto;
-  }
-  .icon-container__inner {
-    border-radius: 34px;
-    width: 32px;
-    height: 32px;
-    padding: 17px;
-    background: #B3A8E7;
-    margin: auto;
-  }
-
   .mail-card {
     background: white;
     padding: 16px 32px 32px 32px;
@@ -56,6 +38,7 @@ export const styles = `
     font-size: 24px;
     font-weight: 600;
   }
+
   .content-purple-info-container {
     background: #F2F0FB;
     border-radius: 8px;

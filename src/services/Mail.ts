@@ -27,7 +27,6 @@ const icons = {
 interface TemplateProps {
   title: string
   content: string
-  icon?: string
   to?: string
 }
 class Mail {
@@ -58,7 +57,7 @@ class Mail {
     )
   }
 
-  private emailTemplate({ title, content, icon }: TemplateProps) {
+  private emailTemplate({ title, content }: TemplateProps) {
     return `
     <!DOCTYPE html>
     <html>
@@ -72,15 +71,6 @@ class Mail {
             <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688316396/assets/yfvpnj3okri3o3u3wgpk.png" width="30" height="30">
             <span class="logo-title">TruckDispatch</span>
           </a>
-          ${
-            !!icon
-              ? `
-              <div class="icon-container mt-32">
-                <div class="icon-container__inner"><img src="${icon}" /></div>
-              </div>
-          `
-              : ''
-          }
           <div class="mail-card mt-32">
             <section>
               <h1>${title}</h1>
@@ -99,7 +89,7 @@ class Mail {
               <span class="logo-title">TruckDispatch</span>
             </a>
               <div class="social-icons mt-32">
-                <a href="twitter.com" class="social-link">
+                <a href="https://twitter.com/truckdispatchHQ" class="social-link">
                   <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308501/assets/g2vlasdrthm0jr9zpfc2.jpg" alt="twitter-logo">
                 </a>
                 <a href="https://www.linkedin.com/company/truckdispatch/" class="social-link">
@@ -121,7 +111,6 @@ class Mail {
   portFromFirebase(to: string, url: string) {
     const template = this.emailTemplate({
       title: 'Password Reset',
-      icon: icons.padlock,
       content: `
         <p> class="content-paragraph">Someone (hopefully you) tried logging into your account. The Truckdispatch team underwent a database upgrade.
         Due to this upgrade, passwords were lost. Kindly use the Link below to reset your password.</p>
@@ -147,7 +136,6 @@ class Mail {
           If you don’t wish to reset your password, disregard this email and no action will be taken.
         </p>
       `,
-      icon: icons.padlock,
     })
 
     return this.sendMail(to, 'Reset Password', template)
@@ -222,7 +210,6 @@ class Mail {
         <a href="${url}" class="action-trigger mt-32 mb-32">View Bid</a>
         <p class="mb-32">Thank you for working with us.</p>
       `,
-      icon: icons.truck,
     })
     return this.sendMail(to, 'A bid has been received for your trip', template)
   }
@@ -257,7 +244,6 @@ class Mail {
       <a href="${url}" class="action-trigger mt-32 mb-32">View Bid</a>
       <p class="mb-32">Thank you for working with us.</p>
     `,
-      icon: icons.truck,
     })
 
     return this.sendMail(to, 'A bid has been updated', template)
@@ -294,7 +280,6 @@ class Mail {
       <a href="${url}" class="action-trigger mt-32 mb-32">View trip</a>
         <p>Thank you for working with us.</p>
       `,
-      icon: icons.truck,
     })
 
     return this.sendMail(to, 'Bid Accepted', template)
@@ -330,7 +315,6 @@ class Mail {
 
         <a href="${url}" class="action-trigger mt-32 mb-32">View Profile</a>
       `,
-      icon: icons.avatar,
     })
 
     return this.sendMail(
@@ -354,7 +338,6 @@ class Mail {
           <p>Ensure that the proof of loading is the same as what was descriped in the bid made by ${transporterName}.</p>
         </div>
       `,
-      icon: icons.receipt,
     })
     return this.sendMail(
       to,
@@ -377,7 +360,6 @@ class Mail {
           <p>Ensure that the proof of loading is the same as what was descriped in the bid made by ${transporterName}.</p>
         </div>
       `,
-      icon: icons.receipt,
     })
 
     return this.sendMail(
@@ -398,7 +380,6 @@ class Mail {
 
         <a href="${url}" class="action-trigger mt-32 mb-32">View Trip</a>
       `,
-      icon: icons.receipt,
     })
 
     return this.sendMail(to, 'Your payment request has been rejected', template)
@@ -415,7 +396,6 @@ class Mail {
         
         <a href="${url}" class="action-trigger mt-32 mb-32">Proceed with trip</a>
       `,
-      icon: icons.receipt,
     })
     return this.sendMail(to, "Your money is on it's way", template)
   }
