@@ -8,7 +8,8 @@ type Status =
   | 'verified'
   | 'unverified'
   | 'rejected'
-  | 'fraudulent'
+  | 'fraudulent';
+
 export default interface User {
   _id: string | Types.ObjectId
   firstName: string
