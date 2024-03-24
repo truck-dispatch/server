@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { recordContactUsMessage } from '@data/contact-us/contactUsRepository'
 import Respond from '@helpers/Respond'
+import Mail from '@services/Mail'
 
 class MarketingController {
   async sendMessage(req: Request, res: Response, next: NextFunction) {
@@ -15,6 +16,8 @@ class MarketingController {
         companyName,
         message,
       });
+
+      await Mail.someoneContactedUs({ name, email, phone, message });
 
       return Respond.success(
         res,

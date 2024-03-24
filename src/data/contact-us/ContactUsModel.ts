@@ -19,4 +19,4 @@ const schema = new Schema({
   },
 })
 
-export const MarketingModel = model<ContactUsMessage>('ContactUsMessage', schema)
+export const ContactUsModel = model<ContactUsMessage>('ContactUsMessage', schema)

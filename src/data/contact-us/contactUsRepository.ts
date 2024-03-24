@@ -1,8 +1,9 @@
-import { MarketingModel } from './ContactUsModel'
 import MarketingMessage from '@interfaces/ContactUsMessage'
 
-export async function recordContactUsMessage(msg: MarketingMessage) {
-  const data = new MarketingModel(msg)
+import { ContactUsModel } from './ContactUsModel'
 
-  return data.save()
+export async function recordContactUsMessage(msg: MarketingMessage) {
+  const data = new ContactUsModel(msg)
+
+  return data.save();
 }

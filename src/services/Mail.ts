@@ -165,6 +165,7 @@ class Mail {
 
     return this.sendMail(to, 'Verify Email', template)
   }
+
   newUserSignedUp(userName: string) {
     const template = this.emailTemplate({
       title: 'A new user signed up',
@@ -179,6 +180,25 @@ class Mail {
       template
     )
   }
+
+  someoneContactedUs({ name, email, phone, message }: {name: string, email: string, phone: string, message: string}) {
+    const template = this.emailTemplate({
+      title: 'A message was sent',
+      content: `
+        <p>${name} just sent a message to us.</p>
+        <p>Phone: ${phone}</p>
+        <p>email: ${email}</p>
+        <p>${message}</p>
+      `,
+      to: 'admin@gettruckdispatch.com',
+    })
+    return this.sendMail(
+      'admin@gettruckdispatch.com',
+      'A new message was sent',
+      template
+    )
+  }
+
   newTripCreated() {
     const template = this.emailTemplate({
       title: 'A new trip has been created',
@@ -191,6 +211,7 @@ class Mail {
       template
     )
   }
+
   transporterHasSentBid(
     to: string,
     transporterName: string,
@@ -226,6 +247,7 @@ class Mail {
     })
     return this.sendMail(to, 'A bid has been received for your trip', template)
   }
+
   transporterHasUpdatedBid(
     to: string,
     transporterName: string,
@@ -262,6 +284,7 @@ class Mail {
 
     return this.sendMail(to, 'A bid has been updated', template)
   }
+
   bidHasBeenAccepted(
     to: string,
     pickUpLocation: string,
@@ -299,6 +322,7 @@ class Mail {
 
     return this.sendMail(to, 'Bid Accepted', template)
   }
+
   tripStarted(
     to: string,
     pickUpLocation: string,
@@ -318,6 +342,7 @@ class Mail {
 
     return this.sendMail(to, 'Transporter has commenced the trip', template)
   }
+
   accountHasBeenVerifiedByAdmin(to: string, url: string) {
     const template = this.emailTemplate({
       title: 'Account Verified 🎉 ',
@@ -339,6 +364,7 @@ class Mail {
       template
     )
   }
+
   paymentHasBeenRequestedByTransporter(
     to: string,
     url: string,
@@ -362,6 +388,7 @@ class Mail {
       template
     )
   }
+
   paymentHasBeenUpdatedByTransporter(
     to: string,
     url: string,
@@ -386,6 +413,7 @@ class Mail {
       template
     )
   }
+
   paymentRequestHasBeenRejected(
     to: string,
     url: string,
@@ -403,6 +431,7 @@ class Mail {
 
     return this.sendMail(to, 'Your payment request has been rejected', template)
   }
+
   paymentRequestHasBeenApproved(
     to: string,
     url: string,
@@ -419,6 +448,7 @@ class Mail {
     })
     return this.sendMail(to, "Your money is on it's way", template)
   }
+
   tripHasBeenSetToInProgress(to: string, url: string, transporterName: string) {
     const template = this.emailTemplate({
       title: "Your  goods are on it's way",
@@ -431,6 +461,7 @@ class Mail {
     })
     return this.sendMail(to, "Your  goods are on it's way", template)
   }
+
   tripHasBeenSetToCompleted(to: string, url: string, transporterName: string) {
     const template = this.emailTemplate({
       title: 'Your goods have arrived',
@@ -444,6 +475,7 @@ class Mail {
 
     return this.sendMail(to, 'Your goods have arrived', template)
   }
+
   tripHasBeenCanceledByTransporter(
     to: string,
     url: string,
@@ -465,6 +497,7 @@ class Mail {
       template
     )
   }
+
   tripHasBeenCanceledByShipper(to: string, url: string, shipperName: string) {
     const template = this.emailTemplate({
       title: `${shipperName} has cancelled the trip 😞`,
