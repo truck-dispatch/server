@@ -56,15 +56,6 @@ class Mail {
             <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688316396/assets/yfvpnj3okri3o3u3wgpk.png" width="30" height="30">
             <span class="logo-title">TruckDispatch</span>
           </a>
-          ${
-            !!icon
-              ? `
-              <div class="icon-container mt-32">
-                <div class="icon-container__inner"><img src="${icon}" /></div>
-              </div>
-          `
-              : ''
-          }
           <div class="mail-card mt-32">
             <section>
               <h1>${title}</h1>
@@ -443,10 +434,11 @@ class Mail {
       title: 'Your money is on the way 🤑',
       content: `
         <p class="content-paragraph"><b>${tripOwnerName}</b> has approved your payment request therefore your money is on it's way to your account. If the money does not reflect in the next 1hr, kindly contact us via email support@gettruckdispatch.com or use the chat dialogue at the bottom of the page.</p>
-        
+
         <a href="${url}" class="action-trigger mt-32 mb-32">Proceed with trip</a>
       `,
     })
+
     return this.sendMail(to, "Your money is on it's way", template)
   }
 
@@ -455,12 +447,13 @@ class Mail {
       title: "Your  goods are on it's way",
       content: `
         <p class="content-paragraph"><b>${transporterName}</b> has started the trip, keep calm and expect your delivery soon.</p>
-        
+
         <a href="${url}" class="action-trigger mt-32 mb-32">View Trip</a>
         <p class="content-paragraph">If you notice any issues with your trips, kindly reach out to our customer service and they would help you address any issues that exist.</p>
       `,
-    })
-    return this.sendMail(to, "Your  goods are on it's way", template)
+    });
+
+    return this.sendMail(to, "Your  goods are on it's way", template);
   }
 
   tripHasBeenSetToCompleted(to: string, url: string, transporterName: string) {
@@ -468,7 +461,7 @@ class Mail {
       title: 'Your goods have arrived',
       content: `
         <p class="content-paragraph"><b>${transporterName}</b> has completed the trip. Thank you for choosing ${COMPANY_NAME}. Kindly help us rate <b>${transporterName}</b>, as it would help keep our platform safe</p>
-        
+
         <a href="${url}" class="action-trigger mt-32 mb-32">Rate Transporter</a>
         <p class="content-paragraph">If the trip has not arrived yet, please inform the ${COMPANY_NAME} team to investigate immediately.</p>
       `,
@@ -504,7 +497,7 @@ class Mail {
       title: `${shipperName} has cancelled the trip 😞`,
       content: `
         <p class="content-paragraph"><b>${shipperName}</b> has cancelled the trip 😞.  In the mean time, feel free to look through the Job board to see other trips you may be eligible for</p>
-        
+
         <a href="${url}" class="action-trigger mt-32 mb-32">View Other Jobs</a>
         <p class="content-paragraph">The team would look into the reason it was cancelled and get back to you if need be.</p>
       `,
