@@ -49,6 +49,7 @@ class AuthController {
       } as User
 
       if (userType !== 'shipper') data.status = 'unverified'
+
       const user = await createUser(data)
 
       if (referralCode) {
@@ -64,9 +65,12 @@ class AuthController {
           })
         }
       }
+
       await Sms.sendOTP({
         to: formattedPhone,
       })
+
+      await Mail.sendWelcomeMailToShipper(email, `${firstName} ${lastName}`);
 
       const token = generateJWT({
         _id: user?._id,

@@ -5,6 +5,7 @@ export const SMS_AUTH_TOKEN = process.env.SMS_AUTH_TOKEN
 export const SMS_ACCOUNT_SID = process.env.SMS_ACCOUNT_SID
 export const SMS_SERVICE_SID = process.env.SMS_SERVICE_SID
 export const JWT_SECRET = process.env.JWT_SECRET
+export const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL
 export const CLOUDINARY_IMAGE_UPLOAD_URL =
   process.env.CLOUDINARY_IMAGE_UPLOAD_URL!
 export const CLOUDINARY_VIDEO_UPLOAD_URL =

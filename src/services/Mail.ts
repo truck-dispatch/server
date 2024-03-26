@@ -3,26 +3,10 @@ import {
   COMPANY_NAME,
   EMAIL_PASSWORD,
   NO_REPLY_EMAIL_ADDRESS,
+  FRONTEND_URL,
+  SUPPORT_EMAIL
 } from '@common/privateKeys'
 import { styles } from './mail/assets/styles'
-
-const icons = {
-  padlock:
-    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328062/assets/gws6dkltdt7b7qmatots.png',
-  close:
-    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688325062/assets/nvkcjbww66grnef7oznz.png',
-  moneys:
-    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328169/assets/punb1u2ouspvcdijs9td.png',
-  user: 'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328269/assets/leavkexonhgoz28cng4v.png',
-  truck:
-    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328400/assets/rcdsnkl2nzfpzhfsgin2.png',
-  truckTime:
-    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328484/assets/qv7ybhlxdvpiydl6ws2b.png',
-  receipt:
-    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688328590/assets/i5sz4x8zkruh8ybrdnah.png',
-  avatar:
-    'https://res.cloudinary.com/dpxb6epv3/image/upload/v1688329364/assets/ha5ajd1ubxfj57frbidh.png',
-}
 
 interface TemplateProps {
   title: string
@@ -99,7 +83,7 @@ class Mail {
               <span class="logo-title">TruckDispatch</span>
             </a>
               <div class="social-icons mt-32">
-                <a href="twitter.com" class="social-link">
+                <a href="https://twitter.com/truckdispatchHQ" class="social-link">
                   <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308501/assets/g2vlasdrthm0jr9zpfc2.jpg" alt="twitter-logo">
                 </a>
                 <a href="https://www.linkedin.com/company/truckdispatch/" class="social-link">
@@ -108,7 +92,7 @@ class Mail {
                 <a href="https://www.instagram.com/gettruckdispatch/" class="social-link">
                   <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308416/assets/xmyy3djwrhkhxfznhj4h.jpg" alt="instagram logo">
                 </a>
-                <a href="https://www.instagram.com/gettruckdispatch/" class="social-link">
+                <a href="https://www.facebook.com/profile.php?id=61555470345402&mibextid=LQQJ4d" class="social-link">
                   <img src="https://res.cloudinary.com/dpxb6epv3/image/upload/v1688308605/assets/qybt981czug696m7i5ym.jpg" alt="instagram logo">
                 </a>
               </div>
@@ -118,10 +102,34 @@ class Mail {
     </html>
     `
   }
+
+  sendWelcomeMailToShipper(email: string, name: string) {
+    const url = `${FRONTEND_URL}/trips`;
+
+    const template = this.emailTemplate({
+      title: 'Welcome onboard ' + name,
+      content: `
+        <p>Hello ${name},</p>
+        <p>Welcome to Truckdispatch and thank you for signing up. We are here to help you book safer road freight transportation and help your business logistics run smoothly.</p>
+        <p class="content-paragraph">Truckdispatch is a truck-hailing platform that gives shippers/companies like you the ability to hire vetted and trusted transporters for your haulage needs.</p>
+        <p class="content-paragraph">Truckdispatch came into existence to combat fraud and inefficiencies in the road freight industry. Hence, we hold the security of your goods in the highest regard.</p>
+        <p class="content-paragraph">When you post a trip, several transporters send bids for your trip, and you can select a transporter with the best rating and pricing.</p>
+        <p class="content-paragraph">All Truckdispatch transporters have been properly vetted to combat fraud and inefficiencies.</p>
+      
+        <a href="${url}" class="action-trigger mt-16 mb-16">Book your first trip</a>
+        <p class="content-paragraph">
+          If you did not take this action, contact us immediately at <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a>
+        </p>
+      `,
+      to: email,
+    })
+
+    return this.sendMail(email, 'Welcome onboard ' + name, template)
+  }
+
   portFromFirebase(to: string, url: string) {
     const template = this.emailTemplate({
       title: 'Password Reset',
-      icon: icons.padlock,
       content: `
         <p> class="content-paragraph">Someone (hopefully you) tried logging into your account. The Truckdispatch team underwent a database upgrade.
         Due to this upgrade, passwords were lost. Kindly use the Link below to reset your password.</p>
@@ -135,6 +143,7 @@ class Mail {
 
     return this.sendMail(to, 'Reset Password', template)
   }
+
   requestResetPassword(to: string, url: string) {
     const template = this.emailTemplate({
       title: 'Password Reset',
@@ -147,11 +156,11 @@ class Mail {
           If you don’t wish to reset your password, disregard this email and no action will be taken.
         </p>
       `,
-      icon: icons.padlock,
     })
 
     return this.sendMail(to, 'Reset Password', template)
   }
+
   verifyMail(to: string, url: string) {
     const template = this.emailTemplate({
       title: 'Verify Email',
@@ -230,7 +239,7 @@ class Mail {
 
           <div class="d-flex">
             <img src="${
-              transporterAvatar || icons.avatar
+              transporterAvatar
             }" class="avatar" alt="user avatar">
             <div class="user-profile-details ml-8">
               <div>
@@ -243,7 +252,6 @@ class Mail {
         <a href="${url}" class="action-trigger mt-32 mb-32">View Bid</a>
         <p class="mb-32">Thank you for working with us.</p>
       `,
-      icon: icons.truck,
     })
     return this.sendMail(to, 'A bid has been received for your trip', template)
   }
@@ -266,7 +274,7 @@ class Mail {
 
         <div class="d-flex">
           <img src="${
-            transporterAvatar || icons.avatar
+            transporterAvatar
           }" class="avatar" alt="user avatar">
           <div class="user-profile-details ml-8">
             <div>
@@ -279,7 +287,6 @@ class Mail {
       <a href="${url}" class="action-trigger mt-32 mb-32">View Bid</a>
       <p class="mb-32">Thank you for working with us.</p>
     `,
-      icon: icons.truck,
     })
 
     return this.sendMail(to, 'A bid has been updated', template)
@@ -303,7 +310,7 @@ class Mail {
 
           <div class="d-flex">
             <img src="${
-              tripOwnerAvatar || icons.avatar
+              tripOwnerAvatar
             }" class="avatar" alt="user avatar">
             <div class="user-profile-details ml-8">
               <div>
@@ -317,7 +324,6 @@ class Mail {
       <a href="${url}" class="action-trigger mt-32 mb-32">View trip</a>
         <p>Thank you for working with us.</p>
       `,
-      icon: icons.truck,
     })
 
     return this.sendMail(to, 'Bid Accepted', template)
@@ -355,7 +361,6 @@ class Mail {
 
         <a href="${url}" class="action-trigger mt-32 mb-32">View Profile</a>
       `,
-      icon: icons.avatar,
     })
 
     return this.sendMail(
@@ -380,7 +385,6 @@ class Mail {
           <p>Ensure that the proof of loading is the same as what was descriped in the bid made by ${transporterName}.</p>
         </div>
       `,
-      icon: icons.receipt,
     })
     return this.sendMail(
       to,
@@ -404,7 +408,6 @@ class Mail {
           <p>Ensure that the proof of loading is the same as what was descriped in the bid made by ${transporterName}.</p>
         </div>
       `,
-      icon: icons.receipt,
     })
 
     return this.sendMail(
@@ -426,7 +429,6 @@ class Mail {
 
         <a href="${url}" class="action-trigger mt-32 mb-32">View Trip</a>
       `,
-      icon: icons.receipt,
     })
 
     return this.sendMail(to, 'Your payment request has been rejected', template)
@@ -444,7 +446,6 @@ class Mail {
         
         <a href="${url}" class="action-trigger mt-32 mb-32">Proceed with trip</a>
       `,
-      icon: icons.receipt,
     })
     return this.sendMail(to, "Your money is on it's way", template)
   }
